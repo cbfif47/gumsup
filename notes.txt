@@ -1,0 +1,7 @@
+changed name in apps.py from base to gumsup4.base
+andded base to requirements files - probly not the thing
+added "allauth.account.middleware.AccountMiddleware" to middleware
+
+run make build first
+
+copied index.jsx to static and renamed index.js

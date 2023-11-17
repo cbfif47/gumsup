@@ -33,8 +33,9 @@ class User(BaseModel, AbstractUser):
     def save(self, *args, **kwargs):
         if self._state.adding is True:
             super().save(*args, **kwargs)
-            Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
-            Follow.objects.create(user=self,following=self)
+            if User.objects.filter(username='gummy').exists():
+                Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
+                Follow.objects.create(user=self,following=self)
         else:
             super().save(*args, **kwargs)
 

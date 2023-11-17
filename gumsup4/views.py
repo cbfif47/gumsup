@@ -292,8 +292,9 @@ class UserView(FilterablePostsMixin,TemplateView):
             return redirect(to='login')
 
 
-class MyLoginView(LoginView):
+class LoginView(LoginView):
     redirect_authenticated_user = True
+    template_name = 'users/login.html'
     
     def get_success_url(self):
         return reverse_lazy('home') 

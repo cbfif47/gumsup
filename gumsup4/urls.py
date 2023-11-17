@@ -30,7 +30,7 @@ urlpatterns = [
     path("", views.PostsPageView.as_view(), name='home'),
     path("posts/<post_id>", views.PostView.as_view(), name='post'),
     path("posts/<post_id>/repost", views.RePostView.as_view(), name='repost'),
-    path("login/", views.MyLoginView.as_view(), name='login'),
+    path("login/", views.LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
