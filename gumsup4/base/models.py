@@ -32,6 +32,7 @@ class User(BaseModel, AbstractUser):
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):
         if self._state.adding is True:
+            self.username = self.username.lower() # force lowercase
             super().save(*args, **kwargs)
             if User.objects.filter(username='gummy').exists():
                 Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
@@ -57,7 +58,7 @@ class User(BaseModel, AbstractUser):
         return follows
 
     def follower_count(self):
-        fc = Follow.objects.filter(following=self).count()
+        fc = Follow.objects.filter(following=self).exclude(user=self).count()
         return fc
 
     def following_count(self):
@@ -84,7 +85,7 @@ class Post(BaseModel):
         User, verbose_name="Gummed By", on_delete=models.CASCADE,related_name="posted_by")
 
     what = models.CharField(max_length=50)
-    why = models.TextField(max_length=140)
+    why = models.TextField(max_length=250)
     original_post = models.ForeignKey(
         'self', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')
     superlike = models.BooleanField(default=False)

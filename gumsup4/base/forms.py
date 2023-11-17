@@ -12,7 +12,7 @@ class PostForm(forms.ModelForm):
               }),
             "why": forms.Textarea(attrs={'placeholder': 'why do you like it'
               ,"rows": 3}),
-            "url": forms.TextInput(attrs={"placeholder": "url if you have one"
+            "url": forms.TextInput(attrs={"placeholder": "url (optional)"
               }),
             "category": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
             "superlike": forms.CheckboxInput(attrs={"class":"tab-input","name":"tab-input"})
@@ -30,31 +30,28 @@ class UserEditForm(forms.ModelForm):
 class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=100,
                                required=True,
-                               widget=forms.TextInput(attrs={'placeholder': 'Username',
+                               widget=forms.TextInput(attrs={'placeholder': 'username',
                                                              'class': 'form-control',
                                                              }))
     email = forms.EmailField(required=True,
-                             widget=forms.TextInput(attrs={'placeholder': 'Email',
+                             widget=forms.TextInput(attrs={'placeholder': 'email',
                                                            'class': 'form-control',
                                                            }))
     password1 = forms.CharField(max_length=50,
                                 required=True,
-                                widget=forms.PasswordInput(attrs={'placeholder': 'Password',
+                                label="Password",
+                                widget=forms.PasswordInput(attrs={'placeholder': 'password',
                                                                   'class': 'form-control',
-                                                                  'data-toggle': 'password',
-                                                                  'id': 'password',
                                                                   }))
     password2 = forms.CharField(max_length=50,
                                 required=True,
-                                widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password',
-                                                                  'class': 'form-control',
-                                                                  'data-toggle': 'password',
-                                                                  'id': 'password',
+                                label="Confirm Password",
+                                widget=forms.PasswordInput(attrs={'placeholder': 'confirm Password',
                                                                   }))
     bio = forms.CharField(max_length=140,
                                required=False,
-                               widget=forms.TextInput(attrs={'placeholder': 'bio',
-                                                             'class': 'form-control',
+                               widget=forms.Textarea(attrs={'placeholder': 'tell me about yourself',
+                                                             'rows':3,
                                                              }))
 
     class Meta:

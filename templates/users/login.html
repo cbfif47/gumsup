@@ -1,7 +1,7 @@
 {%extends 'base.html'%}
 
 {%block content%}
-  <div class="center">
+  <div class="row">
 	  <form method="post" class="card" novalidate>
 	  	{% csrf_token %}
 	    <h2 class="text-center">Log in to your account</h2>
@@ -13,10 +13,11 @@
 	        	{% endif %}
 		{% endfor %}
 		
-		<input type="submit" value="Login" class="btn btn-primary full-width">
-		<hr>
-		<a href="{% url 'signup' %}">Signup</a>
+        <input class="post-button" type="submit" value="login">
 	</form>
+</div>
+<div class="row">
+		<a href="{% url 'signup' %}">don't have an account yet? signup instead</a>
 </div>
 
 {%endblock content%}

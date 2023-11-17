@@ -216,6 +216,7 @@ class UserFollowersView(TemplateView):
 
             context = {
                 'users': page_obj,
+                'title': 'following',
                 'user': user,
                 'is_following': request.user.is_following(user)
             }
@@ -240,6 +241,7 @@ class UserFollowingView(TemplateView):
             context = {
                 'users': page_obj,
                 'user': user,
+                'title': 'following',
                 'is_following': request.user.is_following(user)
             }
             return render(request, 'users/followers.html', context)
