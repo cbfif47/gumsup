@@ -30,5 +30,4 @@ class Migration(migrations.Migration):
     dependencies = [
         ('base', '0001_squashed_0010_auto_20231114_1926'),
     ]
-
-   operations = [migrations.RunPython(generate_superuser)]
+    operations = [migrations.RunPython(generate_superuser)]
