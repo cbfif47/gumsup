@@ -10,9 +10,9 @@ logger = logging.getLogger(__name__)
 def generate_superuser(apps, schema_editor):
     from django.contrib.auth import get_user_model
 
-    USERNAME = os.getenv(("ADMIN_USERNAME")
-    PASSWORD = os.getenv(("ADMIN_PASSWORD")
-    EMAIL = os.getenv(("ADMIN_EMAIL")
+    USERNAME = os.getenv("ADMIN_USERNAME")
+    PASSWORD = os.getenv("ADMIN_PASSWORD")
+    EMAIL = os.getenv("ADMIN_EMAIL")
 
     user = get_user_model()
 
