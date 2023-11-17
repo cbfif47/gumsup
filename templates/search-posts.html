@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+  {% block content %}
+  <h2>search</h2>
+  <div class="row">
+        <button class="button disabled">posts</button>
+      <a href="{%url 'search_users' %}" class="logo button">
+        <button class="button">people</button>
+      </a>
+  </div>
+  <div class="row">
+<form action="{% url 'search_posts' %}" method="get">
+  <input
+    type="search"
+    name="q"
+    placeholder="search some text"
+  />
+</form>
+</div>
+<br><br>
+
+{% include 'feed.html' %}
+{% endblock %}

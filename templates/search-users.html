@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+  {% block content %}
+  <h2>search</h2>
+  <div class="row">
+      <a href="{%url 'search_posts' %}" class="logo button">
+        <button class="button">posts</button>
+      </a>
+        <button class="button disabled">people</button>
+  </div>
+  <div class="row">
+  <div class="row">
+<form action="{% url 'search_users' %}" method="get">
+  <input
+    type="search"
+    name="q"
+    placeholder="search by name or full email"
+  />
+</form>
+</div>
+
+{% for user in users %}
+  <div class="row">
+    <a href="{% url 'user' user %}">
+    <strong>{{ user }}</strong>{% if user.bio != '' %}: {{ user.bio }}
+    {% endif %}
+  </a>
+  </div>
+{% endfor %}
+{% endblock %}

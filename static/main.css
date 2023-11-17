@@ -1,0 +1,261 @@
+body {
+  background-color: lavender;
+  font-family: Monospace;
+}
+
+main {
+    max-width:80ex;
+    margin: auto;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+  text-shadow: 0.1em 0.1em cyan;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: black;
+  text-align: center;
+  font-size: 2.5em;
+}
+
+h2 {
+  text-shadow: 0.1em 0.1em cyan;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: black;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+
+input[type=text], select, textarea, input[type=search] {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  background-color: #EFEFFF;
+  font-family: Monospace;
+}
+
+.error, input[type=text].error {
+  border: 2px solid red;
+}
+
+.postform label {
+  display: inline-block;
+}
+
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+.col-15 {
+  float: left;
+  width: 15%;
+  margin-top: 3px;
+}
+
+.col-50 {
+  float: left;
+  width: 50%;
+  margin-top: 3px;
+}
+
+.col-100 {
+  float: left;
+  width: 100%;
+  margin-top: 3px;
+}
+
+.col-85 {
+  float: left;
+  width: 85%;
+  margin-top: 3px;
+}
+
+/* Clear floats after the columns */
+.row::after {
+  content: "";
+  display: table;
+  clear: both;
+  margin-bottom: 8px;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+/*
+@media screen and (max-width: 600px) {
+  .col-25, .col-75, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+*/
+
+.post-button {
+    float: right;
+    padding:15px;
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-right:0px;
+}
+
+@media screen and (max-width: 600px) {
+  .post-button {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+*/
+
+.header {
+    font-weight: bold;
+}
+
+.header breadcrumb {
+    text-align: left;
+}
+
+.header user_greeting {
+    float: right;
+}
+
+.postform {
+    margin-bottom: 20px;
+}
+
+.postform label {
+    color:black;
+    font-weight: bold;
+}
+
+
+.postcard {
+    border: 0px solid cyan;
+    min-height:10ex;
+    position: relative;
+    margin: auto;
+    margin-bottom: 4ex;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #EFEFFF;
+}
+
+.userinfo {
+    margin-bottom: 10px;
+}
+
+.userbadge {
+  background-color: blueviolet;
+  color: white;
+  padding: 4px 8px;
+  text-align: center;
+  border-radius: 5px;
+  float:right;
+  opacity: 50%;
+  text-decoration: none;
+}
+
+what {
+  text-shadow: 1px 1px cyan;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: black;
+}
+
+.postcard category {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: green;
+  color: white;
+  text-transform: lowercase;
+}
+
+input[type=button], input[type=submit], .button {
+  padding: 4px 8px;
+  margin-bottom: 0px;
+  margin-top: 8px;
+  text-align: center;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  display: inline;
+  text-decoration: none;
+}
+
+.postcard input[type=submit], .postcard button {
+    font-size: 0.7em;
+}
+
+input[type=submit]:hover {
+    background-color: black;
+    color: white;
+}
+
+
+.disabled {
+    background-color: black;
+    color: white;
+
+}
+
+.tabs {
+  --bar-color: blueviolet;
+  display: flex;
+  background-color: #EFEFFF;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.tabs > .tab {
+  flex: 1;
+  display: flex;
+}
+
+.tab > .tab-input {
+  width: 0;
+  height: 0;
+  margin: 0;
+  display: none;
+}
+
+.tab > .tab-box {
+  padding: .3rem;
+  width: 100%;
+  text-align: center;
+  transition: 0.1s;
+  border: 2px solid rgba(0,0,0,0);
+  border-radius: 5px;
+}
+
+.tab > .tab-input:checked + .tab-box {
+  background: var(--background);
+  border-color: var(--bar-color);
+}
+
+.original-post {
+    color:gray;
+    font-size: 0.9em;
+    border: solid 2px white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.original-post a {
+    color:gray;
+    text-decoration: none;
+}
+
+.time-since {
+    font-size: 0.6em;
+    position:absolute;
+    bottom:13px;
+    right:4px;
+    color:gray;
+}

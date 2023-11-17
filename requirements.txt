@@ -1,0 +1,12 @@
+psycopg2-binary
+redis
+django
+django-allauth
+dj-database-url
+djangorestframework
+django-filter
+django-redis
+whitenoise
+gunicorn
+base
+axios

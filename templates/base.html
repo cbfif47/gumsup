@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'main.css' %}" />
+        <title>Gumsup4</title>
+    </head>
+
+    <body>
+        <header class="header">
+            <breadcrumb>
+              <a href="{%url 'home'%}" class="logo">Feed</a>
+              <a href="{%url 'saves' %}" class="logo">Saves</a>
+              <a href="{%url 'search_posts' %}" class="logo">Search</a>
+              </breadcrumb>
+          {% if request.user.is_authenticated %}
+          <user_greeting>
+                    Hi <a href="{% url 'user' request.user %}">{{ request.user }}</a>.  <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+          </user_greeting>
+          {% endif %}
+            </div>
+        </header>
+        <main>
+            <div class="w3-container">
+              {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{message.tags}}">
+                 {{message}}
+               </div>
+             {% endfor %}
+        {% endif %}
+            
+             {%block content %}
+             {%endblock content%}
+            </div>
+            <script type="text/javascript">
+  function clicked(e)
+    {
+        if(!confirm('Are you sure?')) {
+            e.preventDefault();
+        }
+    }
+</script>
+        </main>
+        <footer class="footer">
+        </footer>
+    </body>
+
+</html>

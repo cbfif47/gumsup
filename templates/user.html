@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Welcome Home {% endblock %}</title>
+  <style>
+    table, th, td {
+      border: 10px solid black;
+    }
+</style>
+</head>
+<body>
+  {% block content %}
+  <div class="userinfo">
+    <div class="row">
+    {{ user.username }} has been here since {{ user.created|date:"d/m/y" }},
+    has <a href="{% url 'followers' user %}">{{ user.follower_count}}
+      {% if user.follower_count == 1 %}follower{% else %}followers{% endif %}</a>
+     and is <a href="{% url 'following' user %}">following {{ user.following_count}}</a>.
+   </div>
+  <div class="row">
+    "{{ user.bio|default:'no bio :(' }}"
+  </div>
+  {% if form %}
+    <form action="" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="save bio" class="post-button">
+   </form>
+   {% endif %}
+   <div class="row">
+      {% if request.user != user %}
+          <form method="POST">
+            {% csrf_token %}
+            {% if is_following %}
+              <input type="submit" class="post-button" value ='unfollow :(' />
+            {% else %}
+              <input type="submit" class="post-button" value ='follow' />
+            {% endif %}
+      {% endif %}
+    </div>
+  </div>
+      {% include 'feed.html' %}
+    {% endblock %}
+</body>
+</html>

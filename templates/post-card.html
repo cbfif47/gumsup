@@ -1,0 +1,58 @@
+{% load url_mention %}
+{% load tz %}
+      <div class="postcard">
+          <div class="row">
+            <div class="col-85">
+              {% if post.superlike %}⭐{% endif %}
+              {% if post.url != '' %}
+                <a href="{{ post.url }}">
+              {% endif %}
+                <what>{{ post.what}}</what>
+              {% if post.url != '' %}
+                </a>
+              {% endif %}
+            <category>{{ post.category }}</category>
+            </div>
+          <div class="col-15">
+            <a class="userbadge" href="{% url 'user' post.user %}">{{ post.user }}</a>
+          </div>
+        </div>
+        <div class="row">
+            <why>{{ post.why|lower|url_mention|urlize }}</why>
+        </div>
+        {% if post.original_post %}
+          <div class="original-post">
+            <a href="/posts/{{ post.original_post.id }}">
+              {{ post.original_post.user }}: {{ post.original_post.why }}
+            </a>
+          </div>
+        {% endif %}
+        <div class="row">
+            <form method="GET" action="{% url 'post' post.id %}" style="display:inline;">
+              <input type="submit" value="link" />
+            </form>
+          {% if request.user == post.user %}
+            <form method="POST" action="{% url 'post' post.id %}" style="display:inline;">
+              {% csrf_token %}
+              <input type="submit" class="button" value="delete" onclick="clicked(event)" />
+            </form>
+          {% else %}
+          {% if post.is_saved %} 
+              <form method="POST" action="{% url 'save' post.id %}" style="display:inline;">
+              {% csrf_token %}
+              <input type="submit" class="button" value="unsave" onclick="clicked(event)"/>
+            </form>
+          {% else %}
+              <form method="POST" action="{% url 'save' post.id %}" style="display:inline;">
+              {% csrf_token %}
+              <input type="submit" class="button" value="save" />
+            </form>
+          {% endif %}
+            
+            <form method="GET" action="{% url 'repost' post.id %}" style="display:inline;">
+              <input type="submit" value="repost" />
+            </form>
+          {% endif %}
+          <div class="time-since">{{ post.created|timesince }} ago</div>
+        </div>
+      </div>
