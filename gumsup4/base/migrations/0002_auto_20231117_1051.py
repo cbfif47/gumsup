@@ -3,8 +3,6 @@
 import os
 from django.db import migrations
 
-logger = logging.getLogger(__name__)
-
 def generate_superuser(apps, schema_editor):
     from django.contrib.auth import get_user_model
 
