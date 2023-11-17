@@ -66,7 +66,7 @@ class PostsPageView(FilterablePostsMixin,TemplateView):
             form = PostForm(instance = new_post)
             context['form'] = form
 
-            return render(request, 'posts.html', context)
+            return render(request, 'posts/posts.html', context)
         else:
             return redirect(to='login')
 
@@ -84,7 +84,7 @@ class PostsPageView(FilterablePostsMixin,TemplateView):
                 context = self.make_filtered_context(user.feed(),request)
                 context['form'] = f
                 context['messages'] = ["U forgot some fields"]
-                return render(request, "posts.html", context)
+                return render(request, "posts/posts.html", context)
 
             return redirect(to='home') 
 
@@ -114,7 +114,7 @@ class PostView(TemplateView):
                 'post': post
             }
 
-            return render(request, 'post.html', context)
+            return render(request, 'posts/post.html', context)
         else:
             return redirect(to='login')
 
@@ -148,7 +148,7 @@ class SavedPostsView(FilterablePostsMixin,TemplateView):
             raw_feed = request.user.saved_posts()
             context = self.make_filtered_context(raw_feed,request)
 
-            return render(request, 'saved_posts.html', context)
+            return render(request, 'posts/saved_posts.html', context)
         else:
             return redirect(to='login')
 
@@ -174,7 +174,7 @@ class RePostView(TemplateView):
                 ,'original_post': post
             }
 
-            return render(request, 'repost.html', context)
+            return render(request, 'posts/repost.html', context)
         else:
             return redirect(to='login')
 
@@ -194,7 +194,7 @@ class RePostView(TemplateView):
                             ,'original_post': post
                             ,'messages': ["U forgot some fields"]
                         }
-                return render(request, "repost.html", context)
+                return render(request, "posts/repost.html", context)
 
             return redirect(to='home') 
         else:
@@ -219,7 +219,7 @@ class UserFollowersView(TemplateView):
                 'user': user,
                 'is_following': request.user.is_following(user)
             }
-            return render(request, 'followers.html', context)
+            return render(request, 'users/followers.html', context)
         else:
             return redirect(to='login')
 
@@ -242,7 +242,7 @@ class UserFollowingView(TemplateView):
                 'user': user,
                 'is_following': request.user.is_following(user)
             }
-            return render(request, 'followers.html', context)
+            return render(request, 'users/followers.html', context)
         else:
             return redirect(to='login')
 
@@ -262,7 +262,7 @@ class UserView(FilterablePostsMixin,TemplateView):
             else:
                 is_following = request.user.is_following(user)
 
-            return render(request, 'user.html', context)
+            return render(request, 'users/user.html', context)
         else:
             return redirect(to='login')
 
@@ -287,7 +287,7 @@ class UserView(FilterablePostsMixin,TemplateView):
                 'is_following': request.user.is_following(user),
                 'form': form
             }
-            return render(request, 'user.html', context)
+            return render(request, 'users/user.html', context)
         else:
             return redirect(to='login')
 
@@ -306,7 +306,7 @@ class MyLoginView(LoginView):
 class RegisterView(View):
     form_class = RegisterForm
     initial = {'key': 'value'}
-    template_name = 'registration/signup.html'
+    template_name = 'users/signup.html'
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
@@ -344,7 +344,7 @@ class SearchUsersList(TemplateView):
             elif query != '':
                 context['messages'] = ["Search more than 2 characters"]
 
-            return render(request, 'search-users.html', context)
+            return render(request, 'search/search-users.html', context)
         else:
             return redirect(to='login')
 
@@ -352,7 +352,7 @@ class SearchUsersList(TemplateView):
 class SearchPostsView(FilterablePostsMixin,TemplateView):
 
     def get(self, request, **kwargs):
-        
+
         context = {}
         if request.user.is_authenticated:
             query = request.GET.get("q",'')
@@ -365,7 +365,7 @@ class SearchPostsView(FilterablePostsMixin,TemplateView):
                 if query != '':
                     context['messages'] = ["Search more than 2 characters"]
 
-            return render(request, 'search-posts.html', context)
+            return render(request, 'search/search-posts.html', context)
         else:
             return redirect(to='login')
       

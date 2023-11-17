@@ -21,7 +21,7 @@
       {% endfor %}
 </div>
 {% for post in posts %}
-    {% include 'post-card.html' %}
+    {% include 'posts/post-card.html' %}
 {% endfor %}
 {% if posts.has_next %}
   <a href="?page={{ posts.next_page_number }}">more</a>
