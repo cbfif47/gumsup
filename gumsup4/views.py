@@ -22,6 +22,7 @@ class FilterablePostsMixin:
         category = request.GET.get('category', '')
         query = request.GET.get('q', '')
         feed = Post.filter_posts(raw_feed,superlike, category)
+        has_new_activity = request.user.has_new_activity() 
 
         #filter_params
         superlike_param = 'superlike=' + superlike
@@ -48,7 +49,8 @@ class FilterablePostsMixin:
             'selected_category': category,
             'superlike_param': superlike_param,
             'query_param': query_param,
-            'categories': Post.category.field.choices
+            'categories': Post.category.field.choices,
+            'has_new_activity': has_new_activity
         }
         return context
 
@@ -64,8 +66,7 @@ class PostsPageView(FilterablePostsMixin,TemplateView):
             # for form
             new_post = Post(user=user)
             form = PostForm(instance = new_post)
-            context['form'] = form,
-            context['has_new_activity'] = user.has_new_activity() #we only check this on the homepage
+            context['form'] = form
 
             return render(request, 'posts/posts.html', context)
         else:
@@ -112,7 +113,8 @@ class PostView(TemplateView):
             post = get_object_or_404(Post, id = post_id)
             post.is_saved = post.is_saved(request.user)
             context = {
-                'post': post
+                'post': post,
+                'has_new_activity': request.user.has_new_activity() 
             }
 
             return render(request, 'posts/post.html', context)
@@ -173,7 +175,8 @@ class RePostView(TemplateView):
 
             context = {
                 'form': form
-                ,'original_post': post
+                ,'original_post': post,
+                'has_new_activity': request.user.has_new_activity() 
             }
 
             return render(request, 'posts/repost.html', context)
@@ -224,6 +227,7 @@ class UserFollowersView(TemplateView):
                 'users': page_obj,
                 'title': 'following',
                 'user': user,
+                'has_new_activity': request.user.has_new_activity() 
             }
             return render(request, 'users/followers.html', context)
         else:
@@ -249,6 +253,7 @@ class UserFollowingView(TemplateView):
                 'users': page_obj,
                 'user': user,
                 'title': 'following',
+                'has_new_activity': request.user.has_new_activity() 
             }
             return render(request, 'users/followers.html', context)
         else:
@@ -354,7 +359,8 @@ class SearchUsersList(TemplateView):
                 for user in results:
                     user.is_following = request.user.is_following(user)
                 context = {
-                    'users': results
+                    'users': results,
+                    'has_new_activity': request.user.has_new_activity()
                 }
             elif query != '':
                 context['messages'] = ["Search more than 2 characters"]
@@ -405,7 +411,8 @@ class ActivityView(TemplateView):
                 context = {
                     'activities': page_obj,
                     'user': user,
-                    'include_logout': True
+                    'include_logout': True,
+                    'has_new_activity': user.has_new_activity()
                 }
 
                 return render(request, 'users/activity.html', context)
