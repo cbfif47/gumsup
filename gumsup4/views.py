@@ -395,7 +395,7 @@ class ActivityView(TemplateView):
             if user == request.user:
                 activities = Activity.objects.filter(user = user)
                 for a in activities:
-                    a.original_seen = seen #dont lose the original setting
+                    a.original_seen = a.seen #dont lose the original setting
                 activities.filter(user = user, seen = False).update(seen=True) #mark that we saw em
 
                 paginator = Paginator(activities, 25)  
