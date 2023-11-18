@@ -208,6 +208,8 @@ class UserFollowersView(TemplateView):
         if request.user.is_authenticated:
             user = get_object_or_404(User, username = username)
             followers = user.follower_list()
+            for follower in followers:
+                follower.is_following = request.user.is_following(follower)
 
             #pagination
             paginator = Paginator(followers, 25)  # Show 25 posts per page.
@@ -218,7 +220,6 @@ class UserFollowersView(TemplateView):
                 'users': page_obj,
                 'title': 'following',
                 'user': user,
-                'is_following': request.user.is_following(user)
             }
             return render(request, 'users/followers.html', context)
         else:
@@ -232,6 +233,8 @@ class UserFollowingView(TemplateView):
         if request.user.is_authenticated:
             user = get_object_or_404(User, username = username)
             followers = user.following_list()
+            for follower in followers:
+                follower.is_following = request.user.is_following(follower)
 
             #pagination
             paginator = Paginator(followers, 25)  # Show 25 posts per page.
@@ -242,7 +245,6 @@ class UserFollowingView(TemplateView):
                 'users': page_obj,
                 'user': user,
                 'title': 'following',
-                'is_following': request.user.is_following(user)
             }
             return render(request, 'users/followers.html', context)
         else:
@@ -341,6 +343,8 @@ class SearchUsersList(TemplateView):
                 results = User.objects.filter(Q(username__icontains=query) 
                 | Q(bio__icontains=query)
                 | Q(email=query))
+                for user in results:
+                    user.is_following = request.user.is_following(user)
                 context = {
                     'users': results
                 }

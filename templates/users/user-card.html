@@ -1,0 +1,24 @@
+<div class="postcard">
+  <div class="row">
+    <a href="{% url 'user' user %}">
+    <what>{{ user }}</what>
+    </a>
+  </div>
+  <div class="row">
+      {{ user.bio|default:'no bio :(' }}
+  </div>
+  <div class="row">
+    {% if request.user != user %}
+          <form method="POST" action="{% url 'user' user.username %}">
+            {% csrf_token %}
+            {% if user.is_following %}
+              <input type="submit" style="display:inline;" value ='unfollow :(' />
+            {% else %}
+              <input type="submit" style="display:inline;" value ='follow' />
+            {% endif %}
+      {% endif %}
+      <div class="time-since">
+        joined {{ user.created|timesince }} ago
+      </div>
+  </div>
+</div>
