@@ -38,7 +38,7 @@ class FilterablePostsMixin:
             p.is_saved = p.is_saved(request.user)
 
         #pagination
-        paginator = Paginator(feed, 5)  # Show 25 posts per page.
+        paginator = Paginator(feed, 25)  # Show 25 posts per page.
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
     
