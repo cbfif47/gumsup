@@ -7,11 +7,6 @@ from .base import *
 DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = []
-STORAGES = {
-    "static": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
 
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
