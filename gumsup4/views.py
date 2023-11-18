@@ -262,7 +262,7 @@ class UserView(FilterablePostsMixin,TemplateView):
                 form = UserEditForm(instance = user)
                 context["form"] = form
             else:
-                is_following = request.user.is_following(user)
+                context["is_following"] = request.user.is_following(user)
 
             return render(request, 'users/user.html', context)
         else:

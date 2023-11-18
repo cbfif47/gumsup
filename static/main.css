@@ -101,7 +101,7 @@ input[type=text], select, textarea, input[type=search], input[type=password] {
 */
 
 @media screen and (max-width: 600px) {
-  .post-button {
+  #post-button {
     width: 100%;
     margin-top: 0;
   }
