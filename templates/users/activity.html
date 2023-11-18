@@ -4,7 +4,7 @@
     <h2>{{ user.username }}</h2>
     <div class="row">
       <div class="col-100">
-        <a href="{% url 'activity' request.user %}">view my public profile</a>
+        <a href="{% url 'user' request.user %}">view my public profile</a>
       </div>
     </div><br>
     {% if activities %}
