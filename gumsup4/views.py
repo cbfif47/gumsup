@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost
+from .base.models import Post, User, Follow, SavedPost, Activity
 from .base.forms import PostForm, RegisterForm, UserEditForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -64,7 +64,8 @@ class PostsPageView(FilterablePostsMixin,TemplateView):
             # for form
             new_post = Post(user=user)
             form = PostForm(instance = new_post)
-            context['form'] = form
+            context['form'] = form,
+            context['has_new_activity'] = user.has_new_activity() #we only check this on the homepage
 
             return render(request, 'posts/posts.html', context)
         else:
@@ -134,6 +135,7 @@ class SavedPostView(TemplateView):
                 else:
                     sp = SavedPost(user=request.user,post=post)
                     sp.save()
+                    Activity.objects.create(user=post.user,saved_post=sp)
 
             return redirect(to='home')
         else:
@@ -184,7 +186,9 @@ class RePostView(TemplateView):
             f = PostForm(request.POST)
 
             if f.is_valid():
-                f.save()
+                new_repost = f.save()
+                # now make the activity
+                Activity.objects.create(user=new_repost.original_post.user,repost=new_repost)
             else:
                 for field in f.errors:
                     f[field].field.widget.attrs['class'] = 'error'
@@ -263,6 +267,7 @@ class UserView(FilterablePostsMixin,TemplateView):
             if user == request.user:
                 form = UserEditForm(instance = user)
                 context["form"] = form
+                context["include_logout"] = True
             else:
                 context["is_following"] = request.user.is_following(user)
 
@@ -276,7 +281,10 @@ class UserView(FilterablePostsMixin,TemplateView):
             user = get_object_or_404(User, username = username)
 
             if user != request.user:
-                Follow.toggleFollow(user=request.user, following=user)
+                new_follow = Follow.toggleFollow(user=request.user, following=user)
+                # low log the activity if its a new follow only. Unfollows will delete via cascade
+                if new_follow:
+                    Activity.objects.create(user=user,follow=new_follow)
                 form = None
             else:
                 f = UserEditForm(request.POST, instance=user)
@@ -375,4 +383,34 @@ class SearchPostsView(FilterablePostsMixin,TemplateView):
             return render(request, 'search/search-posts.html', context)
         else:
             return redirect(to='login')
-      
+
+class ActivityView(TemplateView):
+
+    def get(self, request, username, **kwargs):
+
+        if request.user.is_authenticated:
+
+            user = get_object_or_404(User, username = username)
+
+            if user == request.user:
+                activities = Activity.objects.filter(user = user)
+                for a in activities:
+                    a.original_seen = seen #dont lose the original setting
+                activities.filter(user = user, seen = False).update(seen=True) #mark that we saw em
+
+                paginator = Paginator(activities, 25)  
+                page_number = request.GET.get("page")
+                page_obj = paginator.get_page(page_number)
+
+                context = {
+                    'activities': page_obj,
+                    'user': user,
+                    'include_logout': True
+                }
+
+                return render(request, 'users/activity.html', context)
+            else:
+                return redirect(to='home')
+
+        else:
+            return redirect(to='login')

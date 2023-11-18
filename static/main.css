@@ -28,9 +28,12 @@ h2 {
   text-transform: uppercase;
   color: black;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.7em;
 }
 
+a {
+  color: #6203fc;
+}
 
 input[type=text], select, textarea, input[type=search], input[type=password] {
   width: 100%;
@@ -139,6 +142,21 @@ input[type=text], select, textarea, input[type=search], input[type=password] {
     border-radius: 5px;
     padding: 5px;
     background-color: #EFEFFF;
+}
+
+.activity-card {
+    border: 0px solid cyan;
+    min-height:7ex;
+    position: relative;
+    margin: auto;
+    margin-bottom: 4ex;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #EFEFFF;
+}
+
+.unseen {
+  font-weight: bold;
 }
 
 .userinfo {

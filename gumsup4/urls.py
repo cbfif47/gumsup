@@ -41,6 +41,7 @@ urlpatterns = [
     path("users/<username>", views.UserView.as_view(), name="user"),
     path("users/<username>/followers/", views.UserFollowersView.as_view(), name="followers"),
     path("users/<username>/following/", views.UserFollowingView.as_view(), name="following"),
+    path("users/<username>/activity/", views.ActivityView.as_view(), name="activity"),
     path("saves/<post_id>", views.SavedPostView.as_view(), name='save'),
     path("saves/", views.SavedPostsView.as_view(), name='saves'),
 ]

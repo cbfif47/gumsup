@@ -12,13 +12,19 @@
     <body>
         <header class="header">
             <breadcrumb>
-              <a href="{%url 'home'%}" class="logo">Feed</a>
-              <a href="{%url 'saves' %}" class="logo">Saves</a>
-              <a href="{%url 'search_posts' %}" class="logo">Search</a>
+              <a href="{%url 'home'%}" class="logo">feed</a>
+              <a href="{%url 'saves' %}" class="logo">saves</a>
+              <a href="{%url 'search_posts' %}" class="logo">search</a>
               </breadcrumb>
           {% if request.user.is_authenticated %}
           <user_greeting>
-                    Hi <a href="{% url 'user' request.user %}">{{ request.user }}</a>.  <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+            {% if include_logout %}
+              <a href="{% url 'logout' %}">logout</a>
+            {% elif has_new_activity %}
+                    <strong><a href="{% url 'activity' request.user %}">**{{ request.user }}**</a></strong>
+            {% else %}
+                    <a href="{% url 'activity' request.user %}">{{ request.user }}</a>
+            {% endif %}
           </user_greeting>
           {% endif %}
             </div>

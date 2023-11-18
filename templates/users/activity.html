@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+  {% block content %}
+    <h2>{{ user.username }}</h2>
+    <div class="row">
+      <div class="col-100">
+        <a href="{% url 'activity' request.user %}">view my public profile</a>
+      </div>
+    </div><br>
+    {% if activities %}
+      {% for activity in activities %}
+        {% if activity.original_seen %}
+          <div class="activity-card">
+        {% else %}
+          <div class="activity-card unseen">
+        {% endif %}
+            <div class="row">
+            {% if activity.follow %}
+              <a href="{% url 'user' activity.follow.user %}">
+                {{ activity.follow.user }}</a> followed you.
+                <div class="time-since">{{activity.created|timesince}} ago.</div>
+            {% elif activity.repost %}
+              <a href="{% url 'user' activity.repost.user %}">
+                {{ activity.repost.user }}</a> reposted your post about 
+                <a href="{% url 'post' activity.repost.id %}">{{ activity.repost.what }}</a>.
+                <div class="time-since">{{activity.created|timesince}} ago.</div>
+            {% elif activity.saved_post %}
+              <a href="{% url 'user' activity.saved_post.user %}">
+                {{ activity.saved_post.user }}</a> saved your post about 
+                <a href="{% url 'post' activity.saved_post.id %}">{{ activity.saved_post.post.what }}</a>.
+                <div class="time-since">{{activity.created|timesince}} ago.</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+  {% if activities.has_next %}
+    <a href="?page={{ activities.next_page_number }}">more</a>
+  {% endif %}
+    {% else %}
+      No follows or reposts yet. Don't worry, the internet is meaningless!
+    {% endif %}
+  {% endblock %}

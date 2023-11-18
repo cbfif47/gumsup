@@ -1,6 +1,3 @@
-"""Base models for gumsup4"""
-
-
 import uuid
 
 from django.contrib.auth.models import AbstractUser
@@ -67,6 +64,9 @@ class User(BaseModel, AbstractUser):
 
     def saved_posts(self):
         return Post.objects.filter(saved_post__user=self)
+
+    def has_new_activity(self):
+        return Activity.objects.filter(user=self,seen=False).exists()
 
     class Meta:
         """Metadata."""
@@ -148,10 +148,12 @@ class Follow(BaseModel):
         if user.is_following(following):
             existing_follow = Follow.objects.filter(user=user,following=following)
             existing_follow.delete()
+            return None
         else:
             # todo add logic for requests
             new_follow = Follow(user=user,following=following)
             new_follow.save()
+            return new_follow
 
     def __str__(self):
         return f"{self.user} following {self.following}"
@@ -176,3 +178,31 @@ class FollowRequest(BaseModel):
         """Metadata."""
 
         ordering = ["-created"]
+
+
+class Activity(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="activity_for")
+    follow = models.ForeignKey(
+        Follow, on_delete=models.CASCADE, null=True,blank=True,default=None)
+    repost = models.ForeignKey(
+        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="repost_activity")
+    saved_post = models.ForeignKey(
+        SavedPost, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="saved_post_activity")
+    seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        if self.follow:
+            description = 'hi'#self.follow.user.username + ' followed ' + self.user.username
+        elif self.repost:
+            description = 'hi'#self.repost.user.username + ' reposted ' + self.user.username
+        else:
+            description = 'hi'#self.saved_post.user.username + ' saved a post by ' + self.user.username
+        return description
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+

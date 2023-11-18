@@ -20,9 +20,13 @@
         {% endif %}
       {% endfor %}
 </div>
-{% for post in posts %}
-    {% include 'posts/post-card.html' %}
-{% endfor %}
-{% if posts.has_next %}
-  <a href="?page={{ posts.next_page_number }}">more</a>
-{% endif %}
+{% if posts %}
+  {% for post in posts %}
+      {% include 'posts/post-card.html' %}
+  {% endfor %}
+  {% if posts.has_next %}
+    <a href="?page={{ posts.next_page_number }}">more</a>
+  {% endif %}
+  {% else %}
+  a whole bunch of nothin!
+  {% endif %}
