@@ -5,11 +5,9 @@
             <div class="col-85">
               {% if post.superlike %}⭐{% endif %}
               {% if post.url != '' %}
-                <a href="{{ post.url }}">
-              {% endif %}
+                <a href="{{ post.url }}"><what>{{ post.what}}</what></a>
+              {% else %}
                 <what>{{ post.what}}</what>
-              {% if post.url != '' %}
-                </a>
               {% endif %}
             <category>{{ post.category }}</category>
             </div>

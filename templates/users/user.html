@@ -1,18 +1,7 @@
 {% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Welcome Home {% endblock %}</title>
-  <style>
-    table, th, td {
-      border: 10px solid black;
-    }
-</style>
-</head>
-<body>
   {% block content %}
+  <h2>{{ user.username }}</h2>
   <div class="userinfo">
     <div class="row">
     {{ user.username }} has been here since {{ user.created|date:"d/m/y" }},
@@ -20,9 +9,11 @@
       {% if user.follower_count == 1 %}follower{% else %}followers{% endif %}</a>
      and is <a href="{% url 'following' user %}">following {{ user.following_count}}</a>.
    </div>
-  <div class="row">
-    "{{ user.bio|default:'no bio :(' }}"
-  </div>
+   {% if request.user != user %}
+    <div class="row">
+      "{{ user.bio|default:'no bio :(' }}"
+    </div>
+  {% endif %}
   {% if form %}
     <form action="" method="post">
       {% csrf_token %}
@@ -44,5 +35,3 @@
   </div>
       {% include 'posts/feed.html' %}
     {% endblock %}
-</body>
-</html>

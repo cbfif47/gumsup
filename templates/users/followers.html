@@ -11,15 +11,13 @@
         <what>{{ user }}</what>
       </a>
       </div>
-      {% if user.bio != '' %}
         <div class="row">
-          {{ user.bio }}
+          {{ user.bio|default:'no bio :(' }}
         </div>
-      {% endif %}
       <div class="row">
           <div class="time-since">joined {{ user.created|timesince }} ago</div>
       </div>
-      </div></div>
+    </div>
     {% endfor %}
   {% else %}
     None!

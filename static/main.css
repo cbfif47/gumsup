@@ -100,15 +100,6 @@ input[type=text], select, textarea, input[type=search], input[type=password] {
 }
 */
 
-.post-button {
-    float: right;
-    padding:15px;
-    padding-top:5px;
-    padding-bottom:5px;
-    margin-right:0px;
-    font-size: 1;
-}
-
 @media screen and (max-width: 600px) {
   .post-button {
     width: 100%;
@@ -194,8 +185,20 @@ input[type=button], input[type=submit], .button {
   font-family: Arial;
 }
 
+.button a {
+    text-decoration: none;
+    color: black;
+}
+
 .postcard input[type=submit], .postcard button {
     font-size: 0.7em;
+}
+
+#post-button {
+    float: right;
+    padding:0.5em 1em;
+    margin-right:0px;
+    font-size: 1em;
 }
 
 input[type=submit]:hover {

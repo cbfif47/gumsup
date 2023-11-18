@@ -1,19 +1,6 @@
 {% extends 'base.html' %}
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Welcome Home {% endblock %}</title>
-  <style>
-    table, th, td {
-      border: 10px solid black;
-    }
-</style>
-</head>
-<body>
+
   {% block content %}
+  <h2>A post from {{post.user}}</h2>
       {% include 'posts/post-card.html' %}
     {% endblock %}
-</body>
-</html>

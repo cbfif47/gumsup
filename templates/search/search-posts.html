@@ -4,9 +4,7 @@
   <h2>search</h2>
   <div class="row">
         <button class="button disabled">posts</button>
-      <a href="{%url 'search_users' %}" class="logo button">
-        <button class="button">people</button>
-      </a>
+        <button class="button"><a href="{%url 'search_users' %}">people</a></button>
   </div>
   <div class="row">
 <form action="{% url 'search_posts' %}" method="get">
