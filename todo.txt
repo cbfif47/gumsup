@@ -1,0 +1,45 @@
+x Signup
+x Make post
+x link to signup from login
+x follow gummy by default
+x Delete post
+x single post view
+x Save post
+x Repost
+x View saves
+x user profile
+x follow user
+- private user profile
+- follow request
+x feed only show your follows
+x filter for feed, same bar
+x feed filter stack superlike with category
+- mark saves as tried
+x add auth check to views
+x clean up old posts
+x validation
+- sign up message?
+- message for nothing to see here
+	x saves
+	- user posts
+	- following
+	- followers
+	- feed
+	- search users
+	- search posts
+x search users
+	x make results nice
+	x add search by full email
+	x maybe toggle between users and posts?
+x pagination and filters on user page and search results
+	x make search view a templateview
+	x get filtering working right
+x search posts
+x disabled button for saved or make it unsave
+x list of followers
+x list of following
+- user card and list
+x no save bio button if not own profile
+- make @ links
+x add date to postcard
+x filtering working on user page

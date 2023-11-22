@@ -67,6 +67,7 @@ class PostsPageView(FilterablePostsMixin,TemplateView):
             new_post = Post(user=user)
             form = PostForm(instance = new_post)
             context['form'] = form
+            context['is_feed'] = True
 
             return render(request, 'posts/posts.html', context)
         else:
@@ -151,6 +152,7 @@ class SavedPostsView(FilterablePostsMixin,TemplateView):
         if request.user.is_authenticated:
             raw_feed = request.user.saved_posts()
             context = self.make_filtered_context(raw_feed,request)
+            context['is_saves'] = True
 
             return render(request, 'posts/saved_posts.html', context)
         else:
@@ -213,23 +215,31 @@ class UserFollowersView(TemplateView):
     def get(self, request, username, **kwargs):
 
         if request.user.is_authenticated:
+
             user = get_object_or_404(User, username = username)
-            followers = user.follower_list()
-            for follower in followers:
-                follower.is_following = request.user.is_following(follower)
+            
+            if username == 'gummy':
+                context = {'user': user
+                            ,'has_new_activity': request.user.has_new_activity() 
+                }
+                return render(request, 'users/gummy.html', context)
+            else:
+                followers = user.follower_list()
+                for follower in followers:
+                    follower.is_following = request.user.is_following(follower)
 
-            #pagination
-            paginator = Paginator(followers, 25)  # Show 25 posts per page.
-            page_number = request.GET.get("page")
-            page_obj = paginator.get_page(page_number)
+                #pagination
+                paginator = Paginator(followers, 25)  # Show 25 posts per page.
+                page_number = request.GET.get("page")
+                page_obj = paginator.get_page(page_number)
 
-            context = {
-                'users': page_obj,
-                'title': 'following',
-                'user': user,
-                'has_new_activity': request.user.has_new_activity() 
-            }
-            return render(request, 'users/followers.html', context)
+                context = {
+                    'users': page_obj,
+                    'title': 'followers',
+                    'user': user,
+                    'has_new_activity': request.user.has_new_activity() 
+                }
+                return render(request, 'users/followers.html', context)
         else:
             return redirect(to='login')
 
@@ -239,23 +249,31 @@ class UserFollowingView(TemplateView):
     def get(self, request, username, **kwargs):
         
         if request.user.is_authenticated:
+
             user = get_object_or_404(User, username = username)
-            followers = user.following_list()
-            for follower in followers:
-                follower.is_following = request.user.is_following(follower)
 
-            #pagination
-            paginator = Paginator(followers, 25)  # Show 25 posts per page.
-            page_number = request.GET.get("page")
-            page_obj = paginator.get_page(page_number)
+            if username == 'gummy':
+                context = {'user': user
+                            ,'has_new_activity': request.user.has_new_activity() 
+                }
+                return render(request, 'users/gummy.html', context)
+            else:
+                followers = user.following_list()
+                for follower in followers:
+                    follower.is_following = request.user.is_following(follower)
 
-            context = {
-                'users': page_obj,
-                'user': user,
-                'title': 'following',
-                'has_new_activity': request.user.has_new_activity() 
-            }
-            return render(request, 'users/followers.html', context)
+                #pagination
+                paginator = Paginator(followers, 25)  # Show 25 posts per page.
+                page_number = request.GET.get("page")
+                page_obj = paginator.get_page(page_number)
+
+                context = {
+                    'users': page_obj,
+                    'user': user,
+                    'title': 'following',
+                    'has_new_activity': request.user.has_new_activity() 
+                }
+                return render(request, 'users/followers.html', context)
         else:
             return redirect(to='login')
 
@@ -365,6 +383,8 @@ class SearchUsersList(TemplateView):
             elif query != '':
                 context['messages'] = ["Search more than 2 characters"]
 
+            context['is_search'] = True
+
             return render(request, 'search/search-users.html', context)
         else:
             return redirect(to='login')
@@ -385,6 +405,8 @@ class SearchPostsView(FilterablePostsMixin,TemplateView):
                 context = self.make_filtered_context(Post.objects.filter(what=''),request) #no results
                 if query != '':
                     context['messages'] = ["Search more than 2 characters"]
+
+            context['is_search'] = True
 
             return render(request, 'search/search-posts.html', context)
         else:

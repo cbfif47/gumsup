@@ -1,9 +1,10 @@
 {% load url_mention %}
 {% load tz %}
+{% load static %}
       <div class="postcard">
           <div class="row">
             <div class="col-85">
-              {% if post.superlike %}⭐{% endif %}
+              {% if post.superlike %}<img src="{% static 'starsmile.png' %}" height="16px" style="vertical-align: top;">{% endif %}
               {% if post.url != '' %}
                 <a href="{{ post.url }}"><what>{{ post.what}}</what></a>
               {% else %}

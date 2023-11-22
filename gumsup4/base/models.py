@@ -24,7 +24,7 @@ class User(BaseModel, AbstractUser):
     """Base user class."""
     is_private = models.BooleanField(default=False)
     bio = models.TextField(max_length=140,default='',blank=True)
- 
+    username = models.CharField(max_length=20,unique=True)
 
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):
@@ -76,13 +76,13 @@ class User(BaseModel, AbstractUser):
 
 class Post(BaseModel):
     CATEGORY_CHOICES = [
-        ('ART','Art'),
-        ('LIFE','Life'),
-        ('PLACES','Places'),
-        ('STUFF','Stuff')]
+        ('culture','culture'),
+        ('LIFE','life'),
+        ('PLACES','places'),
+        ('STUFF','stuff')]
 
     user = models.ForeignKey(
-        User, verbose_name="Gummed By", on_delete=models.CASCADE,related_name="posted_by")
+        User, verbose_name="Posted By", on_delete=models.CASCADE,related_name="posted_by")
 
     what = models.CharField(max_length=50)
     why = models.TextField(max_length=250)
@@ -113,7 +113,7 @@ class Post(BaseModel):
         return feed
 
     def __str__(self):
-        return f"{self.user}'s post on {self.created}"
+        return f"{self.user}'s post about {self.what}"
 
     class Meta:
         """Metadata."""

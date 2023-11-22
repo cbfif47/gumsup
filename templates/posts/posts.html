@@ -1,19 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Welcome Home {% endblock %}</title>
-  <style>
-    table, th, td {
-      border: 10px solid black;
-    }
-</style>
-</head>
-<body>
+{% block title %}feed{% endblock %}
   {% block content %}
-  <h1>Gums-Up</h1>
+  <h1>RECS with FRIENDS</h1>
   <form action="" method="post" novalidate class="postform">
         {% csrf_token %} {{ form.user.as_hidden }}
     </div>
@@ -30,7 +19,7 @@
     <div class="row tabs col-100">
         <label class="tab" for="id_superlike">
           {{ form.superlike }}
-          <div class="tab-box">Supergum</div></label>
+          <div class="tab-box"><img src="{% static 'starsmile.png' %}" height="16px"></div></label>
         {% for radio in form.category %}
         <label class="tab" for="{{ radio.id_for_label }}">
         {{ radio.tag }}
@@ -39,11 +28,9 @@
     {% endfor %}
     </div>
     <div class="row ">
-        <input id="post-button" type="submit" value="gums up">
+        <input id="post-button" type="submit" value="recommend it">
     </div>
     </form>
     <br><br>
       {% include 'posts/feed.html' %}
     {% endblock %}
-</body>
-</html>

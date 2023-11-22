@@ -23,7 +23,7 @@ class UserEditForm(forms.ModelForm):
      model = User
      fields = {'bio'}
      widgets = {"bio": forms.Textarea(attrs={'placeholder': 'tell me about yourself'
-              ,"rows": 3}),
+              ,"rows": 2}),
       }
 
 

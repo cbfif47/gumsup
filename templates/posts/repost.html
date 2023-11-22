@@ -1,18 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Welcome Home {% endblock %}</title>
-  <style>
-    table, th, td {
-      border: 10px solid black;
-    }
-</style>
-</head>
-<body>
+{% block title %}repost{% endblock %}
   {% block content %}
+  <h2>reposting from {{ original_post.user }}</h2>
     <div class="original-post" style="font-size: 1em;color: black;">
       <i>{{ original_post.user }}:  <strong>{{ original_post.what}}</strong><br>
       {{ original_post.why }}</i>
@@ -25,7 +15,7 @@
     <div class="row tabs col-100">
         <label class="tab" for="id_superlike">
           {{ form.superlike }}
-          <div class="tab-box">Superlike</div></label>
+          <div class="tab-box"><img src="{% static 'starsmile.png' %}" height="16px"></div></label>
         {% for radio in form.category %}
         <label class="tab" for="{{ radio.id_for_label }}">
         {{ radio.tag }}
@@ -34,9 +24,7 @@
     {% endfor %}
     </div>
     <div class="row ">
-        <input class="post-button" type="submit" value="Post">
+        <input id="post-button" type="submit" value="Post">
     </div>
     </form>
     {% endblock %}
-</body>
-</html>
