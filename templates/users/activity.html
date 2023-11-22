@@ -19,18 +19,18 @@
             {% if activity.follow %}
               <a href="{% url 'user' activity.follow.user %}">
                 {{ activity.follow.user }}</a> followed you.
-                <div class="time-since">{{activity.created|timesince}} ago.</div>
             {% elif activity.repost %}
               <a href="{% url 'user' activity.repost.user %}">
                 {{ activity.repost.user }}</a> reposted your post about 
                 <a href="{% url 'post' activity.repost.id %}">{{ activity.repost.what }}</a>.
-                <div class="time-since">{{activity.created|timesince}} ago.</div>
             {% elif activity.saved_post %}
               <a href="{% url 'user' activity.saved_post.user %}">
                 {{ activity.saved_post.user }}</a> saved your post about 
                 <a href="{% url 'post' activity.saved_post.id %}">{{ activity.saved_post.post.what }}</a>.
-                <div class="time-since">{{activity.created|timesince}} ago.</div>
             {% endif %}
+            <div class="row"><br>
+                <div class="time-since">{{activity.created|timesince}} ago.</div>
+            </div>
           </div>
         </div>
       {% endfor %}

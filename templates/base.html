@@ -6,18 +6,19 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'main.css' %}" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Sono:wght@300;700&family=Source+Code+Pro&family=VT323&display=swap" rel="stylesheet">
-        <title>{% block title %}{% endblock %} on gums-up</title>
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" >
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Sono:wght@300;700&family=VT323&display=swap" rel="stylesheet">
+        <title>{% block title %}{% endblock %} on recs w/ friends</title>
     </head>
 
     <body>
         <header class="header">
             <breadcrumb>
-              <a href="{%url 'home'%}" class="logo">feed</a>
-              <a href="{%url 'saves' %}" class="logo">saves</a>
-              <a href="{%url 'search_posts' %}" class="logo">search</a>
+              <a href="{%url 'home'%}" class="logo">FEED</a>
+              <a href="{%url 'saves' %}" class="logo">SAVES</a>
+              <a href="{%url 'search_posts' %}" class="logo">SEARCH</a>
               </breadcrumb>
           {% if request.user.is_authenticated %}
           <user_greeting>

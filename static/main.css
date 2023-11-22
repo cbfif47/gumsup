@@ -116,6 +116,7 @@ input[type=text], select, textarea, input[type=search], input[type=password] {
 @media screen and (max-width: 600px) {
   #post-button {
     width: 100%;
+    height: 2em;
   }
 }
 */
@@ -200,12 +201,13 @@ what {
   -webkit-text-stroke-color: green;
   color: white;
   text-transform: lowercase;
-  font-family: 'VT323',monospace;
-  font-size: 18px;
+  font-family: 'Times New Roman',serif;
+  font-size: 16px;
+  word-break: break-word;
 }
 
 input[type=button], input[type=submit], .button {
-  padding: 4px 8px;
+  padding: 2px 8px;
   margin-bottom: 0px;
   margin-top: 8px;
   text-align: center;
@@ -225,14 +227,14 @@ input[type=button], input[type=submit], .button {
 }
 
 .postcard input[type=submit], .postcard button {
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 #post-button {
     float: right;
     padding:0.2em 1em;
     margin-right:0px;
-    font-size: 1.4em;
+    font-size: 1.5em;
 }
 
 input[type=submit]:hover {

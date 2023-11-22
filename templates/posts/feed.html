@@ -1,22 +1,22 @@
 <div class="row ">
 
       {% if superlike_param != 'superlike=y' and category_param == '' %}
-        <strong><a href="?superlike=n{{ query_param }}">all</a></strong>
+        <strong><a href="?superlike=n{{ query_param }}">ALL</a></strong>
       {% else %}
-        <a href="?superlike=n{{ query_param }}">all</a>
+        <a href="?superlike=n{{ query_param }}">ALL</a>
       {% endif %}
 
       {% if superlike_param == 'superlike=y' %}
-          <strong><a href="?superlike=n{{ category_param }}{{ query_param }}">stars</a></strong>
+          <strong><a href="?superlike=n{{ category_param }}{{ query_param }}">STARS</a></strong>
       {% else %}
-        <a href="?superlike=y{{ category_param }}{{ query_param }}">stars</a>
+        <a href="?superlike=y{{ category_param }}{{ query_param }}">STARS</a>
       {% endif %}
       
       {% for category in categories %}
         {% if selected_category == category.1|lower %}
-          <strong><a href="?{{ superlike_param }}{{ query_param }}">{{ category.1|lower }}</a></strong>
+          <strong><a href="?{{ superlike_param }}{{ query_param }}">{{ category.1|upper }}</a></strong>
         {% else %}
-          <a href="?{{ superlike_param }}&category={{ category.1|lower }}{{ query_param }}">{{ category.1|lower }}</a>
+          <a href="?{{ superlike_param }}&category={{ category.1|lower }}{{ query_param }}">{{ category.1|upper }}</a>
         {% endif %}
       {% endfor %}
 </div>

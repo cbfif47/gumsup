@@ -27,12 +27,12 @@
           <form method="POST">
             {% csrf_token %}
             {% if is_following %}
-              <input type="submit" class="post-button" value ='unfollow :(' />
+              <input type="submit" id="post-button" value ='unfollow :(' />
             {% else %}
-              <input type="submit" class="post-button" value ='follow' />
+              <input type="submit" id="post-button" value ='follow' />
             {% endif %}
       {% endif %}
     </div>
-  </div>
+  </div><br>
       {% include 'posts/feed.html' %}
     {% endblock %}
