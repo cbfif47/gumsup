@@ -7,10 +7,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity
+from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest
 from .base.forms import PostForm, RegisterForm, UserEditForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from .base.utilities import get_button_text
 
 class HomePageView(TemplateView):
     template_name = "base.html"
@@ -223,6 +224,8 @@ class UserFollowersView(TemplateView):
                             ,'has_new_activity': request.user.has_new_activity() 
                 }
                 return render(request, 'users/gummy.html', context)
+            elif user.is_private and request.user.is_following(user) == False:
+                return redirect(to='home')
             else:
                 followers = user.follower_list()
                 for follower in followers:
@@ -257,6 +260,8 @@ class UserFollowingView(TemplateView):
                             ,'has_new_activity': request.user.has_new_activity() 
                 }
                 return render(request, 'users/gummy.html', context)
+            elif user.is_private and request.user.is_following(user) == False:
+                return redirect(to='home')
             else:
                 followers = user.following_list()
                 for follower in followers:
@@ -293,6 +298,7 @@ class UserView(FilterablePostsMixin,TemplateView):
                 context["include_logout"] = True
             else:
                 context["is_following"] = request.user.is_following(user)
+                context["button_text"] = get_button_text(request.user,user)
 
             return render(request, 'users/user.html', context)
         else:
@@ -319,7 +325,7 @@ class UserView(FilterablePostsMixin,TemplateView):
             context = {
                 'posts': Post.objects.filter(user=user),
                 'user': user,
-                'is_following': request.user.is_following(user),
+                'button_text': get_button_text(request.user,user),
                 'form': form
             }
             return render(request, 'users/user.html', context)
@@ -374,8 +380,6 @@ class SearchUsersList(TemplateView):
                 results = User.objects.filter(Q(username__icontains=query) 
                 | Q(bio__icontains=query)
                 | Q(email=query))
-                for user in results:
-                    user.is_following = request.user.is_following(user)
                 context = {
                     'users': results,
                     'has_new_activity': request.user.has_new_activity()
@@ -434,12 +438,81 @@ class ActivityView(TemplateView):
                     'activities': page_obj,
                     'user': user,
                     'include_logout': True,
-                    'has_new_activity': user.has_new_activity()
+                    'follow_request_count': user.count_follow_requests()
                 }
 
                 return render(request, 'users/activity.html', context)
             else:
                 return redirect(to='home')
+
+        else:
+            return redirect(to='login')
+
+class UserPrivacyView(TemplateView):
+
+    def post(self, request, username, **kwargs):
+
+        user = get_object_or_404(User, username = username)
+
+        if user == request.user:
+            if user.is_private == False: #this means were taking it private
+                user.is_private = True
+                user.save()
+            else:
+                user.is_private = False
+                user.save()
+
+                # auto approve all follow requests
+                for fr in FollowRequest.objects.filter(following=user):
+                    fr.is_approved = True
+                    fr.save()    # the save method will create the follows
+
+            return redirect(to='user',username = username)
+        else:
+            return redirect(to='home')
+
+
+class UserFollowRequestsView(TemplateView):
+
+    def get(self, request, username, **kwargs):
+        if request.user.is_authenticated:
+            user = get_object_or_404(User, username = username)
+            if user == request.user:
+                follow_requests = FollowRequest.objects.filter(following=user,is_approved=None,auto_denied = False)
+                context = {
+                            'user': user,
+                            'follow_requests': follow_requests
+                }
+
+                return render(request, 'users/follow-requests.html', context)
+            else:
+                return redirect(to='login')
+        else:
+            return redirect(to='login')
+
+    def post(self, request, username, **kwargs):
+
+        if request.user.is_authenticated:
+            user = get_object_or_404(User, username = username)
+
+            if user == request.user:
+                f_id = request.POST['follow_request_id']
+                follow_request = get_object_or_404(FollowRequest, id = f_id)
+                if request.POST['response'] == 'approve':
+                    follow_request.is_approved = True 
+                    follow_request.save() # in the save function, this will make a follow
+                else:
+                    follow_request.is_approved = False 
+                    follow_request.save() # in the save function, this will NOT make a follow
+
+                follow_requests = FollowRequest.objects.filter(following=user,is_approved=None,auto_denied = False)
+                context = {
+                            'user': user,
+                            'follow_requests': follow_requests
+                }
+
+                return render(request, 'users/follow-requests.html', context)
+
 
         else:
             return redirect(to='login')

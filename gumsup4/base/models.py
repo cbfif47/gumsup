@@ -40,6 +40,15 @@ class User(BaseModel, AbstractUser):
     def is_following(self,following):
         return Follow.objects.filter(user=self,following=following).exists()
 
+    def has_requested(self,following):
+        return FollowRequest.objects.filter(user=self,following=following).exists()
+
+    def has_pending_request(self,following):
+        return FollowRequest.objects.filter(user=self,following=following,is_approved=None).exists()
+
+    def has_declined_request(self,following):
+        return FollowRequest.objects.filter(user=self,following=following,is_approved=False).exists()
+
     def feed(self, superlike = '', category = ''):
         #following = Follow.objects.filter(user=self).values_list('following', flat=True)
         #feed = Post.objects.filter(user__in=following)
@@ -65,8 +74,16 @@ class User(BaseModel, AbstractUser):
     def saved_posts(self):
         return Post.objects.filter(saved_post__user=self)
 
+    def count_follow_requests(self):
+        return FollowRequest.objects.filter(following=self,is_approved=None,auto_denied=False).count()
+
     def has_new_activity(self):
-        return Activity.objects.filter(user=self,seen=False).exists()
+        if FollowRequest.objects.filter(following=self,is_approved=None,auto_denied=False).exists():
+            return True
+        elif Activity.objects.filter(user=self,seen=False).exists():
+            return True
+        else:
+            return False
 
     class Meta:
         """Metadata."""
@@ -140,20 +157,28 @@ class SavedPost(BaseModel):
 
 class Follow(BaseModel):
     user = models.ForeignKey(
-        User, verbose_name="Followed By", on_delete=models.CASCADE,related_name="follows")
+        User, verbose_name="User", on_delete=models.CASCADE,related_name="follows")
     following = models.ForeignKey(
         User, verbose_name="Following", on_delete=models.CASCADE,related_name="followers")
 
     def toggleFollow(user,following):
-        if user.is_following(following):
+        if user.is_following(following): # if already follow, unfollow
             existing_follow = Follow.objects.filter(user=user,following=following)
             existing_follow.delete()
+            FollowRequest.objects.filter(user=user,following=following).delete() #also any old requests
             return None
-        else:
-            # todo add logic for requests
+        elif following.is_private == False: #if not private, follow
             new_follow = Follow(user=user,following=following)
             new_follow.save()
             return new_follow
+        elif user.has_pending_request(following): #cancel requests that are pending
+            existing_follow_request = FollowRequest.objects.filter(user = user, following=following, is_approved=None)
+            existing_follow_request.delete()
+            return None
+        else: #otherwise request the follow. If theyve had a denied one previously, this will auto deny
+            new_follow_request = FollowRequest(user = user, following=following)
+            new_follow_request.save()
+            return None #this is what triggers activity logging
 
     def __str__(self):
         return f"{self.user} following {self.following}"
@@ -166,10 +191,24 @@ class Follow(BaseModel):
 
 class FollowRequest(BaseModel):
     user = models.ForeignKey(
-        User, verbose_name="Followed By", on_delete=models.CASCADE,related_name="follow_requests")
+        User, verbose_name="User", on_delete=models.CASCADE,related_name="follow_requests")
     following = models.ForeignKey(
         User, verbose_name="Following", on_delete=models.CASCADE,related_name="requested_followers")
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.BooleanField(null=True,blank=True,default=None)
+    auto_denied = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.is_approved == True:
+                # if approving, create the follow
+            new_follow = Follow.objects.create(user=self.user,following=self.following)
+            Activity.objects.create(user=self.following,follow=new_follow,seen=True) #log the activity for the one who approved it as seen
+            Activity.objects.create(user=self.user,follow_request=self) #log the activity for the requester
+            super().save(*args, **kwargs)
+        elif FollowRequest.objects.filter(user=self.user,following=self.following,is_approved=False).exists():
+            self.auto_denied = True
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user} requested to follow {self.following}"
@@ -190,6 +229,8 @@ class Activity(BaseModel):
     saved_post = models.ForeignKey(
         SavedPost, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="saved_post_activity")
     seen = models.BooleanField(default=False)
+    follow_request = models.ForeignKey(
+        FollowRequest, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="follow_request_activity")
 
     def __str__(self):
         if self.follow:

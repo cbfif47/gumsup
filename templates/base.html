@@ -25,9 +25,9 @@
             {% if include_logout %}
               <a href="{% url 'logout' %}">logout</a>
             {% elif has_new_activity %}
-                    <strong><a href="{% url 'activity' request.user %}">**{{ request.user }}**</a></strong>
+                    <strong><a href="{% url 'activity' request.user %}">**{{ request.user|upper }}**</a></strong>
             {% else %}
-                    <a href="{% url 'activity' request.user %}">{{ request.user }}</a>
+                    <a href="{% url 'activity' request.user %}">{{ request.user|upper }}</a>
             {% endif %}
           </user_greeting>
           {% endif %}

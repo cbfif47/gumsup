@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}{{ user.username }} {% endblock %}
 
   {% block content %}
@@ -7,9 +7,26 @@
   <div class="userinfo">
     <div class="row">
     {{ user.username }} has been here since {{ user.created|date:"m/d/y" }}
-    <li><a href="{% url 'followers' user %}">followers</a>: {{ user.follower_count}}</li>
-    <li><a href="{% url 'following' user %}">following</a>: {{ user.following_count}}</li>
+    {% if user.is_private == False or is_following or request.user == user %}
+      <li><a href="{% url 'followers' user %}">followers</a>: {{ user.follower_count}}</li>
+      <li><a href="{% url 'following' user %}">following</a>: {{ user.following_count}}</li>
+    {%  else %}
+      <li>followers: {{ user.follower_count}}</li>
+      <li>following: {{ user.following_count}}</li>
+    {% endif %}
    </div>
+   {% if request.user == user %}
+    <div class="row">
+      <form action="{% url 'privacy' user %}" method="post">
+      {% csrf_token %}
+      {% if user.is_private == False %}
+        <input type="submit" value="make my profile private" onclick="clicked(event)">
+      {% else %}
+        <input type="submit" value="make my profile public" onclick="clicked(event)">
+      {% endif %}
+      </form>
+    </div>
+   {% endif %}
    {% if request.user != user %}
     <div class="row">
       "{{ user.bio|default:'no bio :(' }}"
@@ -26,13 +43,13 @@
       {% if request.user != user %}
           <form method="POST">
             {% csrf_token %}
-            {% if is_following %}
-              <input type="submit" id="post-button" value ='unfollow :(' />
-            {% else %}
-              <input type="submit" id="post-button" value ='follow' />
-            {% endif %}
+            <input type="submit" id="post-button" value ='{{ button_text }}' />  
       {% endif %}
     </div>
   </div><br>
-      {% include 'posts/feed.html' %}
+      {% if request.user == user or is_following %}
+        {% include 'posts/feed.html' %}
+      {% else %}
+        <img src="{% static 'locked.png' %}" height="16px"> {{ user.username }} is private. you can still request to follow them.
+      {% endif %}
     {% endblock %}
