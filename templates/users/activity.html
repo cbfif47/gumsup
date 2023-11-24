@@ -6,12 +6,14 @@
     <div class="row">
       <div class="col-100">
         <li><a href="{% url 'user' request.user %}">view my public profile</a>
-        <li><a href="{% url 'follow-requests' request.user %}">
-          {% if follow_request_count == 1 %}<strong> 1 new follow request</strong>
-          {% elif follow_request_count > 1 %}<strong> {{ follow_request_count }} new follow requests</strong>
-          {% else %}no new follow requests
-          {% endif %}
-        </a>
+        {% if user.is_private %}
+          <li><a href="{% url 'follow-requests' request.user %}">
+            {% if follow_request_count == 1 %}<strong> 1 new follow request</strong>
+            {% elif follow_request_count > 1 %}<strong> {{ follow_request_count }} new follow requests</strong>
+            {% else %}no new follow requests
+            {% endif %}
+          </a>
+        {% endif %}
       </div>
     </div><br>
     {% if activities %}
@@ -47,6 +49,6 @@
     <a href="?page={{ activities.next_page_number }}">more</a>
   {% endif %}
     {% else %}
-      No follows or reposts yet. Don't worry, the internet is meaningless!
+      no follows or reposts yet. don't worry, the internet is meaningless!
     {% endif %}
   {% endblock %}

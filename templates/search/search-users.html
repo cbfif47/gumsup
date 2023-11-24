@@ -3,12 +3,13 @@
   {% block content %}
   <h2>search</h2>
   <div class="row">
-        <button class="button"><a href="{%url 'search_posts' %}">posts</a></button>
+        <button class="button"><a href="{%url 'search-posts' %}">posts</a></button>
         <button class="button disabled">people</button>
+        <button class="button"><a href="{%url 'suggested' %}">people you might know</a></button>
   </div>
   <div class="row">
   <div class="row">
-<form action="{% url 'search_users' %}" method="get">
+<form action="{% url 'search-users' %}" method="get">
   <input
     type="search"
     name="q"

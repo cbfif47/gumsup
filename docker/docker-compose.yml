@@ -14,7 +14,7 @@ services:
     depends_on:
       - gumsup4_db
       - gumsup4_redis
-    command: |
+    command:
       gunicorn gumsup4.wsgi --bind 0.0.0.0:8000 --reload
   gumsup4_db:
     image: postgres:alpine

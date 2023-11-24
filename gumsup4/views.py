@@ -516,3 +516,18 @@ class UserFollowRequestsView(TemplateView):
 
         else:
             return redirect(to='login')
+
+
+class SuggestedView(TemplateView):
+
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            user_list = request.user.suggested_users()
+            context = {
+                            'users': user_list,
+                            'has_new_activity': request.user.has_new_activity() 
+                }
+
+            return render(request, 'search/suggested.html', context)
+        else:
+            return redirect(to='login')

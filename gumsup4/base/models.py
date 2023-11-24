@@ -85,6 +85,18 @@ class User(BaseModel, AbstractUser):
         else:
             return False
 
+    def suggested_users(self):
+        user_list = User.objects.raw("""with f as (select following_id from base_follow where user_id = %s
+                                                   UNION ALL select following_id from base_followrequest where user_id = %s)
+                                        SELECT u.id, u.username, u.bio
+                                        FROM users u
+                                        WHERE u.id not in (SELECT following_id from f)
+                                        ORDER BY u.created DESC
+                                        LIMIT 25
+                                        """,[self.id,self.id])
+
+        return user_list
+
     class Meta:
         """Metadata."""
 
