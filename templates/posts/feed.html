@@ -27,6 +27,8 @@
   {% if posts.has_next %}
     <a href="?page={{ posts.next_page_number }}">more</a>
   {% endif %}
+  {% elif not query and is_search %}
+  search for something!
   {% else %}
   a whole bunch of nothin!
   {% endif %}

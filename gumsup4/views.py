@@ -388,6 +388,7 @@ class SearchUsersList(TemplateView):
                 context['messages'] = ["Search more than 2 characters"]
 
             context['is_search'] = True
+            context['query'] = query
 
             return render(request, 'search/search-users.html', context)
         else:
@@ -411,6 +412,7 @@ class SearchPostsView(FilterablePostsMixin,TemplateView):
                     context['messages'] = ["Search more than 2 characters"]
 
             context['is_search'] = True
+            context['query'] = query
 
             return render(request, 'search/search-posts.html', context)
         else:
