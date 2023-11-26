@@ -105,7 +105,7 @@ class User(BaseModel, AbstractUser):
 
 class Post(BaseModel):
     CATEGORY_CHOICES = [
-        ('culture','culture'),
+        ('CULTURE','culture'),
         ('LIFE','life'),
         ('PLACES','places'),
         ('STUFF','stuff')]
