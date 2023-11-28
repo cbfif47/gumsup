@@ -6,7 +6,7 @@ from .base import *
 
 DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.rexwithfriends.com']
 
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
