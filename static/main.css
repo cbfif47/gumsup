@@ -221,6 +221,22 @@ input[type=button], input[type=submit], .button {
   font-family: 'VT323', monospace;
 }
 
+.button {
+    padding:0.2em 1em;
+  margin-bottom: 0px;
+  margin-top: 8px;
+  text-align: center;
+  border-radius: 5px;
+  color: black;
+  background-color: #dbdbdb;
+  background: #dbdbdb;
+  cursor: pointer;
+  display: inline;
+  font-size: 1.3em;
+  text-decoration: none;
+  font-family: 'VT323', monospace;
+}
+
 .button a {
     text-decoration: none;
     color: black;

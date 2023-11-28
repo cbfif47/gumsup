@@ -49,7 +49,7 @@
           {% endif %}
             
             <form method="GET" action="{% url 'repost' post.id %}" style="display:inline;">
-              <input type="submit" value="repost" />
+              <input type="submit" value="recommend" />
             </form>
           {% endif %}
           <div class="time-since">{{ post.created|timesince }} ago</div>

@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}repost{% endblock %}
   {% block content %}
-  <h2>reposting from {{ original_post.user }}</h2>
+  <h2>recommending via {{ original_post.user }}</h2>
     <div class="original-post" style="font-size: 1em;color: black;">
       <i>{{ original_post.user }}:  <strong>{{ original_post.what}}</strong><br>
       {{ original_post.why }}</i>
