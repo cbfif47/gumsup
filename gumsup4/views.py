@@ -363,6 +363,7 @@ class RegisterView(View):
             new_user = authenticate(username=form.cleaned_data['username'],
                                     password=form.cleaned_data['password1'],
                                     )
+            messages.success(request, "welcome " + form.cleaned_data['username'] + "! we started you off by following gummy, but click search to find other people to follow.")
             login(request, new_user)
             return redirect(to='home')
 
