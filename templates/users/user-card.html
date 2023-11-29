@@ -5,7 +5,7 @@
     </a>
   </div>
   <div class="row">
-      {{ user.bio|default:'no bio :(' }}
+      {{ user.bio|lower|default:'no bio :(' }}
   </div>
   <div class="row">
       <div class="time-since">

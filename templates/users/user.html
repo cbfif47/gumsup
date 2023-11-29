@@ -29,7 +29,7 @@
    {% endif %}
    {% if request.user != user %}
     <div class="row">
-      "{{ user.bio|default:'no bio :(' }}"
+      "{{ user.bio|lower|default:'no bio :(' }}"
     </div>
   {% endif %}
   {% if form %}
