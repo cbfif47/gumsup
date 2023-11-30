@@ -9,6 +9,16 @@ from . import models
 @admin.register(models.User)
 class CustomUserAdmin(UserAdmin):
     """Admin for custom users."""
+    fieldsets = UserAdmin.fieldsets+ (
+        (                      
+            'More info', # you can also use None 
+            {
+                'fields': (
+                    'bio','is_private'
+                ),
+            },
+        ),
+    )
 
 @admin.register(models.Post)
 class PostAdmin(admin.ModelAdmin):
