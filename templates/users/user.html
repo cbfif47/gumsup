@@ -15,35 +15,16 @@
       <li>following: {{ user.following_count}}</li>
     {% endif %}
    </div>
-   {% if request.user == user %}
-    <div class="row">
-      <form action="{% url 'privacy' user %}" method="post">
-      {% csrf_token %}
-      {% if user.is_private == False %}
-        <input type="submit" value="make my profile private" onclick="clicked(event)">
-      {% else %}
-        <input type="submit" value="make my profile public" onclick="clicked(event)">
-      {% endif %}
-      </form>
-    </div>
-   {% endif %}
-   {% if request.user != user %}
     <div class="row">
       "{{ user.bio|lower|default:'no bio :(' }}"
     </div>
-  {% endif %}
-  {% if form %}
-    <form action="" method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="save bio" id="post-button">
-   </form>
-   {% endif %}
    <div class="row">
       {% if request.user != user %}
           <form method="POST">
             {% csrf_token %}
             <input type="submit" id="post-button" value ='{{ button_text }}' />  
+      {% else %}
+        <button class="button"><a href="{%url 'edit-user' user %}">edit my profile</a></button>
       {% endif %}
     </div>
   </div><br>
