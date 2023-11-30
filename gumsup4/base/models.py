@@ -2,6 +2,7 @@ import uuid
 import re
 
 from django.contrib.auth.models import AbstractUser
+from django.core import validators
 from django.db import models
 from django.db.models import Q
 
@@ -25,7 +26,19 @@ class User(BaseModel, AbstractUser):
     """Base user class."""
     is_private = models.BooleanField(default=False)
     bio = models.TextField(max_length=140,default='',blank=True)
-    username = models.CharField(max_length=20,unique=True)
+    username = models.CharField(
+        "username",
+        max_length = 20,
+        unique = True,
+        help_text = ("gotta have it. 20 characters or fewer. nothing weird."),
+        validators=[validators.RegexValidator(r'^([a-z0-9])\w+(?:-[a-z0-9]+)*$'
+            ,('username can only have letters, digits, underscores and hyphens'))
+            ,validators.MinLengthValidator(3, 'username needs to be at least 3 characters'),
+             ],
+        error_messages = {
+            'unique': ("username taken :("),
+        },
+    )
 
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):
