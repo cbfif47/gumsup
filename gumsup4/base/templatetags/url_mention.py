@@ -8,7 +8,7 @@ from ..models import User
 @register.filter(name='url_mention', is_safe=True)
 @stringfilter
 def url_mention(text):
-    mentions = re.findall("@\S+",text)
+    mentions = re.findall("@([a-z0-9])+(?:-\w*)*",text)
     for mention in mentions:
         username = mention.replace("@","")
         user = User.objects.filter(username=username)
