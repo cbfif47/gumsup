@@ -31,7 +31,7 @@ class User(BaseModel, AbstractUser):
         max_length = 20,
         unique = True,
         help_text = ("gotta have it. 20 characters or fewer. nothing weird."),
-        validators=[validators.RegexValidator(r'^([a-z0-9])\w+(?:-[a-z0-9]+)*$'
+        validators=[validators.RegexValidator(r'^([A-Za-z0-9])+(?:-\w*)*$'
             ,('username can only have letters, digits, underscores and hyphens'))
             ,validators.MinLengthValidator(3, 'username needs to be at least 3 characters'),
              ],
