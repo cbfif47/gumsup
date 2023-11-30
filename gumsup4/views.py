@@ -291,8 +291,6 @@ class UserView(FilterablePostsMixin,TemplateView):
             context["user"] = user
 
             if user == request.user:
-                form = UserEditForm(instance = user)
-                context["form"] = form
                 context["include_logout"] = True
             else:
                 context["is_following"] = request.user.is_following(user)
@@ -312,21 +310,58 @@ class UserView(FilterablePostsMixin,TemplateView):
                 # low log the activity if its a new follow only. Unfollows will delete via cascade
                 if new_follow:
                     Activity.objects.create(user=user,follow=new_follow)
-                form = None
-            else:
-                f = UserEditForm(request.POST, instance=user)
-
-                if f.is_valid():
-                    f.save()
-                form = UserEditForm(instance = user)
 
             context = {
                 'posts': Post.objects.filter(user=user),
                 'user': user,
                 'button_text': get_button_text(request.user,user),
-                'form': form
             }
             return render(request, 'users/user.html', context)
+        else:
+            return redirect(to='login')
+
+class UserEditView(TemplateView):
+
+    def get(self, request, username, **kwargs):
+        if request.user.is_authenticated:
+            user = get_object_or_404(User, username = username)
+
+            if user == request.user:
+                context = {
+                    'form': UserEditForm(instance = user),
+                    'include_logout': True,
+                    'user': user
+                }
+                return render(request, 'users/edit-user.html', context)
+            else:
+                return redirect(to='home')
+
+            return render(request, 'users/user.html', context)
+        else:
+            return redirect(to='login')
+
+    def post(self, request, username, **kwargs):
+
+        if request.user.is_authenticated:
+            user = get_object_or_404(User, username = username)
+
+            if user == request.user:
+                f = UserEditForm(request.POST, instance=user)
+
+                if f.is_valid():
+                    updated_user = f.save()
+                    return redirect(to='user',username = updated_user.username)
+                else:
+                    for field in f.errors:
+                        f[field].field.widget.attrs['class'] = 'error'
+                    context = {
+                        'form': f,
+                        'include_logout': True,
+                        'user': request.user
+                    }
+                    return render(request, "users/edit-user.html", context)
+            else:        
+                return redirect(to='home') 
         else:
             return redirect(to='login')
 
