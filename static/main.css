@@ -196,6 +196,11 @@ what {
   word-break: break-word;
 }
 
+.mention {
+  color: black;
+  text-decoration: underline wavy 1px;
+}
+
 .postcard category {
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: green;

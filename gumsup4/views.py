@@ -192,9 +192,7 @@ class RePostView(TemplateView):
             f = PostForm(request.POST)
 
             if f.is_valid():
-                new_repost = f.save()
-                # now make the activity
-                Activity.objects.create(user=new_repost.original_post.user,repost=new_repost)
+                f.save()
             else:
                 for field in f.errors:
                     f[field].field.widget.attrs['class'] = 'error'

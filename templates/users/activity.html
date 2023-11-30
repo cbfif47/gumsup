@@ -32,12 +32,16 @@
                 {{ activity.follow_request.following }}</a> approved your follow request.
             {% elif activity.repost %}
               <a href="{% url 'user' activity.repost.user %}">
-                {{ activity.repost.user }}</a> reposted your post about 
+                {{ activity.repost.user }}</a> re-recommended you about 
                 <a href="{% url 'post' activity.repost.id %}">{{ activity.repost.what }}</a>.
             {% elif activity.saved_post %}
               <a href="{% url 'user' activity.saved_post.user %}">
-                {{ activity.saved_post.user }}</a> saved your post about 
+                {{ activity.saved_post.user }}</a> saved your recommendation about 
                 <a href="{% url 'post' activity.saved_post.id %}">{{ activity.saved_post.post.what }}</a>.
+            {% elif activity.mention %}
+              <a href="{% url 'user' activity.mention.user %}">
+                {{ activity.mention.user }}</a> mentioned you in a recommendation about 
+                <a href="{% url 'post' activity.mention.id %}">{{ activity.mention.what }}</a>.
             {% endif %}
             <div class="row"><br>
                 <div class="time-since">{{activity.created|timesince}} ago.</div>

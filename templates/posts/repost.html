@@ -19,7 +19,7 @@
         {% for radio in form.category %}
         <label class="tab" for="{{ radio.id_for_label }}">
         {{ radio.tag }}
-          <div class="tab-box">{{ radio.choice_label }}</div>
+          <div class="tab-box">{{ radio.choice_label|upper }}</div>
         </label>
     {% endfor %}
     </div>

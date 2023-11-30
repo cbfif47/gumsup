@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="row">
-            <why>{{ post.why|lower|url_mention|urlize }}</why>
+            <why>{{ post.why|lower|striptags|url_mention }}</why>
         </div>
         {% if post.original_post %}
           <div class="original-post">
@@ -49,7 +49,7 @@
           {% endif %}
             
             <form method="GET" action="{% url 'repost' post.id %}" style="display:inline;">
-              <input type="submit" value="recommend" />
+              <input type="submit" value="re-rec" />
             </form>
           {% endif %}
           <div class="time-since">{{ post.created|timesince }} ago</div>

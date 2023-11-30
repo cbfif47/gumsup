@@ -1,4 +1,5 @@
 import uuid
+import re
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -116,13 +117,35 @@ class Post(BaseModel):
     what = models.CharField(max_length=50)
     why = models.TextField(max_length=250)
     original_post = models.ForeignKey(
-        'self', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')
+        'Post', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')
     superlike = models.BooleanField(default=False)
     category = models.CharField(max_length=50
         , choices = CATEGORY_CHOICES
         , default='LIFE'
         , verbose_name="Category", blank=False)
     url = models.URLField(blank=True,default='')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        gummy = User.objects.get(username='gummy')
+        # now lets log activity
+
+        # first repost. dont do it if its gummy
+        if self.original_post_id:
+                original_poster = self.original_post.user
+                if original_poster != gummy:
+                    Activity.objects.create(user=original_poster,repost=self)
+        else:
+            original_poster = gummy
+
+        #now mentions, dont notify same person as above, and no gummy, and no self-mention
+        mentions = re.findall("@\S+",self.why)
+        for mention in mentions:
+            username = mention.replace("@","")
+            user = User.objects.filter(username=username.lower()).first()
+            if user:
+                if user != original_poster and user != self.user: 
+                    Activity.objects.create(user=user,mention=self)
 
     def is_saved(self,user):
         return SavedPost.objects.filter(user=user,post=self).exists()
@@ -243,14 +266,16 @@ class Activity(BaseModel):
     seen = models.BooleanField(default=False)
     follow_request = models.ForeignKey(
         FollowRequest, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="follow_request_activity")
+    mention = models.ForeignKey(
+        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="mention_activity")
 
     def __str__(self):
         if self.follow:
-            description = 'hi'#self.follow.user.username + ' followed ' + self.user.username
+            description = self.follow.user.username + ' followed ' + self.user.username
         elif self.repost:
-            description = 'hi'#self.repost.user.username + ' reposted ' + self.user.username
+            description = self.repost.user.username + ' reposted ' + self.user.username
         else:
-            description = 'hi'#self.saved_post.user.username + ' saved a post by ' + self.user.username
+            description = self.saved_post.user.username + ' saved a post by ' + self.user.username
         return description
 
     class Meta:
