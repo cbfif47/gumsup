@@ -24,7 +24,8 @@
             {% csrf_token %}
             <input type="submit" id="post-button" value ='{{ button_text }}' />  
       {% else %}
-        <button class="button"><a href="{%url 'edit-user' user %}">edit my profile</a></button>
+        <button class="button"><a href="{%url 'edit-user' %}">edit my profile</a></button>
+        <button class="button"><a href="{%url 'logout' %}">logout</a></button>
       {% endif %}
     </div>
   </div><br>

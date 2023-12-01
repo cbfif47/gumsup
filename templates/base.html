@@ -22,9 +22,7 @@
               </breadcrumb>
           {% if request.user.is_authenticated %}
           <user_greeting>
-            {% if include_logout %}
-              <a href="{% url 'logout' %}">LOGOUT</a>
-            {% elif has_new_activity %}
+            {% if has_new_activity %}
                     <strong><a href="{% url 'activity' request.user %}">**{{ request.user|upper }}**</a></strong>
             {% else %}
                     <a href="{% url 'activity' request.user %}">{{ request.user|upper }}</a>

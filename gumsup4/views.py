@@ -322,46 +322,34 @@ class UserView(FilterablePostsMixin,TemplateView):
 
 class UserEditView(TemplateView):
 
-    def get(self, request, username, **kwargs):
+    def get(self, request, **kwargs):
         if request.user.is_authenticated:
-            user = get_object_or_404(User, username = username)
-
-            if user == request.user:
-                context = {
-                    'form': UserEditForm(instance = user),
-                    'include_logout': True,
-                    'user': user
-                }
-                return render(request, 'users/edit-user.html', context)
-            else:
-                return redirect(to='home')
-
-            return render(request, 'users/user.html', context)
+            context = {
+                'form': UserEditForm(instance = request.user),
+                'include_logout': True,
+                'user': request.user
+            }
+            return render(request, 'users/edit-user.html', context)
         else:
             return redirect(to='login')
 
-    def post(self, request, username, **kwargs):
+    def post(self, request, **kwargs):
 
         if request.user.is_authenticated:
-            user = get_object_or_404(User, username = username)
+            f = UserEditForm(request.POST, instance=request.user)
 
-            if user == request.user:
-                f = UserEditForm(request.POST, instance=user)
-
-                if f.is_valid():
-                    updated_user = f.save()
-                    return redirect(to='user',username = updated_user.username)
-                else:
-                    for field in f.errors:
-                        f[field].field.widget.attrs['class'] = 'error'
-                    context = {
-                        'form': f,
-                        'include_logout': True,
-                        'user': request.user
-                    }
-                    return render(request, "users/edit-user.html", context)
-            else:        
-                return redirect(to='home') 
+            if f.is_valid():
+                updated_user = f.save()
+                return redirect(to='user',username = updated_user.username)
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                    'form': f,
+                    'include_logout': True,
+                    'user': request.user
+                }
+                return render(request, "users/edit-user.html", context)
         else:
             return redirect(to='login')
 
