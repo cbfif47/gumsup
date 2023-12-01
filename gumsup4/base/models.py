@@ -151,7 +151,7 @@ class Post(BaseModel):
             original_poster = gummy
 
         #now mentions, dont notify same person as above, and no gummy, and no self-mention
-        mentions = re.findall("@\S+",self.why)
+        mentions = re.findall("@[-\w]*",self.why)
         for mention in mentions:
             username = mention.replace("@","")
             user = User.objects.filter(username=username.lower()).first()
