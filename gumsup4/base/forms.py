@@ -19,16 +19,18 @@ class PostForm(forms.ModelForm):
       }
 
 class UserEditForm(forms.ModelForm):
-   class Meta:
-     model = User
-     fields = {'bio','username','is_private'}
-     labels = {'is_private': 'private profile'}
-     widgets = {"bio": forms.Textarea(attrs={'placeholder': 'tell me about yourself'
+
+    field_order = ['username', 'bio', 'is_private']
+    class Meta:
+        model = User
+        fields = {'bio','username','is_private'}
+        labels = {'is_private': 'private profile'}
+        widgets = {"bio": forms.Textarea(attrs={'placeholder': 'tell me about yourself'
               ,"rows": 2}),
             "username": forms.TextInput(attrs={'placeholder': 'username'
               }),
             "is_private": forms.CheckboxInput()
-      }
+        }
 
 
 class RegisterForm(UserCreationForm):
