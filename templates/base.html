@@ -15,12 +15,12 @@
 
     <body>
         <header class="header">
+          {% if request.user.is_authenticated %}
             <breadcrumb>
               <a href="{%url 'home'%}" class="logo">FEED</a>
               <a href="{%url 'saves' %}" class="logo">SAVES</a>
               <a href="{%url 'search-posts' %}" class="logo">SEARCH</a>
               </breadcrumb>
-          {% if request.user.is_authenticated %}
           <user_greeting>
             {% if has_new_activity %}
                     <strong><a href="{% url 'activity' request.user %}">**{{ request.user|upper }}**</a></strong>

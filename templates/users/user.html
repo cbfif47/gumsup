@@ -16,16 +16,15 @@
     {% endif %}
    </div>
     <div class="row">
-      "{{ user.bio|lower|default:'no bio :(' }}"
+      <bio class="col-100">
+        "{{ user.bio|lower|default:'no bio :(' }}"
+      </bio>
     </div>
    <div class="row">
       {% if request.user != user %}
           <form method="POST">
             {% csrf_token %}
             <input type="submit" id="post-button" value ='{{ button_text }}' />  
-      {% else %}
-        <button class="button"><a href="{%url 'edit-user' %}">edit my profile</a></button>
-        <button class="button"><a href="{%url 'logout' %}">logout</a></button>
       {% endif %}
     </div>
   </div><br>

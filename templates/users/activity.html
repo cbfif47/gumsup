@@ -5,15 +5,17 @@
     <h2>{{ user.username }}</h2>
     <div class="row">
       <div class="col-100">
-        <li><a href="{% url 'user' request.user %}">view/edit my public profile</a>
+        <li><a href="{% url 'user' request.user %}">view my profile</a>
+        <li><a href="{%url 'edit-user' %}">edit my profile</a>
         {% if user.is_private %}
           <li><a href="{% url 'follow-requests' request.user %}">
-            {% if follow_request_count == 1 %}<strong> 1 new follow request</strong>
-            {% elif follow_request_count > 1 %}<strong> {{ follow_request_count }} new follow requests</strong>
+            {% if follow_request_count == 1 %}1 new follow request
+            {% elif follow_request_count > 1 %}{{ follow_request_count }} new follow requests
             {% else %}no new follow requests
             {% endif %}
           </a>
         {% endif %}
+        <li><a href="{%url 'logout' %}">logout</a>
       </div>
     </div><br>
     {% if activities %}
