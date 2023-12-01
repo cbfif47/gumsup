@@ -43,6 +43,8 @@ class User(BaseModel, AbstractUser):
     def save(self, *args, **kwargs):
         if self._state.adding is True:
             self.username = self.username.lower() # force lowercase
+            self.bio = self.bio.lower() # force lowercase
+            self.email = self.email.lower() # force lowercase
             super().save(*args, **kwargs)
             if User.objects.filter(username='gummy').exists():
                 Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
