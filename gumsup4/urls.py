@@ -28,6 +28,12 @@ router.register(r'posts', viewsets.PostViewset, 'post')
 
 urlpatterns = [
     path("", views.PostsPageView.as_view(), name='home'),
+    path("items/", views.ItemsView.as_view(), name="items"),
+    path("items/<item_id>", views.ItemDetailView.as_view(), name="view-item"),
+    path("items/<item_id>/edit", views.ItemEditView.as_view(), name="edit-item"),
+    path("items/<item_id>/start", views.ItemStartView.as_view(), name="start-item"),
+    path("items/<item_id>/delete", views.ItemDeleteView.as_view(), name="delete-item"),
+    path("items/<item_id>/finish", views.FinishItemView.as_view(), name="finish-item"),
     path("posts/<post_id>", views.PostView.as_view(), name='post'),
     path("posts/<post_id>/repost", views.RePostView.as_view(), name='repost'),
     path("login/", views.LoginView.as_view(), name='login'),

@@ -1,6 +1,7 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
+from django.utils import timezone
 import re
 register = template.Library()
 from ..models import User
@@ -17,3 +18,19 @@ def url_mention(text):
                             ,"""<a href="/users/""" + username + '" class="mention">'
                             + mention + '</a>')
     return mark_safe(text)
+
+
+@register.filter(name='dayssince', is_safe=True)
+def dayssince(value):
+    "Returns number of days between today and value."
+    today = timezone.now().date()
+    diff  = today - value
+    if diff.days > 1:
+        return '%s days ago' % diff.days
+    elif diff.days == 1:
+        return 'yesterday'
+    elif diff.days == 0:
+        return 'today'
+    else:
+        # Date is in the future; return formatted date.
+        return value.strftime("%B %d, %Y")

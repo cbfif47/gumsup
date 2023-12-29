@@ -1,0 +1,28 @@
+{% load static %}
+  {% block content %}
+  <form action="" method="post" novalidate class="postform">
+        {% csrf_token %}{{ form.user.as_hidden }}
+    </div>
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
+        {{ form.name }}
+      </div>
+    </div>
+        {{ form.note }}
+    </div>
+    <div class="row tabs col-100">
+        {% for radio in form.item_type %}
+        <label class="tab" for="{{ radio.id_for_label }}">
+        {{ radio.tag }}
+          <div class="tab-box">{{ radio.choice_label|upper }}</div>
+        </label>
+    {% endfor %}
+    </div>
+    <div class="row ">
+        <input id="post-button" type="submit" value="save for later">
+    </div>
+      <div class="row">
+          <button class="secondary-button" type="submit" formaction="?status=done">finished it</button>
+      </div>
+    </form>
+    {% endblock %}

@@ -40,3 +40,7 @@ class FollowRequestsAdmin(admin.ModelAdmin):
 @admin.register(models.Activity)
 class ActivityAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.Item)
+class ActivityAdmin(admin.ModelAdmin):
+    """Admin for posts."""

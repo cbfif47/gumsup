@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}feed{% endblock %}
+  {% block content %}
+      {% include 'items/item_form_main.html' %}<br>
+
+      {% include 'items/items_list.html' %}
+
+    {% endblock %}

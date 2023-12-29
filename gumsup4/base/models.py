@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core import validators
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 
 class BaseModel(models.Model):
@@ -297,4 +298,80 @@ class Activity(BaseModel):
 
         ordering = ["-created"]
 
+
+class Item(BaseModel):
+
+    RATING_CHOICES = [
+        (1,'hated'),
+        (2,'disliked'),
+        (3,'liked'),
+        (4,'loved')
+        ]
+
+    TYPE_CHOICES = [
+        ('MOVIE','movie'),
+        ('BOOK','book'),
+        ('TV','tv'),
+        ('MUSIC','music'),
+        ('EVENT','event')
+        ]
+
+    STATUS_CHOICES = [
+        (1,'later'),
+        (2,'now'),
+        (3,'finished'),
+        (4,'quit')
+        ]
+
+    user = models.ForeignKey(
+        User, verbose_name="Created By", on_delete=models.CASCADE,related_name="created_by")
+
+    name = models.CharField(max_length=50, blank=False)
+    item_type = models.CharField(max_length=50
+        , choices = TYPE_CHOICES
+        , default='MOVIE'
+        , verbose_name="Type", blank=False)
+    note = models.TextField(max_length=250,blank=True,null=True,default='')
+    review = models.TextField(max_length=250,blank=True,null=True,default='')
+    rating = models.IntegerField(choices=RATING_CHOICES,blank=True,null=True)
+    original_item = models.ForeignKey(
+        'Item', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')
+    started_date = models.DateField(blank=True,null=True)
+    ended_date = models.DateField(blank=True,null=True)
+    status = models.IntegerField(choices=STATUS_CHOICES,default=1)
+    last_date = models.DateField(default=timezone.now)
+
+    def filter_items(ItemsQuerySet,status='',item_type=''):
+
+        if status != '':
+            status = int(status)
+            if item_type != '':
+                items = ItemsQuerySet.filter(status=status,item_type=item_type.upper())
+            else:
+                items = ItemsQuerySet.filter(status=status)
+        elif item_type != '':
+            items = ItemsQuerySet.filter(item_type=item_type.upper())
+        else:
+            items = ItemsQuerySet
+
+        return items
+
+    def save(self, *args, **kwargs):
+        if self.status == 2 and self.started_date:
+            self.last_date = self.started_date
+        elif self.status == 3 and self.ended_date:
+            self.last_date = self.ended_date
+        elif self.status == 4 and self.ended_date:
+            self.last_date = self.ended_date
+        else:
+            self.last_date = timezone.now().date()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user}': {self.name} on {self.created}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-last_date","-updated"]
 

@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.views.generic import TemplateView, CreateView, ListView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest
-from .base.forms import PostForm, RegisterForm, UserEditForm
+from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item
+from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from .base.utilities import get_button_text
+from datetime import datetime
 
 class HomePageView(TemplateView):
     template_name = "base.html"
@@ -51,6 +52,49 @@ class FilterablePostsMixin:
             'superlike_param': superlike_param,
             'query_param': query_param,
             'categories': Post.category.field.choices,
+            'has_new_activity': has_new_activity
+        }
+        return context
+
+
+class FilterableItemsMixin:
+
+    def make_filtered_context(self,raw_items,request):
+        status = request.GET.get('status', '')
+        item_type = request.GET.get('item_type', '')
+        query = request.GET.get('q', '')
+        items = Item.filter_items(raw_items,status, item_type)
+        has_new_activity = request.user.has_new_activity() 
+        if status != '':
+            selected_status = Item.status.field.choices[int(status) - 1][1]
+        else:
+            selected_status = None
+
+        #filter_params
+        status_param = 'status=' + status
+        if item_type != '':
+            item_type_param = '&item_type=' + item_type
+        else:
+            item_type_param = ''
+        if query != '':
+            query_param = '&q=' + query
+        else:
+            query_param = ''
+
+        #pagination
+        paginator = Paginator(items, 25)  # Show 25 posts per page.
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+    
+        context = {
+            'items': page_obj,
+            'item_type_param': item_type_param,
+            'selected_item_type': item_type,
+            'selected_status': selected_status,
+            'status_param': status_param,
+            'query_param': query_param,
+            'item_types': Item.item_type.field.choices,
+            'statuses': Item.status.field.choices,
             'has_new_activity': has_new_activity
         }
         return context
@@ -553,5 +597,182 @@ class SuggestedView(TemplateView):
                 }
 
             return render(request, 'search/suggested.html', context)
+        else:
+            return redirect(to='login')
+
+
+class ItemsView(FilterableItemsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+
+        if request.user.is_authenticated:
+            items = Item.objects.filter(user=request.user)
+            context = self.make_filtered_context(items,request)
+            new_item = Item(user=request.user,status=1)
+            form = ItemFormMain(instance=new_item)
+            context['form']= form
+
+            return render(request, 'items/items.html', context)
+        else:
+            return redirect(to='login')
+
+    def post(self,request, **kwargs):
+        if request.user.is_authenticated:
+
+            f = ItemFormMain(request.POST)
+            if f.is_valid():                
+                new_item = f.save()
+                if request.GET.get('status', '') == 'done':
+                    return redirect(to='finish-item',item_id=new_item.id)
+                else:
+                    return redirect(to='items')
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                            'form': f
+                            ,'messages': ["U forgot some fields"]
+                        }
+                return render(request, "items/item_form_main.html", context)
+        else:
+            return redirect(to='login')
+
+
+class FinishItemView(TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            if item.user == request.user:
+                if item.started_date is None:
+                    item.started_date = datetime.now()
+                item.ended_date = datetime.now()
+                form = ItemFormFinished(instance=item)
+                context= {
+                    'form': form
+                }
+
+                return render(request, 'items/item_form_finished.html', context)
+            else:
+                return redirect(to='home')
+        else:
+            return redirect(to='login')
+
+    def post(self,request, item_id, **kwargs):
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            f = ItemFormFinished(request.POST, instance=item)
+
+            if f.is_valid():                
+                new_item = f.save(commit=False)
+                if request.GET.get('status', '') == 'abandoned':
+                    item.status = 4
+                else:
+                    item.status = 3
+                new_item.save()
+                return redirect(to='items')
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                            'form': f
+                            ,'messages': ["U forgot some fields"]
+                        }
+                return render(request, "items/item_form_finished.html", context)
+        else:
+            return redirect(to='login')
+
+
+class ItemEditView(TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            if item.user == request.user:
+                form = ItemEditForm(instance=item)
+                context= {
+                    'form': form,
+                    'item': item
+                }
+
+                return render(request, 'items/edit_item.html', context)
+            else:
+                return redirect(to='home')
+        else:
+            return redirect(to='login')
+
+    def post(self,request, item_id, **kwargs):
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            f = ItemEditForm(request.POST, instance=item)
+
+            if f.is_valid():                
+                new_item = f.save(commit=False)
+                if (item.status == 4 or item.status == 3) and item.ended_date is None:
+                    item.ended_date = datetime.now()
+                if (item.status == 1 or item.status == 2):
+                    item.ended_date = None
+                    item.rating = None
+                if item.ended_date is not None and item.started_date is None:
+                    item.started_date = item.ended_date
+                new_item.save()
+                return redirect(to='items')
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                            'form': f
+                            ,'messages': ["U forgot some fields"]
+                        }
+                return render(request, "items/edit_item.html", context)
+        else:
+            return redirect(to='login')
+
+
+class ItemDetailView(TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            context = {
+                'item': item
+            }
+
+            return render(request, 'items/view_item.html', context)
+        else:
+            return redirect(to='login')
+
+
+class ItemDeleteView(TemplateView):
+
+    def post(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            back_to = request.GET.get('from', 'items')
+            if item.user == request.user:
+                item.delete()
+
+            return redirect(to=back_to)
+        else:
+            return redirect(to='login')
+
+
+class ItemStartView(TemplateView):
+
+    def post(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            back_to = request.GET.get('from', 'items')
+            if item.user == request.user:
+                item.status = 2
+                item.started_date = datetime.now()
+                item.save()
+
+            return redirect(to=back_to)
         else:
             return redirect(to='login')
