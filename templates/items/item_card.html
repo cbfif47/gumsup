@@ -11,23 +11,8 @@
                   <a href="{% url 'view-item' item.id %}">
                 {%  endif %}
                 <what>{{ item.name}}</what></a>
-            <category>{{ item.item_type }}</category>
             </div>
             <div class="col 30">
-              <div class="action-buttons">
-                {% if item.status == 1 %}
-                  <form method="POST" action="{% url 'start-item' item.id %}?from=items" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="tertiary-button" value="start" onclick="clicked(event)" />start</button>
-                  </form>
-                {% endif %}
-                {% if item.ended_date is None %}
-                  <form method="GET" action="{% url 'finish-item' item.id %}" style="display:inline;">
-                    <button type="submit" class="tertiary-button"/>finish</button>
-                  </form>
-                  {% endif %}
-              </div>
-            </div>
             {% if item.rating %}
               <div class="userbadge">
                {% if item.rating == 1%}
@@ -44,19 +29,34 @@
               </div>
             {% endif %}
         </div>
-        <div class="row">
-          {% if item.ended_date %}
-            <why>{{ item.review|lower|striptags|url_mention }}</why>
-          {% else %}
-            <why>{{ item.note|lower|striptags|url_mention }}</why>
-          {% endif %}
-        </div>
-        {% if item.item_list %}
-        <div class="row">
-          <div class="list-name">
-          <a href="{% url 'view-item-list' item.item_list.id %}">{{ item.item_list }}</a>
+        <div class="col-100">
+          <div class="row">
+            <button class="item-type">{{ item.item_type }}</button>
+            {% if item.item_list %}
+            <a href="{% url 'view-item-list' item.item_list.id %}"><button class="list-name">{{ item.item_list }}</button></a>
+            {% endif %}
+          </div>
+          <div class="row">
+            {% if item.ended_date %}
+              <why>{{ item.review|lower|striptags|url_mention }}</why>
+            {% else %}
+              <why>{{ item.note|lower|striptags|url_mention }}</why>
+            {% endif %}
+          </div>
+          <div class="row">
+            {% if item.status == 1 %}
+                    <form method="POST" action="{% url 'start-item' item.id %}?from=items" style="display:inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="tertiary-button" value="start" onclick="clicked(event)" />start</button>
+                    </form>
+                  {% endif %}
+                  {% if item.ended_date is None %}
+                    <form method="GET" action="{% url 'finish-item' item.id %}" style="display:inline;">
+                      <button type="submit" class="tertiary-button"/>finish</button>
+                    </form>
+                    {% endif %}
+                  </div>
           </div>
         </div>
-        {% endif %}
         <div class="time-since">{{ item.status|statustoaction }} {{ item.last_date|dayssince }}</div>
       </div>

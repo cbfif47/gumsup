@@ -39,7 +39,6 @@
     {% else %}
       <button onclick="openList()" class="dropbtn">LIST ⌄</button>
       <div class="dropdown-options" id ="listDropdown">
-      <li><a href="{% url 'create-item-list' %}">*CREATE NEW LIST*</a></li>
     {% endif %}
       {% for item_list in item_lists %}
         {% if selected_item_list.name != item_list.name or selected_item_list is None %}
@@ -48,6 +47,9 @@
       {% endfor %}
     </div>
   </div>
+</div>
+<div class="row">
+  <a class="smalllink" href="{% url 'create-item-list' %}">create new list</a>
 </div>
   {% if items %}
     {% for item in items %}

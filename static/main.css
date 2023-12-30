@@ -107,7 +107,6 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   float: left;
   width: 100%;
   margin-top: 3px;
-  word-break: break-all;
 }
 
 .col-85 {
@@ -230,12 +229,12 @@ what {
 }
 
 .postcard category {
-  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-width: 0.1em;
   -webkit-text-stroke-color: green;
   color: white;
-  text-transform: lowercase;
+  text-transform: uppercase;
   font-family: 'Times New Roman',serif;
-  font-size: 16px;
+  font-size: 1em;
   word-break: break-word;
 }
 
@@ -355,7 +354,6 @@ input[type=submit]:hover {
   margin-left: 1%;
   word-break: break-all;
   border: dotted 1px black;
-  margin-bottom: 10px;
 }
 
 .dropbtn {
@@ -426,25 +424,38 @@ input[type=submit]:hover {
   color: black;
 }
 
-.clearfilters {
+.smalllink {
   font-size: 0.8em;
   float: right;
 }
 
 .list-name {
   background-color: white;
-  padding: 2px 4px;
+  padding: 0.1em 0.2em;
   text-align: center;
+  cursor: pointer;
   border-radius: 5px;
   border:dotted 1px black;
+  line-height: 1.1em;
   opacity: 75%;
   font-family: 'VT323',monospace;
   font-size: 0.9em;
-  float: left;
 }
 
 .list-name a {
   color: black;
   text-decoration: none;
+}
+
+.item-type {
+  -webkit-text-stroke-width: 0.1em;
+  -webkit-text-stroke-color: green;
+  color: white;
+  text-transform: uppercase;
+  font-family: 'Times New Roman',serif;
+  font-size: 1em;
+  cursor: pointer;
+  border: 0px;
+  padding: 0px;
 }
 
