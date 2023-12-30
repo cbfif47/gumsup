@@ -621,7 +621,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             items = Item.objects.filter(user=request.user)
             context = self.make_filtered_context(items,request)
             new_item = Item(user=request.user,status=1)
-            form = ItemFormMain(instance=new_item,loggedin_user=request.user)
+            form = ItemFormMain(instance=new_item)
             context['form']= form
 
             return render(request, 'items/items.html', context)

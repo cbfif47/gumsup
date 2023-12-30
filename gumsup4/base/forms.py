@@ -79,9 +79,6 @@ class ItemFormMain(forms.ModelForm):
             "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
       }
 
-   def __init__(self, loggedin_user,*args, **kwargs):
-    super(ItemFormMain, self).__init__(*args, **kwargs)
-    self.fields['item_list'].queryset = ItemList.objects.filter(user=loggedin_user)
 
 
 class ItemFormFinished(forms.ModelForm):
