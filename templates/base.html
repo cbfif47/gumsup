@@ -45,20 +45,14 @@
              {%block content %}
              {%endblock content%}
             </div>
-            <script type="text/javascript">
+<script type="text/javascript">
   function clicked(e)
     {
         if(!confirm('Are you sure?')) {
             e.preventDefault();
         }
     }
-    function validateForm() {
-      let x = document.forms["mainform"]["name"].value;
-      if (x == "") {
-        alert("Name must be filled out");
-        return false;
-      }
-    }
+
     /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
 function openType() {
@@ -69,19 +63,6 @@ function openList() {
   document.getElementById("listDropdown").classList.toggle("show");
 }
 
-// Close the dropdown menu if the user clicks outside of it
-    window.onclick = function(event) {
-      if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-options");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-          var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
-          }
-        }
-      }
-    }
 </script>
         </main>
         <footer class="footer">
