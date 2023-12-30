@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}LIST{% endblock %}
+
+  {% block content %}
+    <div class="row">
+      <form action="{% url 'create-item-list' %}" method="post">  
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+        <input id="post-button" type="submit" value="save">
+  </form>
+{% endblock %}

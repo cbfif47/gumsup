@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}feed{% endblock %}
+{% load static %}
   {% block content %}
-      {% include 'items/item_form_main.html' %}<br>
-
+  <h1>{{ item_list.name }}</h1>hi
+  
       {% include 'items/item_feed.html' %}
 
     {% endblock %}

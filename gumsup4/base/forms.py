@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from datetime import datetime
 
-from .models import Post, User, FollowRequest, Item
+from .models import Post, User, FollowRequest, Item, ItemList
 
 class PostForm(forms.ModelForm):
    class Meta:
@@ -69,14 +69,19 @@ class RegisterForm(UserCreationForm):
 class ItemFormMain(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','item_type','note','user'}
+     fields = {'name','item_type','note','user','item_list'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it'
               }),
+            "item_list": forms.Select(),
             "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'
               ,"rows": 3}),
             "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
       }
+
+   def __init__(self, loggedin_user,*args, **kwargs):
+    super(ItemFormMain, self).__init__(*args, **kwargs)
+    self.fields['item_list'].queryset = ItemList.objects.filter(user=loggedin_user)
 
 
 class ItemFormFinished(forms.ModelForm):
@@ -105,10 +110,11 @@ class ItemEditForm(forms.ModelForm):
               ,"rows": 3}),
             "review": forms.Textarea(attrs={'placeholder': 'what did you think?'
               ,"rows": 3}),
-            "ended_date": forms.DateInput(attrs={'class':'datepicker'}),
-            "started_date": forms.DateInput(attrs={'class':'datepicker'}),
+            "ended_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
+            "started_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
             "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
             "status": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
             "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
             "rating": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
       }
+

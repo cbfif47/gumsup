@@ -34,3 +34,26 @@ def dayssince(value):
     else:
         # Date is in the future; return formatted date.
         return value.strftime("%B %d, %Y")
+
+
+@register.filter(name='statustoaction', is_safe=True)
+def statustoaction(status):
+    if status == 1:
+        return 'saved'
+    elif status == 2:
+        return 'started'
+    elif status == 3:
+        return 'finished'
+    elif status == 4:
+        return 'quit'
+
+@register.filter(name='statustoemoji', is_safe=True)
+def statustoemoji(status):
+    if status == 1:
+        return ''
+    elif status == 2:
+        return '⏳'
+    elif status == 3:
+        return '✅'
+    elif status == 4:
+        return '❌'

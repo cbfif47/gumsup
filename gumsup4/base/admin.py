@@ -44,3 +44,7 @@ class ActivityAdmin(admin.ModelAdmin):
 @admin.register(models.Item)
 class ActivityAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.ItemList)
+class ActivityAdmin(admin.ModelAdmin):
+    """Admin for posts."""

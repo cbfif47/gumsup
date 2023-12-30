@@ -1,6 +1,6 @@
 {% load static %}
   {% block content %}
-  <form action="" method="post" novalidate class="postform">
+  <form action="" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
         {% csrf_token %}{{ form.user.as_hidden }}
     </div>
     <div class="row">
@@ -8,6 +8,7 @@
         {{ form.name }}
       </div>
     </div>
+    <div class="row">
         {{ form.note }}
     </div>
     <div class="row tabs col-100">
@@ -18,8 +19,11 @@
         </label>
     {% endfor %}
     </div>
+    <div class="row">
+        {{ form.item_list }}
+    </div>
     <div class="row ">
-        <input id="post-button" type="submit" value="save for later">
+        <input id="post-button" type="submit" value="save for later" >
     </div>
       <div class="row">
           <button class="secondary-button" type="submit" formaction="?status=done">finished it</button>

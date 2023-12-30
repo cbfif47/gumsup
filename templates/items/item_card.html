@@ -4,6 +4,7 @@
       <div class="postcard">
           <div class="row">
             <div class="col-85">
+              {{ item.status|statustoemoji }}
                 {% if item.user == request.user %}
                   <a href="{% url 'edit-item' item.id %}">
                 {% else %}
@@ -28,7 +29,7 @@
               </div>
             {% endif %}
           <div class="col-15">
-            <div class="time-since">{{ item.last_date|dayssince }}</div>
+            <div class="time-since">{{ item.status|statustoaction }} {{ item.last_date|dayssince }}</div>
           </div>
         </div>
         <div class="row">

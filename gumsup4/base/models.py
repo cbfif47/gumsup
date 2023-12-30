@@ -299,6 +299,20 @@ class Activity(BaseModel):
         ordering = ["-created"]
 
 
+class ItemList(BaseModel):
+    user = models.ForeignKey(
+        User, verbose_name="List created By", on_delete=models.CASCADE,related_name="list_by")
+    name = models.CharField(max_length=50, blank=False)
+
+    def __str__(self):
+        return f"{self.user}'s list {self.name}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
 class Item(BaseModel):
 
     RATING_CHOICES = [
@@ -340,17 +354,28 @@ class Item(BaseModel):
     ended_date = models.DateField(blank=True,null=True)
     status = models.IntegerField(choices=STATUS_CHOICES,default=1)
     last_date = models.DateField(default=timezone.now)
+    item_list = models.ForeignKey(ItemList, models.SET_DEFAULT,blank=True,null=True,default='')
 
-    def filter_items(ItemsQuerySet,status='',item_type=''):
+    def filter_items(ItemsQuerySet,status='',item_type='', item_list=''):
 
         if status != '':
             status = int(status)
             if item_type != '':
-                items = ItemsQuerySet.filter(status=status,item_type=item_type.upper())
+                if item_list != '':
+                    items = ItemsQuerySet.filter(status=status,item_type=item_type.upper(),item_list=item_list)
+                else:
+                    items = ItemsQuerySet.filter(status=status,item_type=item_type.upper())
+            elif item_list != '':
+                items = ItemsQuerySet.filter(status=status,item_list=item_list)
             else:
                 items = ItemsQuerySet.filter(status=status)
         elif item_type != '':
-            items = ItemsQuerySet.filter(item_type=item_type.upper())
+            if item_list != '':
+                items = ItemsQuerySet.filter(item_type=item_type.upper(),item_list=item_list)
+            else:
+                items = ItemsQuerySet.filter(item_type=item_type.upper())
+        elif item_list != '':
+                items = ItemsQuerySet.filter(item_list=item_list)
         else:
             items = ItemsQuerySet
 
@@ -368,7 +393,7 @@ class Item(BaseModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user}': {self.name} on {self.created}"
+        return f"{self.name}"
 
     class Meta:
         """Metadata."""

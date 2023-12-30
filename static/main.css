@@ -48,7 +48,7 @@ bio {
     padding: 10px;
 }
 
-input[type=text], select, textarea, input[type=search], input[type=password] {
+input[type=text], select, textarea, input[type=search], input[type=password], input[type=date] {
   width: 100%;
   padding: 5px;
   border: 1px solid #ccc;
@@ -127,8 +127,10 @@ input[type=text], select, textarea, input[type=search], input[type=password] {
     height: 2em;
   }
   .secondary-button {
-    width: 100%;
+    position: relative;
     height: 2em;
+    width: 50%;
+    left:-25%;
   }
 }
 */
@@ -331,7 +333,6 @@ input[type=submit]:hover {
   position: relative;
   font-family: 'VT323', monospace;
   font-size: 1.2em;
-  z-index:9999;
   padding: 5px;
   background-color: white;
   float: left;
@@ -341,8 +342,12 @@ input[type=submit]:hover {
   word-break: break-all;
   border: dotted 1px black;
 }
-.dropdown:hover {
+
+.dropbtn {
   border: 0px;
+  background: none;
+  font-family: 'VT323', monospace;
+  font-size: 1.2em;
 }
 
 .dropdown-options {
@@ -355,23 +360,33 @@ input[type=submit]:hover {
   padding: 10px;
   line-height: 4ex;
   width: 100%;
+  z-index:1;
 }
 
-.dropdown:hover .dropdown-options {
+.dropdown-options a {
   display: block;
+  text-decoration: none;
 }
+
+.show {display:block;}
 
 .secondary-button {
   background: none;
   border: none;
-    float: right;
-    font-size: 1.5em;
+  float: right;
+  font-size: 1.5em;
   text-decoration: underline;
   font-family: 'VT323', monospace;
   cursor: pointer;
   float: right;
+  color: black;
 }
 
 .secondary-button:hover {
   color: blue;
+}
+
+.clearfilters {
+  font-size: 0.8em;
+  float: right;
 }

@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.views.generic import TemplateView, CreateView, ListView, DetailView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item
+from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList
 from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -62,9 +62,14 @@ class FilterableItemsMixin:
     def make_filtered_context(self,raw_items,request):
         status = request.GET.get('status', '')
         item_type = request.GET.get('item_type', '')
+        item_list = request.GET.get('item_list', '')
         query = request.GET.get('q', '')
-        items = Item.filter_items(raw_items,status, item_type)
+        items = Item.filter_items(raw_items,status, item_type, item_list)
         has_new_activity = request.user.has_new_activity() 
+        if item_list != '':
+            selected_item_list = get_object_or_404(ItemList,id=item_list)
+        else:
+            selected_item_list = None
         if status != '':
             selected_status = Item.status.field.choices[int(status) - 1][1]
         else:
@@ -76,6 +81,10 @@ class FilterableItemsMixin:
             item_type_param = '&item_type=' + item_type
         else:
             item_type_param = ''
+        if item_list != '':
+            item_list_param = '&item_list=' + item_list
+        else:
+            item_list_param = ''
         if query != '':
             query_param = '&q=' + query
         else:
@@ -90,12 +99,15 @@ class FilterableItemsMixin:
             'items': page_obj,
             'item_type_param': item_type_param,
             'selected_item_type': item_type,
+            'selected_item_list': selected_item_list,
             'selected_status': selected_status,
             'status_param': status_param,
             'query_param': query_param,
+            'item_list_param': item_list_param,
             'item_types': Item.item_type.field.choices,
             'statuses': Item.status.field.choices,
-            'has_new_activity': has_new_activity
+            'has_new_activity': has_new_activity,
+            'item_lists': ItemList.objects.filter(user = request.user)
         }
         return context
 
@@ -609,7 +621,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             items = Item.objects.filter(user=request.user)
             context = self.make_filtered_context(items,request)
             new_item = Item(user=request.user,status=1)
-            form = ItemFormMain(instance=new_item)
+            form = ItemFormMain(instance=new_item,loggedin_user=request.user)
             context['form']= form
 
             return render(request, 'items/items.html', context)
@@ -776,3 +788,63 @@ class ItemStartView(TemplateView):
             return redirect(to=back_to)
         else:
             return redirect(to='login')
+
+
+class ItemListView(TemplateView):
+    
+    def post(self, request, item_list_id, **kwargs):
+        if request.user.is_authenticated:
+            item_list = get_object_or_404(ItemList, id = item_list_id)
+            back_to = request.GET.get('from', 'items')
+            if item.user == request.user:
+                item.status = 2
+                item.started_date = datetime.now()
+                item.save()
+
+            return redirect(to=back_to)
+        else:
+            return redirect(to='login')
+
+    def get(self, request, item_list_id, **kwargs):
+        if request.user.is_authenticated:
+            item_list = get_object_or_404(ItemList, id = item_list_id)
+            items = Item.objects.filter(item_list=item_list)
+            if item_list.user == request.user:
+                context = {
+                    'item_list': item_list,
+                    'items': items
+                }
+
+            return render(request, 'item_lists/view_item_list.html', context)
+        else:
+            return redirect(to='login')
+
+
+class ItemListCreateView(CreateView):
+    model = ItemList
+    fields = ["name"]
+    template_name = "item_lists/item_list_form.html"
+
+    def get_success_url(self):
+        return f'/item-lists/{self.object.pk}/'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class ItemListDeleteView(DeleteView):
+    # specify the model you want to use
+    model = ItemList
+    success_url ="/items"
+     
+    template_name = "item_lists/confirm_delete.html"
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user == request.user:
+            success_url = self.get_success_url()
+            self.object.delete()
+            return redirect(success_url)
+        else:
+            return http.HttpResponseForbidden("Cannot delete other's lists") #todo this doesnt work
