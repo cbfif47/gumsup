@@ -36,10 +36,6 @@ h2 {
   font-size: 1.7em;
 }
 
-a {
-  color: #6203fc;
-}
-
 bio {
     color:black;
     font-style: italic;;
@@ -58,6 +54,7 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   font-family: 'Cutive Mono', monospace;
   font-size: 16px;
   text-transform: lowercase;
+  color:black;
 }
 
 .error, input[type=text].error {
@@ -427,6 +424,7 @@ input[type=submit]:hover {
 .smalllink {
   font-size: 0.8em;
   float: right;
+  margin-top: 5px;
 }
 
 .list-name {
@@ -440,6 +438,7 @@ input[type=submit]:hover {
   opacity: 75%;
   font-family: 'VT323',monospace;
   font-size: 0.9em;
+  color: black;
 }
 
 .list-name a {
@@ -457,5 +456,14 @@ input[type=submit]:hover {
   cursor: pointer;
   border: 0px;
   padding: 0px;
+  background: none;
+}
+
+.vertical-center {
+  padding:0.5em;
+}
+
+a {
+  color: #6203fc;
 }
 

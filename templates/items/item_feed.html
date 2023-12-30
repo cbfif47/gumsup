@@ -31,6 +31,7 @@
       {% endfor %}
     </div>
   </div>
+{% if show_lists %}
     <div class="dropdown">
     {% if selected_item_list %}
       <button onclick="openList()" class="dropbtn">{{ selected_item_list.name|upper }} ⌄</button>
@@ -47,10 +48,12 @@
       {% endfor %}
     </div>
   </div>
-</div>
 <div class="row">
   <a class="smalllink" href="{% url 'create-item-list' %}">create new list</a>
 </div>
+{% else %}
+</div>
+{% endif %}
   {% if items %}
     {% for item in items %}
       {% include 'items/item_card.html' %}

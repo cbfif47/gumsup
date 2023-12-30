@@ -32,7 +32,7 @@
         <div class="col-100">
           <div class="row">
             <button class="item-type">{{ item.item_type }}</button>
-            {% if item.item_list %}
+            {% if item.item_list and show_lists %}
             <a href="{% url 'view-item-list' item.item_list.id %}"><button class="list-name">{{ item.item_list }}</button></a>
             {% endif %}
           </div>

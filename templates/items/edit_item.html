@@ -26,11 +26,52 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-15 vertical-center">started:</div>
+      <div class="col-85">{{ form.started_date }}</div>
+    </div>
+    <div class="row">
+      <div class="col-15 vertical-center">ended:</div>
+      <div class="col-85">{{ form.ended_date }}</div>
+    </div>
+    <div class="row">
       <div class="col-100" style="padding-right: 2px;">
         {{ form.review }}
       </div>
     </div>
-    <div class="row tabs col-100">
+    <div class="row">
+      <div class="tabs">
+          <label class="tab" for="{{ form.rating.1.id_for_label }}">
+          {{ form.rating.1.tag }}
+            <div class="tab-box"><img src="{% static 'starsmall.png' %}" height="14px"></div>
+          </label>
+          <label class="tab" for="{{ form.rating.2.id_for_label }}">
+          {{ form.rating.2.tag }}
+            <div class="tab-box">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+          <label class="tab" for="{{ form.rating.3.id_for_label }}">
+          {{ form.rating.3.tag }}
+            <div class="tab-box">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+          <label class="tab" for="{{ form.rating.4.id_for_label }}">
+          {{ form.rating.4.tag }}
+            <div class="tab-box">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+          <label class="tab" for="{{ form.rating.4.id_for_label }}">
+          {{ form.rating.5.tag }}
+            <div class="tab-box">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="tabs">
         {% for radio in form.status %}
         <label class="tab" for="{{ radio.id_for_label }}">
         {{ radio.tag }}
@@ -38,53 +79,10 @@
         </label>
         {% endfor %}
     </div>
-    <div>
-        Started:
-    </div>
-    <div>
-        {{ form.started_date }}
-    </div>
-    <div>
-        Finished/Abandoned:
-    </div>
-    <div>
-        {{ form.ended_date }}
-    </div>
-    <div class="row tabs col-100">
-        <label class="tab" for="{{ form.rating.1.id_for_label }}">
-        {{ form.rating.1.tag }}
-          <div class="tab-box"><img src="{% static 'starsmall.png' %}" height="14px"></div>
-        </label>
-        <label class="tab" for="{{ form.rating.2.id_for_label }}">
-        {{ form.rating.2.tag }}
-          <div class="tab-box">
-            <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-        </div>
-        </label>
-        <label class="tab" for="{{ form.rating.3.id_for_label }}">
-        {{ form.rating.3.tag }}
-          <div class="tab-box">
-            <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-        </div>
-        </label>
-        <label class="tab" for="{{ form.rating.4.id_for_label }}">
-        {{ form.rating.4.tag }}
-          <div class="tab-box">
-            <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-        </div>
-        </label>
-        <label class="tab" for="{{ form.rating.4.id_for_label }}">
-        {{ form.rating.5.tag }}
-          <div class="tab-box">
-            <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-        </div>
-        </label>
     </div>
     
     <div class="row">
-      <div class="col-100" style="padding-right: 2px;">
         {{ form.item_list }}
-      </div>
     <div class="row ">
         <input id="post-button" type="submit" value="save">
     </div>

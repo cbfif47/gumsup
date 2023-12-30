@@ -629,6 +629,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
             form.fields['item_list'].empty_label= None
             context['form']= form
+            context['show_lists'] = True
 
             return render(request, 'items/items.html', context)
         else:
