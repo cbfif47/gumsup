@@ -3,7 +3,7 @@
 {% load static %}
       <div class="postcard">
           <div class="row">
-            <div class="col-85">
+            <div class="col-70">
               {{ item.status|statustoemoji }}
                 {% if item.user == request.user %}
                   <a href="{% url 'edit-item' item.id %}">
@@ -12,6 +12,21 @@
                 {%  endif %}
                 <what>{{ item.name}}</what></a>
             <category>{{ item.item_type }}</category>
+            </div>
+            <div class="col 30">
+              <div class="action-buttons">
+                {% if item.status == 1 %}
+                  <form method="POST" action="{% url 'start-item' item.id %}?from=items" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="tertiary-button" value="start" onclick="clicked(event)" />start</button>
+                  </form>
+                {% endif %}
+                {% if item.ended_date is None %}
+                  <form method="GET" action="{% url 'finish-item' item.id %}" style="display:inline;">
+                    <button type="submit" class="tertiary-button"/>finish</button>
+                  </form>
+                  {% endif %}
+              </div>
             </div>
             {% if item.rating %}
               <div class="userbadge">
@@ -28,9 +43,6 @@
                 {% endif %}
               </div>
             {% endif %}
-          <div class="col-15">
-            <div class="time-since">{{ item.status|statustoaction }} {{ item.last_date|dayssince }}</div>
-          </div>
         </div>
         <div class="row">
           {% if item.ended_date %}
@@ -39,17 +51,12 @@
             <why>{{ item.note|lower|striptags|url_mention }}</why>
           {% endif %}
         </div>
+        {% if item.item_list %}
         <div class="row">
-          {% if item.status == 1 %}
-            <form method="POST" action="{% url 'start-item' item.id %}?from=items" style="display:inline;">
-              {% csrf_token %}
-              <input type="submit" class="button" value="start" onclick="clicked(event)" />
-            </form>
-          {% endif %}
-          {% if item.ended_date is None %}
-            <form method="GET" action="{% url 'finish-item' item.id %}" style="display:inline;">
-              <input type="submit" value="finish" />
-            </form>
-            {% endif %}
+          <div class="list-name">
+          <a href="{% url 'view-item-list' item.item_list.id %}">{{ item.item_list }}</a>
+          </div>
         </div>
+        {% endif %}
+        <div class="time-since">{{ item.status|statustoaction }} {{ item.last_date|dayssince }}</div>
       </div>

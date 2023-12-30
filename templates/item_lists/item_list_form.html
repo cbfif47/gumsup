@@ -4,7 +4,7 @@
 
   {% block content %}
     <div class="row">
-      <form action="{% url 'create-item-list' %}" method="post">  
+      <form action="" method="post">  
     {% csrf_token %}
     {{ form.as_p }}
     

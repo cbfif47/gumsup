@@ -3,8 +3,13 @@
 {% block title %}feed{% endblock %}
 {% load static %}
   {% block content %}
-  <h1>{{ item_list.name }}</h1>hi
-  
+  <h1>{{ item_list.name }}</h1>
+  <div class="row">
+      <button class="tertiary-button">
+      <a href="{% url 'edit-item-list' item_list.id %}">edit name</a></button>
+      <button class="tertiary-button">
+      <a href="{% url 'delete-item-list' item_list.id %}">delete list</a></button>
+      </div>
       {% include 'items/item_feed.html' %}
 
     {% endblock %}

@@ -1,10 +1,10 @@
 {% load static %}
 {% block content %}
 <div class="row">
-  {% if selected_status is None %}
-  <strong><a href ="?{{ item_type_param }}{{ item_list_param }}{{ query_param }}">ALL</a></strong>
+  {% if selected_status is None and selected_item_type is None and selected_list is None %}
+  <strong><a>ALL</a></strong>
   {% else %}
-  <a href ="?{{ item_type_param }}{{ item_list_param }}{{ query_param }}">ALL</a>
+  <a href ="{% url 'items' %}">ALL</a>
   {% endif %}
   {% for status in statuses %}
         {% if selected_status == status.1|lower %}
@@ -39,7 +39,7 @@
     {% else %}
       <button onclick="openList()" class="dropbtn">LIST ⌄</button>
       <div class="dropdown-options" id ="listDropdown">
-      <li><a href="{% url 'create-item-list' %}">* CREATE LIST *</a></li>
+      <li><a href="{% url 'create-item-list' %}">*CREATE NEW LIST*</a></li>
     {% endif %}
       {% for item_list in item_lists %}
         {% if selected_item_list.name != item_list.name or selected_item_list is None %}
@@ -49,13 +49,13 @@
     </div>
   </div>
 </div>
-<div class="row">
-      <a href="?" class="clearfilters">clear all filters</a>
-</div>
-  {% for item in items %}
-    {% include 'items/item_card.html' %}
-  {% endfor %}
-
+  {% if items %}
+    {% for item in items %}
+      {% include 'items/item_card.html' %}
+    {% endfor %}
+  {% else %}
+    nothing to see here!
+  {% endif %}
   {% if items.has_next %}
     <a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.next_page_number }}">more</a>
   {% endif %}

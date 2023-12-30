@@ -47,6 +47,7 @@ class User(BaseModel, AbstractUser):
         self.email = self.email.lower() # force lowercase
         if self._state.adding is True:
             super().save(*args, **kwargs)
+            ItemList.objects.create(user=self,name='default list',is_default=True)
             if User.objects.filter(username='gummy').exists():
                 Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
                 Follow.objects.create(user=self,following=self)
@@ -303,6 +304,7 @@ class ItemList(BaseModel):
     user = models.ForeignKey(
         User, verbose_name="List created By", on_delete=models.CASCADE,related_name="list_by")
     name = models.CharField(max_length=50, blank=False)
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name}"
@@ -310,7 +312,7 @@ class ItemList(BaseModel):
     class Meta:
         """Metadata."""
 
-        ordering = ["-created"]
+        ordering = ["-is_default","-created"]
 
 
 class Item(BaseModel):
@@ -389,7 +391,7 @@ class Item(BaseModel):
         elif self.status == 4 and self.ended_date:
             self.last_date = self.ended_date
         else:
-            self.last_date = timezone.now().date()
+            self.last_date = self.created.date()
         super().save(*args, **kwargs)
 
     def __str__(self):

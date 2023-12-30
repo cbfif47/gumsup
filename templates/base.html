@@ -18,7 +18,8 @@
           {% if request.user.is_authenticated %}
             <breadcrumb>
               <a href="{%url 'home'%}" class="logo">FEED</a>
-              <a href="{%url 'saves' %}" class="logo">SAVES</a>
+              <a href="{%url 'items' %}" class="logo">MY STUFF</a>
+              <a href="{%url 'item-lists' %}" class="logo">LISTS</a>
               <a href="{%url 'search-posts' %}" class="logo">SEARCH</a>
               </breadcrumb>
           <user_greeting>

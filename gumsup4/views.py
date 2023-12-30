@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView, UpdateView
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
@@ -74,6 +74,10 @@ class FilterableItemsMixin:
             selected_status = Item.status.field.choices[int(status) - 1][1]
         else:
             selected_status = None
+        if item_type != '':
+            selected_item_type = item_type
+        else:
+            selected_item_type = None
 
         #filter_params
         status_param = 'status=' + status
@@ -98,7 +102,7 @@ class FilterableItemsMixin:
         context = {
             'items': page_obj,
             'item_type_param': item_type_param,
-            'selected_item_type': item_type,
+            'selected_item_type': selected_item_type,
             'selected_item_list': selected_item_list,
             'selected_status': selected_status,
             'status_param': status_param,
@@ -623,7 +627,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             new_item = Item(user=request.user,status=1)
             form = ItemFormMain(instance=new_item)
             form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-            form.fields['item_list'].empty_label="(choose list)"
+            form.fields['item_list'].empty_label= None
             context['form']= form
 
             return render(request, 'items/items.html', context)
@@ -707,7 +711,7 @@ class ItemEditView(TemplateView):
             if item.user == request.user:
                 form = ItemEditForm(instance=item)
                 form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-                form.fields['item_list'].empty_label="(choose list)"
+                form.fields['item_list'].empty_label= None
                 context= {
                     'form': form,
                     'item': item
@@ -852,3 +856,24 @@ class ItemListDeleteView(DeleteView):
             return redirect(success_url)
         else:
             return http.HttpResponseForbidden("Cannot delete other's lists") #todo this doesnt work
+
+
+class ItemListListView(ListView):
+    # specify the model you want to use
+    model = ItemList
+    paginate_by = 100
+    context_object_name = 'item_lists'
+    template_name = "item_lists/item_lists.html"
+    def get_queryset(self):
+        return ItemList.objects.filter(user=self.request.user)
+
+
+class ItemListEditView(UpdateView):
+    model = ItemList
+    fields = ["name"]
+    template_name = "item_lists/item_list_form.html"
+
+    def get_success_url(self):
+        return f'/item-lists/{self.object.pk}/'
+
+        
