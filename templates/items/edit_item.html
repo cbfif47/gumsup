@@ -19,10 +19,16 @@
         {{ form.name }}
       </div>
     </div>
+    </div>
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
         {{ form.note }}
+      </div>
     </div>
-    </div>
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
         {{ form.review }}
+      </div>
     </div>
     <div class="row tabs col-100">
         {% for radio in form.status %}
@@ -74,7 +80,11 @@
         </div>
         </label>
     </div>
-
+    
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
+        {{ form.item_list }}
+      </div>
     <div class="row ">
         <input id="post-button" type="submit" value="save">
     </div>

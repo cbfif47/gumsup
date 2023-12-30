@@ -622,6 +622,8 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             context = self.make_filtered_context(items,request)
             new_item = Item(user=request.user,status=1)
             form = ItemFormMain(instance=new_item)
+            form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
+            form.fields['item_list'].empty_label="(choose list)"
             context['form']= form
 
             return render(request, 'items/items.html', context)
@@ -704,6 +706,8 @@ class ItemEditView(TemplateView):
             item = get_object_or_404(Item, id = item_id)
             if item.user == request.user:
                 form = ItemEditForm(instance=item)
+                form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
+                form.fields['item_list'].empty_label="(choose list)"
                 context= {
                     'form': form,
                     'item': item

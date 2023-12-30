@@ -348,6 +348,7 @@ input[type=submit]:hover {
   background: none;
   font-family: 'VT323', monospace;
   font-size: 1.2em;
+  color: black;
 }
 
 .dropdown-options {
@@ -366,6 +367,7 @@ input[type=submit]:hover {
 .dropdown-options a {
   display: block;
   text-decoration: none;
+  color:black;
 }
 
 .show {display:block;}

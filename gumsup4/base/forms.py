@@ -67,17 +67,18 @@ class RegisterForm(UserCreationForm):
 
 
 class ItemFormMain(forms.ModelForm):
-   class Meta:
-     model = Item
-     fields = {'name','item_type','note','user','item_list'}
-     widgets = {
-            "name": forms.TextInput(attrs={'placeholder': 'what is it'
-              }),
-            "item_list": forms.Select(),
-            "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'
-              ,"rows": 3}),
-            "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
-      }
+
+  class Meta:
+   model = Item
+   fields = {'name','item_type','note','user','item_list'}
+   widgets = {
+          "name": forms.TextInput(attrs={'placeholder': 'what is it'
+            }),
+          "item_list": forms.Select(),
+          "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'
+            ,"rows": 3}),
+          "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
+    }
 
 
 
@@ -99,10 +100,11 @@ class ItemFormFinished(forms.ModelForm):
 class ItemEditForm(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','review','rating','ended_date', 'started_date','item_type','note','status'}
+     fields = {'name','review','rating','ended_date', 'started_date','item_type','note','status','item_list'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it'
               }),
+            "item_list": forms.Select(),
             "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'
               ,"rows": 3}),
             "review": forms.Textarea(attrs={'placeholder': 'what did you think?'
