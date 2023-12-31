@@ -56,4 +56,15 @@ def statustoemoji(status):
     elif status == 3:
         return '✅'
     elif status == 4:
-        return '❌'
+        return ''
+
+@register.filter(name='statustoimage', is_safe=True)
+def statustoimage(status):
+    if status == 1:
+        return 'later.png'
+    elif status == 2:
+        return 'now.png'
+    elif status == 3:
+        return 'check.png'
+    elif status == 4:
+        return 'x.png'

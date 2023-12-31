@@ -3,17 +3,23 @@
 {% load static %}
       <div class="postcard">
           <div class="row">
+            {% if item.rating %}
             <div class="col-70">
-              {{ item.status|statustoemoji }}
+            {% else %}
+            <div class="col-100">
+            {% endif %}
+            <p class="name">
+              <img src="{% static item.status|statustoimage %}">
                 {% if item.user == request.user %}
                   <a href="{% url 'edit-item' item.id %}">
                 {% else %}
                   <a href="{% url 'view-item' item.id %}">
                 {%  endif %}
-                <what>{{ item.name}}</what></a>
+                {{ item.name}}
+                </a></p>
             </div>
-            <div class="col 30">
             {% if item.rating %}
+            <div class="col 30">
               <div class="userbadge">
                {% if item.rating == 1%}
                   <img src="{% static 'starsmall.png' %}" height="14px">
@@ -26,9 +32,9 @@
                 {% elif item.rating == 5 %}
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                 {% endif %}
-              </div>
+                </div>
+                </div>
             {% endif %}
-        </div>
         <div class="col-100">
           <div class="row">
             <button class="item-type">{{ item.item_type }}</button>

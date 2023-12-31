@@ -46,6 +46,7 @@ bio {
 
 input[type=text], select, textarea, input[type=search], input[type=password], input[type=date] {
   width: 100%;
+  appearance: none;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -218,6 +219,23 @@ what {
   font-family: 'VT323',monospace;
   font-size: 18px;
   word-break: break-word;
+  margin-bottom: 10px;
+}
+
+.name {
+  text-shadow: 1px 1px cyan;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: black;
+  font-family: 'VT323',monospace;
+  font-size: 18px;
+  word-break: break-word;
+  margin-top: 0px;
+  margin-bottom: 0.3em;
+}
+
+.name a {
+  color: black;
 }
 
 .mention {
