@@ -208,7 +208,6 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   text-align: center;
   border-radius: 5px;
   float:right;
-  opacity: 50%;
   text-decoration: none;
   font-family: 'VT323',monospace;
   font-size: 18px;
@@ -467,7 +466,6 @@ input[type=submit]:hover {
   border-radius: 5px;
   border:dotted 1px black;
   line-height: 1.1em;
-  opacity: 75%;
   font-family: 'VT323',monospace;
   font-size: 0.9em;
   color: black;
