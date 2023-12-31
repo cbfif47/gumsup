@@ -657,6 +657,46 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             return redirect(to='login')
 
 
+class ItemsFeedView(FilterableItemsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+
+        if request.user.is_authenticated:
+            items = request.user.item_feed()
+            context = self.make_filtered_context(items,request)
+            new_item = Item(user=request.user,status=1)
+            form = ItemFormMain(instance=new_item)
+            form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
+            form.fields['item_list'].empty_label= None
+            context['form']= form
+            context['show_lists'] = False
+
+            return render(request, 'items/items.html', context)
+        else:
+            return redirect(to='login')
+
+    def post(self,request, **kwargs):
+        if request.user.is_authenticated:
+
+            f = ItemFormMain(request.POST)
+            if f.is_valid():                
+                new_item = f.save()
+                if request.GET.get('status', '') == 'done':
+                    return redirect(to='finish-item',item_id=new_item.id)
+                else:
+                    return redirect(to='items')
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                            'form': f
+                            ,'messages': ["U forgot some fields"]
+                        }
+                return render(request, "items/item_form_main.html", context)
+        else:
+            return redirect(to='login')
+
+
 class FinishItemView(TemplateView):
 
     def get(self, request, item_id, **kwargs):

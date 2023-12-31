@@ -72,6 +72,10 @@ class User(BaseModel, AbstractUser):
         feed = Post.objects.filter(user__followers__user=self)
         return feed
 
+    def item_feed(self):
+        feed = Item.objects.filter(user__followers__user=self)
+        return feed
+
     def follower_list(self):
         followed_by = User.objects.filter(follows__following=self).filter(~Q(id=self.id))
         return followed_by
