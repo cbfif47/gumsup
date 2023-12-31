@@ -91,8 +91,8 @@ class ItemFormFinished(forms.ModelForm):
               }),
             "review": forms.Textarea(attrs={'placeholder': 'what did you think?'
               ,"rows": 3}),
-            "ended_date": forms.DateInput(attrs={'class':'datepicker'}),
-            "started_date": forms.DateInput(attrs={'class':'datepicker'}),
+            "ended_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
+            "started_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
             "rating": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
       }
 

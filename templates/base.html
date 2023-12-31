@@ -49,6 +49,14 @@
         <footer class="footer">
         </footer>
 <script type="text/javascript">
+function validateForm() {
+      let x = document.forms["mainform"]["name"].value;
+      if (x == "") {
+        alert("Name must be filled out");
+        return false;
+      }
+    }
+    
   function clicked(e)
     {
         if(!confirm('Are you sure?')) {

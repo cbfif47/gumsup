@@ -391,7 +391,7 @@ class Item(BaseModel):
         elif self.status == 4 and self.ended_date:
             self.last_date = self.ended_date
         else:
-            self.last_date = self.created.date()
+            self.last_date = timezone.now()
         super().save(*args, **kwargs)
 
     def __str__(self):
