@@ -7,9 +7,11 @@
   <div class="row">
       <button class="tertiary-button">
       <a href="{% url 'edit-item-list' item_list.id %}">edit name</a></button>
-      <button class="tertiary-button">
-      <a href="{% url 'delete-item-list' item_list.id %}">delete list</a></button>
-      </div>
+      {% if not item_list.is_default %}
+        <button class="tertiary-button">
+        <a href="{% url 'delete-item-list' item_list.id %}">delete list</a></button>
+      {% endif %}
+        </div>
       {% include 'items/item_feed.html' %}
 
     {% endblock %}

@@ -1,6 +1,6 @@
 {% load static %}
   {% block content %}
-  <form action="" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
+  <form action="{% url 'items' %}?from={{ from }}" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
         {% csrf_token %}{{ form.user.as_hidden }}
     </div>
     <div class="row">
@@ -30,7 +30,7 @@
         <input id="post-button" type="submit" value="save for later" >
     </div>
       <div class="row">
-          <button class="secondary-button" type="submit" formaction="?status=done">finished it</button>
+          <button class="secondary-button" type="submit" formaction="{% url 'items' %}?status=done&from={{ from }}">finished it</button>
       </div>
     </form>
     {% endblock %}

@@ -29,7 +29,7 @@
     </div>
   </div><br>
       {% if request.user == user or is_following or user.is_private == False %}
-        {% include 'posts/feed.html' %}
+        {% include 'items/item_feed.html' %}
       {% else %}
         <img src="{% static 'locked.png' %}" height="16px"> {{ user.username }} is private, but you can still request to follow.
       {% endif %}

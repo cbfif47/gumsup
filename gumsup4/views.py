@@ -341,12 +341,12 @@ class UserFollowingView(TemplateView):
             return redirect(to='login')
 
 
-class UserView(FilterablePostsMixin,TemplateView):
+class UserView(FilterableItemsMixin,TemplateView):
 
     def get(self, request, username, **kwargs):
         if request.user.is_authenticated:
             user = get_object_or_404(User, username = username)
-            raw_feed = Post.objects.filter(user=user)
+            raw_feed = Item.objects.filter(user=user)
             context = self.make_filtered_context(raw_feed,request)
             context["user"] = user
 
@@ -630,6 +630,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             form.fields['item_list'].empty_label= None
             context['form']= form
             context['show_lists'] = True
+            context['from'] = 'items'
 
             return render(request, 'items/items.html', context)
         else:
@@ -644,7 +645,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
                 if request.GET.get('status', '') == 'done':
                     return redirect(to='finish-item',item_id=new_item.id)
                 else:
-                    return redirect(to='items')
+                    return redirect(to=request.GET.get('from', ''))
             else:
                 for field in f.errors:
                     f[field].field.widget.attrs['class'] = 'error'
@@ -670,29 +671,9 @@ class ItemsFeedView(FilterableItemsMixin,TemplateView):
             form.fields['item_list'].empty_label= None
             context['form']= form
             context['show_lists'] = False
+            context['from'] = 'home'
 
             return render(request, 'items/items.html', context)
-        else:
-            return redirect(to='login')
-
-    def post(self,request, **kwargs):
-        if request.user.is_authenticated:
-
-            f = ItemFormMain(request.POST)
-            if f.is_valid():                
-                new_item = f.save()
-                if request.GET.get('status', '') == 'done':
-                    return redirect(to='finish-item',item_id=new_item.id)
-                else:
-                    return redirect(to='items')
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                            'form': f
-                            ,'messages': ["U forgot some fields"]
-                        }
-                return render(request, "items/item_form_main.html", context)
         else:
             return redirect(to='login')
 
@@ -839,7 +820,7 @@ class ItemStartView(TemplateView):
             return redirect(to='login')
 
 
-class ItemListView(TemplateView):
+class ItemListView(FilterableItemsMixin,TemplateView):
     
     def post(self, request, item_list_id, **kwargs):
         if request.user.is_authenticated:
@@ -859,10 +840,8 @@ class ItemListView(TemplateView):
             item_list = get_object_or_404(ItemList, id = item_list_id)
             items = Item.objects.filter(item_list=item_list)
             if item_list.user == request.user:
-                context = {
-                    'item_list': item_list,
-                    'items': items
-                }
+                context = self.make_filtered_context(items,request)
+                context['item_list'] = item_list
 
             return render(request, 'item_lists/view_item_list.html', context)
         else:

@@ -4,7 +4,7 @@
   {% if selected_status is None and selected_item_type is None and selected_list is None %}
   <strong><a>ALL</a></strong>
   {% else %}
-  <a href ="{% url 'items' %}">ALL</a>
+  <a href ="?status={{ query_param }}">ALL</a>
   {% endif %}
   {% for status in statuses %}
         {% if selected_status == status.1|lower %}
