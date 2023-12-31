@@ -438,10 +438,24 @@ input[type=submit]:hover {
   padding: 1px 6px;
   text-align: center;
   border-radius: 5px;
+  border: solid 2px black;
   color: black;
   background-color: #dbdbdb;
   background: #dbdbdb;
   cursor: pointer;
+  display: inline;
+  text-decoration: none;
+  font-family: 'VT323', monospace;
+}
+
+.tertiary-button-disabled {
+  padding: 1px 6px;
+  text-align: center;
+  border-radius: 5px;
+  border: solid 2px #dbdbdb;
+  color: #dbdbdb;
+  background-color: #f0f0f0;
+  background: #f0f0f0;
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
