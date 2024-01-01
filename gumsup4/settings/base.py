@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    'allauth.socialaccount.providers.google',
     "rest_framework",
     "django_filters",
     "django_redis",
@@ -137,3 +138,20 @@ STATIC_ROOT  = os.path.join(BASE_DIR, "static")
 STATICFILES_STORAGE="whitenoise.storage.CompressedStaticFilesStorage"#add this line
 
 SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv("GOOGLE_CLIENT_ID", "redis://redis:6379/0"),
+            'secret': os.getenv("GOOGLE_SECRET", "redis://redis:6379/0"),
+            'key': ''
+        },
+        'SCOPE': [
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}

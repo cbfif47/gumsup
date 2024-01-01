@@ -46,6 +46,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
+    path('accounts/', include('allauth.socialaccount.urls')),
     path("api/", include(router.urls)),
     path("signup/", views.RegisterView.as_view(), name="signup"),
     path("search-users/", views.SearchUsersList.as_view(), name='search-users'),
@@ -60,4 +61,5 @@ urlpatterns = [
     path("users/<username>/follow-requests/", views.UserFollowRequestsView.as_view(), name="follow-requests"),
     path("saves/<post_id>", views.SavedPostView.as_view(), name='save'),
     path("saves/", views.SavedPostsView.as_view(), name='saves'),
+    path("welcome/", views.TemplateView.as_view(template_name='users/welcome.html'), name='welcome'),
 ]

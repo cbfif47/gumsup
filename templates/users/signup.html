@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load socialaccount %}
 {% block title %}sign up {% endblock %}
 
 {% block content %}
@@ -13,6 +13,7 @@
 </div>
 <div class="row">
 	<br>
+    <a href="{% provider_login_url 'google' %}">Sign up with Google</a>
     <a href="{% url 'login' %}">already have an account? login instead</a>
 </div>
 {% endblock content %}

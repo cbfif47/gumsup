@@ -1,0 +1,35 @@
+{%extends 'base.html'%}
+{% block title %}login{% endblock %}
+
+{%block content%}
+  <div class="row">
+	  <form method="post" class="card" novalidate>
+	  	{% csrf_token %}
+<h1>welcome to REX WITH FRIENDS</h1>
+<div>we're so glad you're here. this is a place to:
+	<ul>
+		<li>keep track of stuff to watch, read, listen to, etc</li>
+		<li>organize it with lists</li>
+		<li>rate and review it</li>
+		<li>see stuff your friends are checking out</li>
+	</ul>
+</div>
+<hr>
+	<strong>FEED</strong> shows activity from you and people you follow
+	<ul>
+		<li>your lists are private and only visible to you</li>
+		<li>everything else is visible to your followers</li>
+		<li>by default anyone can follow you, but take your profile private to have approval on follow requests.
+	</ul>
+
+	<hr>
+	<strong>MINE</strong> shows just your activity
+	<ul>
+		<li>filter by list, status and type</li>
+		<li>mark stuff as started, finished, or quit</li>
+		<li>rate it when you're done</li>
+	</ul>
+
+<button class="primary-button"><a href="{% url 'items' %}">START LOGGING STUFF</a></button>
+
+{%endblock content%}
