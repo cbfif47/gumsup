@@ -1,25 +1,15 @@
 {%extends 'base.html'%}
+{% load socialaccount %}
 {% block title %}login{% endblock %}
 
 {%block content%}
+<h1>welcome to REX WITH FRIENDS</h1>
+<br>
   <div class="row">
-	  <form method="post" class="card" novalidate>
-	  	{% csrf_token %}
-<h1>welcome back to REX WITH FRIENDS</h1>
-		{% for field in form %}
-	    		{{ field.label_tag }} 
-	        	{{ field }}
-	        	{% if field.errors %}
-	        		<small>{{ field.errors|striptags }}</small> 
-	        	{% endif %}
-		{% endfor %}
-		
-        <input id="post-button" type="submit" value="login">
-	</form>
-</div>
-<div class="row">
-	<br>
-		<a href="{% url 'signup' %}">don't have an account yet? signup instead</a>
+	<form method="post" action="{% provider_login_url 'google' %}">
+    {% csrf_token %}
+          
+	<button type="submit" class="primary-button" style="margin: auto;display: grid;float: none;">login or sign-Up with google</button>
 </div>
 
 {%endblock content%}

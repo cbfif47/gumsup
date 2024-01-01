@@ -61,5 +61,5 @@ urlpatterns = [
     path("users/<username>/follow-requests/", views.UserFollowRequestsView.as_view(), name="follow-requests"),
     path("saves/<post_id>", views.SavedPostView.as_view(), name='save'),
     path("saves/", views.SavedPostsView.as_view(), name='saves'),
-    path("welcome/", views.TemplateView.as_view(template_name='users/welcome.html'), name='welcome'),
+    path("welcome/", views.WelcomeView.as_view(), name='welcome'),
 ]

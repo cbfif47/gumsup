@@ -414,6 +414,43 @@ class UserEditView(TemplateView):
             return redirect(to='login')
 
 
+class WelcomeView(TemplateView):
+
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.username:
+                return redirect('items')
+            else:
+                context = {
+                    'form': UserEditForm(instance = request.user),
+                    'include_logout': True,
+                    'user': request.user
+                }
+                return render(request, 'users/welcome.html', context)
+        else:
+            return redirect(to='login')
+
+    def post(self, request, **kwargs):
+
+        if request.user.is_authenticated:
+            f = UserEditForm(request.POST, instance=request.user)
+
+            if f.is_valid():
+                updated_user = f.save()
+                return redirect(to='items')
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                    'form': f,
+                    'include_logout': True,
+                    'user': request.user
+                }
+                return render(request, "users/edit-user.html", context)
+        else:
+            return redirect(to='login')
+
+
 class LoginView(LoginView):
     redirect_authenticated_user = True
     template_name = 'users/login.html'
@@ -449,6 +486,7 @@ class RegisterView(View):
             return redirect(to='home')
 
         return render(request, self.template_name, {'form': form})
+
 
 
 class SearchUsersList(TemplateView):

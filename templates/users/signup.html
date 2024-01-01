@@ -16,4 +16,15 @@
     <a href="{% provider_login_url 'google' %}">Sign up with Google</a>
     <a href="{% url 'login' %}">already have an account? login instead</a>
 </div>
+<form method="post" action="{% provider_login_url 'google' %}">
+    {% csrf_token %}
+          
+<button type="submit">
+
+                Continue
+            
+</button>
+
+        
+</form>
 {% endblock content %}

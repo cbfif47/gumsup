@@ -30,7 +30,7 @@ class User(BaseModel, AbstractUser):
     username = models.CharField(
         "username",
         max_length = 20,
-        unique = True,
+        unique = True,blank=True,null=True,
         validators=[validators.RegexValidator(r'^([A-Za-z0-9])+(?:-\w*)*$'
             ,('username can only have letters, digits, underscores and hyphens'))
             ,validators.MinLengthValidator(3, 'username needs to be at least 3 characters'),
@@ -42,15 +42,17 @@ class User(BaseModel, AbstractUser):
 
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):
-        self.username = self.username.lower() # force lowercase
-        self.bio = self.bio.lower() # force lowercase
+        if self.username:
+            self.username = self.username.lower() # force lowercase
+        if self.bio:
+            self.bio = self.bio.lower() # force lowercase
         self.email = self.email.lower() # force lowercase
         if self._state.adding is True:
             super().save(*args, **kwargs)
             ItemList.objects.create(user=self,name='default list',is_default=True)
             if User.objects.filter(username='gummy').exists():
                 Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
-                Follow.objects.create(user=self,following=self)
+                # Follow.objects.create(user=self,following=self) -- no more as of 2024
         else:
             super().save(*args, **kwargs)
 
@@ -117,6 +119,12 @@ class User(BaseModel, AbstractUser):
                                         """,[self.id,self.id])
 
         return user_list
+
+    def __str__(self):
+        if self.username:
+            return f"{self.username}"
+        else:
+            return f"new user"
 
     class Meta:
         """Metadata."""
@@ -405,4 +413,3 @@ class Item(BaseModel):
         """Metadata."""
 
         ordering = ["-last_date","-updated"]
-

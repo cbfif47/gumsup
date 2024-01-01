@@ -54,9 +54,11 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_USERNAME_MIN_LENGTH = 3
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+#ACCOUNT_USERNAME_MIN_LENGTH = 3
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -142,12 +144,12 @@ SITE_ID = 1
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': os.getenv("GOOGLE_CLIENT_ID", "redis://redis:6379/0"),
-            'secret': os.getenv("GOOGLE_SECRET", "redis://redis:6379/0"),
+            'client_id': os.getenv("GOOGLE_CLIENT_ID"),
+            'secret': os.getenv("GOOGLE_SECRET"),
             'key': ''
         },
         'SCOPE': [
-            'email',
+            'email','profile',
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
@@ -155,3 +157,5 @@ SOCIALACCOUNT_PROVIDERS = {
         'OAUTH_PKCE_ENABLED': True,
     }
 }
+
+LOGIN_REDIRECT_URL = '/welcome/'

@@ -4,4 +4,5 @@ pytest-coverage
 wait-for-it
 black
 base
+python-dotenv
 -r requirements.txt

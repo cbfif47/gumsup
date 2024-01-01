@@ -1,35 +1,63 @@
-{%extends 'base.html'%}
-{% block title %}login{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{%block content%}
-  <div class="row">
-	  <form method="post" class="card" novalidate>
-	  	{% csrf_token %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'main.css' %}" />
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" >
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Sono:wght@300;700&family=VT323&display=swap" rel="stylesheet">
+        <title>REX: welcome</title>
+    </head>
+
+    <body>
+ 
+        <main>
+            <div class="w3-container">
+              <div class="row">
 <h1>welcome to REX WITH FRIENDS</h1>
-<div>we're so glad you're here. this is a place to:
-	<ul>
-		<li>keep track of stuff to watch, read, listen to, etc</li>
-		<li>organize it with lists</li>
-		<li>rate and review it</li>
-		<li>see stuff your friends are checking out</li>
-	</ul>
-</div>
+<br>
+<p>we're so glad you're here logging cool stuff.</p>
 <hr>
-	<strong>FEED</strong> shows activity from you and people you follow
-	<ul>
-		<li>your lists are private and only visible to you</li>
-		<li>everything else is visible to your followers</li>
-		<li>by default anyone can follow you, but take your profile private to have approval on follow requests.
-	</ul>
-
+	<strong>FEED</strong> shows activity from people you follow
 	<hr>
-	<strong>MINE</strong> shows just your activity
+	<strong>MINE</strong> shows just your stuff
 	<ul>
 		<li>filter by list, status and type</li>
 		<li>mark stuff as started, finished, or quit</li>
 		<li>rate it when you're done</li>
 	</ul>
+	<hr>
+	<strong>PRIVACY</strong>
+	<ul>
+		<li>your lists are private and only visible to you</li>
+		<li>everything else is visible to your followers</li>
+		<li>by default anyone can follow you, but make your profile private to have approval on follow requests.
+	</ul>
 
-<button class="primary-button"><a href="{% url 'items' %}">START LOGGING STUFF</a></button>
+<h2>GIVE YOURSELF A NAME</h2>
+<div class="row">
+  <form action="{% url 'welcome' %}" method="post" novalidate name="welcomeform" onsubmit="return validateForm()">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+        <input class="primary-button" type="submit" value="get started">
+  </form>
+            </div>
+        </main>
+<script type="text/javascript">
+function validateForm() {
+      let x = document.forms["welcomeform"]["username"].value;
+      if (x == "") {
+        alert("gotta have a username");
+        return false;
+      }
+    }
+   
+</script>
+    </body>
 
-{%endblock content%}
+</html>
