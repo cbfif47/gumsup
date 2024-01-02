@@ -35,6 +35,7 @@ urlpatterns = [
     path("items/<item_id>/start", views.ItemStartView.as_view(), name="start-item"),
     path("items/<item_id>/delete", views.ItemDeleteView.as_view(), name="delete-item"),
     path("items/<item_id>/finish", views.FinishItemView.as_view(), name="finish-item"),
+    path("items/<item_id>/save", views.SaveItemView.as_view(), name="save-item"),
     path("item-lists/", views.ItemListListView.as_view(), name="item-lists"),
     path("item-lists/new", views.ItemListCreateView.as_view(), name="create-item-list"),
     path("item-lists/<pk>/delete", views.ItemListDeleteView.as_view(), name="delete-item-list"),

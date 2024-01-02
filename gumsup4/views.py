@@ -934,4 +934,52 @@ class ItemListEditView(UpdateView):
     def get_success_url(self):
         return f'/item-lists/{self.object.pk}/'
 
+
+class SaveItemView(TemplateView):
+
+    def get(self, request, item_id, *args, **kwargs):
+
+        if request.user.is_authenticated:
+
+            item = get_object_or_404(Item, id = item_id)
+            new_item = Item(item = item
+                , user = request.user
+                ,name = item.name
+                ,item_type = item.item_type
+                )
+            form = ItemFormMain(instance = new_item)
+            form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
+            form.fields['item_list'].empty_label= None
+
+            context = {
+                'form': form,
+                'has_new_activity': request.user.has_new_activity() ,
+                'item_lists': ItemList.objects.filter(user = request.user),
+                'from': request.GET.get('from', '')
+            }
+
+            return render(request, 'items/save-item.html', context)
+        else:
+            return redirect(to='login')
+
+    def post(self,request,post_id, *args, **kwargs):
+
+        if request.user.is_authenticated:
+
+            f = ItemFormMain(request.POST)
+            if f.is_valid():                
+                new_item = f.save()
+                return redirect(to=request.GET.get('from', 'home'))
+            else:
+                for field in f.errors:
+                    f[field].field.widget.attrs['class'] = 'error'
+                context = {
+                            'form': f
+                            ,'messages': ["U forgot some fields"],
+            'item_lists': ItemList.objects.filter(user = request.user)
+                        }
+                return render(request, "items/save-item.html", context)
+        else:
+            return redirect(to='login')
+
         
