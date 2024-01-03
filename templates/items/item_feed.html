@@ -65,7 +65,8 @@
   {% elif is_search and query == '' %}
     search something above
   {% elif from == 'home' %}
-    <br>nothing here, go <a href="{%url 'suggested' %}">find some people to follow!</a>
+    <br>nothing here yet!<br><br>
+    go <a href="{%url 'suggested' %}">find some people to follow</a> and start <a href="{% url 'items' %}">logging your stuff</a>!
   {% else %}
     nothing to see here!
   {% endif %}

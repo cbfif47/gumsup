@@ -418,7 +418,7 @@ class WelcomeView(TemplateView):
     def get(self, request, **kwargs):
         if request.user.is_authenticated:
             if request.user.username:
-                return redirect('items')
+                return redirect('home')
             else:
                 context = {
                     'form': UserEditForm(instance = request.user),
@@ -736,7 +736,7 @@ class ItemsFeedView(FilterableItemsMixin,TemplateView):
             context['show_lists'] = False
             context['from'] = 'home'
 
-            return render(request, 'items/items.html', context)
+            return render(request, 'items/feed.html', context)
         else:
             return redirect(to='login')
 

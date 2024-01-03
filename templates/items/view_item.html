@@ -1,14 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}feed{% endblock %}
+{% block title %}{{ item.name }}{% endblock %}
 {% load static %}
   {% block content %}
-  {{ item.name }}
-  {{ item.note }}
-  {{ item.review }}
-  {{ item.rating }}
-  {{ item.created }}
-  {{ item.started_date }}
-  {{ item.ended_date }}
-  {{ item.status }}
+  {% include 'items/item_card.html' %}
     {% endblock %}
