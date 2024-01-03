@@ -62,6 +62,10 @@
     {% for item in items %}
       {% include 'items/item_card.html' %}
     {% endfor %}
+  {% elif is_search and query == '' %}
+    search something above
+  {% elif from == 'home' %}
+    <br>nothing here, go <a href="{%url 'suggested' %}">find some people to follow!</a>
   {% else %}
     nothing to see here!
   {% endif %}

@@ -22,9 +22,14 @@
     </div>
    <div class="row">
       {% if request.user != user %}
-          <form method="POST">
+          <form method="POST" action="{% url 'user-follow' user.username %}">
             {% csrf_token %}
-            <input type="submit" id="post-button" value ='{{ button_text }}' />  
+            {% if button_text == 'unfollow :(' %}
+              <button type="submit" class="primary-button"  onclick="clicked(event)">{{ button_text }}</button>
+            {% else %}
+              <button type="submit" class="primary-button">{{ button_text }}</button>
+            {% endif %}
+          </form>
       {% endif %}
     </div>
   </div><br>

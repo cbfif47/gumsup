@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}search posts{% endblock %}
+{% block title %}search stuff{% endblock %}
   {% block content %}
   <h2>search</h2>
   <div class="row">
-        <button class="tertiary-button-disabled">rex</button>
+        <button class="tertiary-button-disabled">stuff</button>
         <button class="tertiary-button"><a href="{%url 'search-users' %}">people</a></button>
         <button class="tertiary-button"><a href="{%url 'suggested' %}">people you might know</a></button>
   </div>
   <div class="row">
-<form action="{% url 'search-posts' %}" method="get">
+<form action="{% url 'search-items' %}" method="get">
   <input
     type="search"
     name="q"
@@ -19,5 +19,5 @@
 </div>
 <br><br>
 
-{% include 'posts/feed.html' %}
+{% include 'items/item_feed.html' %}
 {% endblock %}

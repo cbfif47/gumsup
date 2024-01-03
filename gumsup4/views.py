@@ -360,6 +360,9 @@ class UserView(FilterableItemsMixin,TemplateView):
         else:
             return redirect(to='login')
 
+
+class UserFollowView(TemplateView):
+
     def post(self, request, username, **kwargs):
 
         if request.user.is_authenticated:
@@ -371,14 +374,10 @@ class UserView(FilterableItemsMixin,TemplateView):
                 if new_follow:
                     Activity.objects.create(user=user,follow=new_follow)
 
-            context = {
-                'posts': Post.objects.filter(user=user),
-                'user': user,
-                'button_text': get_button_text(request.user,user),
-            }
-            return render(request, 'users/user.html', context)
+            return redirect(to='user',username = username)
         else:
             return redirect(to='login')
+
 
 class UserEditView(TemplateView):
 
@@ -535,6 +534,32 @@ class SearchPostsView(FilterablePostsMixin,TemplateView):
             context['query'] = query
 
             return render(request, 'search/search-posts.html', context)
+        else:
+            return redirect(to='login')
+
+
+class SearchItemsView(FilterableItemsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+
+        context = {}
+        if request.user.is_authenticated:
+            query = request.GET.get("q",'')
+            if len(query) > 2:
+                raw_feed = Item.objects.filter(Q(name__icontains=query) #term matches
+                    & (Q(user=request.user) #owned by user
+                    | Q(user__is_private=False) #public user
+                    | Q(user__followers__user=request.user)),).distinct() #or one we're following
+                context = self.make_filtered_context(raw_feed,request)
+            else:
+                context = self.make_filtered_context(Item.objects.filter(name=''),request) #no results
+                if query != '':
+                    context['messages'] = ["Search more than 2 characters"]
+
+            context['is_search'] = True
+            context['query'] = query
+
+            return render(request, 'search/search-items.html', context)
         else:
             return redirect(to='login')
 

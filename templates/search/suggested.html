@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}people you might know{% endblock %}
   {% block content %}
-  <h2>search</h2>
+  <h2>people you might know</h2>
   <div class="row">
-        <button class="button"><a href="{%url 'search-posts' %}">rex</a></button>
-        <button class="button"><a href="{%url 'search-users' %}">people</a></button>
-        <button class="button disabled">people you might know</button>
+        <button class="tertiary-button"><a href="{%url 'search-items' %}">stuff</a></button>
+        <button class="tertiary-button"><a href="{%url 'search-users' %}">people</a></button>
+        <button class="tertiary-button-disabled">people you might know</button>
   </div>
   <div class="row">
 

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}search people{% endblock %}
   {% block content %}
-  <h2>search</h2>
+  <h2>search people</h2>
   <div class="row">
-        <button class="button"><a href="{%url 'search-posts' %}">rex</a></button>
-        <button class="button disabled">people</button>
-        <button class="button"><a href="{%url 'suggested' %}">people you might know</a></button>
+        <button class="tertiary-button"><a href="{%url 'search-items' %}">stuff</a></button>
+        <button class="tertiary-button-disabled">people</button>
+        <button class="tertiary-button"><a href="{%url 'suggested' %}">people you might know</a></button>
   </div>
   <div class="row">
   <div class="row">
@@ -17,8 +17,13 @@
   />
 </form>
 </div>
-
-{% for user in users %}
-    {% include 'users/user-card.html' %}
-  {% endfor %}
+{% if users %}
+  {% for user in users %}
+      {% include 'users/user-card.html' %}
+    {% endfor %}
+{% elif query == '' %}
+  search for somebody above
+{% else %}
+  nothing to see here!
+{% endif %}
 {% endblock %}

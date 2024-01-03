@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}mine{% endblock %}
+{% block title %}{% if from == 'home' %}
+home
+{% else %}
+mine
+{% endif %}
+{% endblock %}
   {% block content %}
   <h1>REX with FRIENDS</h1>
       {% include 'items/item_form_main.html' %}<br>
