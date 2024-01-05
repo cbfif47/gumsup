@@ -37,8 +37,7 @@ h2 {
   font-size: 1.7em;
 }
 
-bio {
-    color:black;
+.bio {
     font-style: italic;;
     border: solid 2px white;
     border-radius: 5px;
@@ -448,7 +447,7 @@ select {
 }
 
 .user-name {
-  background-color: #ff5ef2;
+  background-color: #fc7cda;
   text-align: center;
   cursor: pointer;
   border-radius: 5px;
@@ -485,8 +484,8 @@ a {
 }
 
 .center {
-  float: none;
-  margin: auto;
+  display: flex;
+  justify-content: center;
 }
 
 ul {

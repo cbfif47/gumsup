@@ -3,7 +3,7 @@
 {% block title %}{{ user.username }} {% endblock %}
 
   {% block content %}
-  <h2>{{ user.username }}</h2>
+  <h1>{{ user.username }}</h1>
   <div class="userinfo">
     <div class="row">
     {{ user.username }} has been here since {{ user.created|date:"m/d/y" }}
@@ -16,9 +16,9 @@
     {% endif %}
    </div>
     <div class="row">
-      <bio class="col-100">
+      <div class="bio">
         "{{ user.bio|lower|default:'no bio :(' }}"
-      </bio>
+      </div>
     </div>
    <div class="row">
       {% if request.user != user %}

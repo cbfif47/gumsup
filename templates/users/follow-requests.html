@@ -2,16 +2,16 @@
 {% block title %}{{ user.username }} {{ title }} {% endblock %}
   {% block content %}
 
-  <h2>Follow Requests</h2>
+  <h1>Follow Requests</h1>
   {% if follow_requests %}
     {% for request in follow_requests %}
     <div class="postcard">
 	  <div class="row">
 	    <a href="{% url 'user' request.user %}">
-	    <what>{{ request.user }}</what>
+	    <div class="name">{{ request.user }}</div>
 	    </a>
 	  </div>
-	  <div class="row">
+	  <div class="row bio">
 	      {{ user.bio|default:'no bio :(' }}
 	  </div>
 	  <div class="row">
