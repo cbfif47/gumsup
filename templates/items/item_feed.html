@@ -15,7 +15,11 @@
   {% endfor %}
 </div>
 <div class="row">
-  <div class="dropdown">
+  {% if show_lists %}
+    <div class="dropdown">
+  {% else %}
+    <div class="dropdown-full">
+  {% endif %}
     {% if selected_item_type %}
       <button onclick="openType()" class="dropbtn">{{ selected_item_type|upper }} ⌄</button>
       <div class="dropdown-options" id ="typeDropdown">
