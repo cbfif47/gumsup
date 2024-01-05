@@ -2,6 +2,7 @@ body {
   background-color: black;
   font-family: 'Sono', monospace;
   font-size: 14px;
+  color: white;
 }
 
 h1, h2 {
@@ -56,6 +57,13 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   font-size: 16px;
   text-transform: lowercase;
   color:#00ff11;
+}
+
+select {
+  appearance: none;
+  cursor: pointer;
+  
+
 }
 
 .error, input[type=text].error {
