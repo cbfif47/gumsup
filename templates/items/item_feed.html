@@ -7,57 +7,51 @@
   <a href ="?status={{ query_param }}">ALL</a>
   {% endif %}
   {% for status in statuses %}
-        {% if selected_status == status.1|lower %}
-          <strong><a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a></strong>
-        {% else %}
-          <a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a>
-        {% endif %}
-      {% endfor %}
+    {% if selected_status == status.1|lower %}
+      <strong><a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a></strong>
+    {% else %}
+      <a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a>
+    {% endif %}
+  {% endfor %}
 </div>
 <div class="row">
-  {% if show_lists %}
   <div class="dropdown">
-  {% else %}
-  <div class="dropdown-full">
-  {% endif %}
     {% if selected_item_type %}
       <button onclick="openType()" class="dropbtn">{{ selected_item_type|upper }} ⌄</button>
       <div class="dropdown-options" id ="typeDropdown">
-      <li><a href="?{{ status_param }}{{ item_list_param }}{{ query_param }}">ALL</a></li>
     {% else %}
       <button onclick="openType()" class="dropbtn">TYPE ⌄</button>
       <div class="dropdown-options" id ="typeDropdown">
     {% endif %}
+      <li><a href="?{{ status_param }}{{ item_list_param }}{{ query_param }}">ALL</a></li>
       {% for item_type in item_types %}
         {% if selected_item_type != item_type.1|lower or selected_item_type is None %}
           <li><a href="?{{ status_param }}{{ item_list_param }}&item_type={{ item_type.1|lower }}{{ query_param }}">{{ item_type.1|upper }}</a></li>
         {% endif %}
       {% endfor %}
-    </div>
-  </div>
-{% if show_lists %}
-    <div class="dropdown">
+      </div> <!-- dropdown-options -->
+  </div> <!-- dropdown -->
+  {% if show_lists %}
+  <div class="dropdown">
     {% if selected_item_list %}
       <button onclick="openList()" class="dropbtn">{{ selected_item_list.name|upper }} ⌄</button>
-      <div class="dropdown-options" id ="listDropdown">
-      <li><a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}">ALL</a></li>
     {% else %}
       <button onclick="openList()" class="dropbtn">LIST ⌄</button>
-      <div class="dropdown-options" id ="listDropdown">
     {% endif %}
-      {% for item_list in item_lists %}
-        {% if selected_item_list.name != item_list.name or selected_item_list is None %}
-          <li><a href="?{{ status_param }}{{ item_type_param }}&item_list={{ item_list.id }}{{ query_param }}">{{ item_list.name|upper }}</a></li>
-        {% endif %}
-      {% endfor %}
-    </div>
+    <div class="dropdown-options" id ="listDropdown">
+    <li><a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}">ALL</a></li>
+    {% for item_list in item_lists %}
+      {% if selected_item_list.name != item_list.name or selected_item_list is None %}
+        <li><a href="?{{ status_param }}{{ item_type_param }}&item_list={{ item_list.id }}{{ query_param }}">{{ item_list.name|upper }}</a></li>
+      {% endif %}
+    {% endfor %}
+    </div> <!-- dropdown-options -->
+  </div> <!-- dropdown -->
+  <div class="row">
+    <a class="smalllink" href="{% url 'create-item-list' %}">create new list</a>
   </div>
-<div class="row">
-  <a class="smalllink" href="{% url 'create-item-list' %}">create new list</a>
-</div>
-{% else %}
-</div>
 {% endif %}
+</div><br>
   {% if items %}
     {% for item in items %}
       {% include 'items/item_card.html' %}
