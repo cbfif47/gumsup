@@ -331,10 +331,11 @@ class ItemList(BaseModel):
 class Item(BaseModel):
 
     RATING_CHOICES = [
-        (1,'hated'),
-        (2,'disliked'),
-        (3,'liked'),
-        (4,'loved')
+        (1,'1'),
+        (2,'2'),
+        (3,'3'),
+        (4,'4'),
+        (5,'5')
         ]
 
     TYPE_CHOICES = [
