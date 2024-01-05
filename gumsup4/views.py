@@ -7,12 +7,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList
+from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike
 from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from .base.utilities import get_button_text
 from datetime import datetime
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 
 class HomePageView(TemplateView):
     template_name = "base.html"
@@ -78,6 +79,12 @@ class FilterableItemsMixin:
             selected_item_type = item_type
         else:
             selected_item_type = None
+
+        for item in items:
+            if ItemLike.objects.filter(user=request.user,item=item):
+                item.like_button = 'unlike'
+            else:
+                item.like_button = 'like'
 
         #filter_params
         status_param = 'status=' + status
@@ -1007,4 +1014,32 @@ class SaveItemView(TemplateView):
         else:
             return redirect(to='login')
 
+
+def ItemLikes(request,item_id):
+    # request.is_ajax() is deprecated since django 3.1
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if is_ajax:
+        if request.method == 'POST':
+            item = get_object_or_404(Item, id = item_id)
+            ItemLike.objects.create(user=request.user,item=item)
+            return JsonResponse({'status': 'Like added'})
+        return JsonResponse({'status': 'Invalid request'}, status=400)
+    else:
+        return HttpResponseBadRequest('Invalid request')
+
+
+def LikeItem(request,item_id):
+    if request.method == 'GET' and request.user.is_authenticated:
+        item = get_object_or_404(Item, id = item_id)
+        existing_like = ItemLike.objects.filter(user=request.user,item=item)
+        if existing_like:
+            existing_like.delete()
+            return HttpResponse("like") # Sending an success response
+        else:
+            m = ItemLike(user=request.user,item=item) # Creating Like Object
+            m.save()  # saving it to store in database
+            return HttpResponse("unlike") # Sending an success response
+    else:
+        return HttpResponse("Request method is not a GET")
         

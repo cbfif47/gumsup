@@ -566,5 +566,17 @@ a {
   float:right;
 }
 
+.center {
+  float: none;
+  margin: auto;
+}
 
+ul {
+  list-style-type: square;
+}
+
+li {
+  font-size: 1em;
+  margin: 0.5em;
+}
 

@@ -114,9 +114,10 @@ class User(BaseModel, AbstractUser):
                                         SELECT u.id, u.username, u.bio
                                         FROM users u
                                         WHERE u.id not in (SELECT following_id from f)
+                                        and u.id <> %s
                                         ORDER BY u.created DESC
                                         LIMIT 25
-                                        """,[self.id,self.id])
+                                        """,[self.id,self.id,self.id])
 
         return user_list
 
@@ -340,8 +341,7 @@ class Item(BaseModel):
         ('MOVIE','movie'),
         ('BOOK','book'),
         ('TV','tv'),
-        ('MUSIC','music'),
-        ('EVENT','event')
+        ('LIFE','life')
         ]
 
     STATUS_CHOICES = [
@@ -413,3 +413,18 @@ class Item(BaseModel):
         """Metadata."""
 
         ordering = ["-last_date","-updated"]
+
+
+class ItemLike(BaseModel):
+    user = models.ForeignKey(
+        User, verbose_name="Like By", on_delete=models.CASCADE,related_name="liked_by")
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE,related_name="liked")
+
+    def __str__(self):
+        return f"By {self.user}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]

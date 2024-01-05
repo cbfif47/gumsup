@@ -66,6 +66,7 @@
             {% else %}
               <button class="user-name"><a href="{% url 'user' item.user %}">{{ item.user }}</a></button>
               <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
+              <button class="tertiary-button likebutton" id="like{{item.id}}"data-catid="{{ item.id }}">{{ item.like_button }}</button>
             {% endif %}
             <div class="time-since">{{ item.status|statustoaction }} {{ item.last_date|dayssince }}</div>
            </div>
