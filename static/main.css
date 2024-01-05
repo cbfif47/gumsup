@@ -62,7 +62,7 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
 select {
   appearance: none;
   cursor: pointer;
-  
+
 
 }
 
@@ -510,22 +510,17 @@ input[type=submit]:hover {
 }
 
 .list-name {
-  background-color: white;
   padding: 0.1em 0.2em;
   text-align: center;
   cursor: pointer;
-  border-radius: 5px;
-  border:dotted 1px black;
+  border:dotted 1px white;
   line-height: 1.1em;
   font-family: 'VT323',monospace;
   font-size: 0.9em;
-  color: black;
+  color: white;
+  background-color: black;
 }
 
-.list-name a {
-  color: black;
-  text-decoration: none;
-}
 
 .item-type {
   color: cyan;
@@ -543,7 +538,7 @@ input[type=submit]:hover {
 }
 
 .user-name {
-  background-color: #BD6DF2;
+  background-color: #ff5ef2;
   text-align: center;
   cursor: pointer;
   border-radius: 5px;
@@ -603,5 +598,9 @@ li {
   font-size: 0.8em;
   word-break: break-word;
   margin-bottom: 0px;
+}
+
+.likebutton {
+  width: 3.2em;
 }
 
