@@ -2,24 +2,40 @@
 {% load tz %}
 {% load static %}
       <div class="postcard">
+        <div class="col-20">
           <div class="row">
-            {% if item.rating %}
-            <div class="col-70">
-            {% else %}
-            <div class="col-100">
+            <button class="item-type">{{ item.item_type }}</button>
+            {% if item.user == request.user and item.item_list %}
+              <a href="{% url 'view-item-list' item.item_list.id %}"><button class="list-name">{{ item.item_list }}</button></a>
+            {% elif item.user != request.user %}
+              <button class="user-name"><a href="{% url 'user' item.user %}">{{ item.user }}</a></button>
             {% endif %}
+          </div>
+        </div>
+        <div class="col-50">
+          <div class="row">
             <p class="name">
-              <img src="{% static item.status|statustoimage %}">
                 {% if item.user == request.user %}<a href="{% url 'edit-item' item.id %}">
                 {% else %}
                   <a href="{% url 'view-item' item.id %}">
                 {%  endif %}
                 {{ item.name}}
-                </a></p>
+                </a>
+              </p>
             </div>
-            {% if item.rating %}
-            <div class="col 30">
-              <div class="rating">
+            <div class="row">
+            <p class="review">
+              {% if item.ended_date %}
+                {{ item.review|lower|striptags|url_mention }}
+              {% else %}
+                {{ item.note|lower|striptags|url_mention }}
+              {% endif %}
+            </p>
+          </div>
+        </div>
+        <div class="col-30">
+          <div class="row">
+            <div class="rating">
                {% if item.rating == 1%}
                   <img src="{% static 'starsmall.png' %}" height="14px">
                 {% elif item.rating == 2 %}
@@ -30,46 +46,36 @@
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                 {% elif item.rating == 5 %}
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif item.status == 2 %}
+                  {{ item.item_type|itemtypeverb}} now
+                {% elif item.status == 3 %}
+                  saved {{item.last_date|dayssince}}
+                {% elif item.status == 4 %}
+                  quit {{item.last_date|dayssince}}
                 {% endif %}
                 </div>
-                </div>
-            {% endif %}
-        <div class="col-100">
-          <div class="row">
-            <button class="item-type">{{ item.item_type }}</button>
-            {% if item.user == request.user and item.item_list %}
-            <a href="{% url 'view-item-list' item.item_list.id %}"><button class="list-name">{{ item.item_list }}</button></a>
-            {% endif %}
+              </div>
           </div>
-          <div class="row">
-            {% if item.ended_date %}
-              <why>{{ item.review|lower|striptags|url_mention }}</why>
-            {% else %}
-              <why>{{ item.note|lower|striptags|url_mention }}</why>
-            {% endif %}
-          </div>
-          <div class="row">
+          <div class="row"><div class="actions">
             {% if item.user == request.user %}
               {% if item.status == 1 %}
-                      <form method="POST" action="{% url 'start-item' item.id %}?from={{ from }}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="tertiary-button" value="start" onclick="clicked(event)" />start</button>
-                      </form>
+                <form method="POST" action="{% url 'start-item' item.id %}?from={{ from }}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="tertiary-button" value="start" onclick="clicked(event)" />start</button>
+                </form>
               {% elif item.status == 2 %}
-                  <button type="disabled" class="tertiary-button-disabled" />start</button>
+                <button type="disabled" class="tertiary-button-disabled" />start</button>
               {% endif %}
               {% if item.ended_date is None %}
-                    <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
-                      <button type="submit" class="tertiary-button"/>finish</button>
-                    </form>
+                  <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
+                    <button type="submit" class="tertiary-button"/>finish</button>
+                  </form>
               {% endif %}
             {% else %}
-              <button class="user-name"><a href="{% url 'user' item.user %}">{{ item.user }}</a></button>
               <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
               <button class="tertiary-button likebutton" id="like{{item.id}}"data-catid="{{ item.id }}">{{ item.like_button }}</button>
             {% endif %}
-            <div class="time-since">{{ item.status|statustoaction }} {{ item.last_date|dayssince }}</div>
-           </div>
-          </div>
+          </div></div>
         </div>
       </div>
+          

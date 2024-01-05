@@ -68,3 +68,15 @@ def statustoimage(status):
         return 'check.png'
     elif status == 4:
         return 'x.png'
+
+
+@register.filter(name='itemtypeverb', is_safe=True)
+def itemtypeverb(item_type):
+    if item_type == "MOVIE":
+        return 'watching'
+    elif item_type == "BOOK":
+        return 'reading'
+    elif item_type == "TV":
+        return 'watching'
+    elif item_type == "LIFE":
+        return 'living'

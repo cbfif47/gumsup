@@ -75,7 +75,7 @@ class User(BaseModel, AbstractUser):
         return feed
 
     def item_feed(self):
-        feed = Item.objects.filter(user__followers__user=self)
+        feed = Item.objects.filter(user__followers__user=self).exclude(status=1)
         return feed
 
     def follower_list(self):

@@ -1,5 +1,5 @@
 body {
-  background-color: lavender;
+  background-color: black;
   font-family: 'Sono', monospace;
   font-size: 14px;
 }
@@ -9,7 +9,7 @@ h1, h2 {
 }
 
 main {
-    max-width:80ex;
+    max-width:60ex;
     margin: auto;
 }
 
@@ -22,7 +22,7 @@ h1 {
   text-shadow: 0.1em 0.1em cyan;
   font-weight: bold;
   text-transform: uppercase;
-  color: black;
+  color: white;
   text-align: center;
   font-size: 2.5em;
 }
@@ -31,7 +31,7 @@ h2 {
   text-shadow: 0.1em 0.1em cyan;
   font-weight: bold;
   text-transform: uppercase;
-  color: black;
+  color: white;
   text-align: center;
   font-size: 1.7em;
 }
@@ -58,20 +58,14 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   color:black;
 }
 
-
-
 .error, input[type=text].error {
   border: 2px solid red;
-}
-
-.postform label {
-  display: inline-block;
 }
 
 
 .container {
   border-radius: 5px;
-  background-color: #f2f2f2;
+  background-color: black;
   padding: 20px;
 }
 
@@ -80,6 +74,20 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   width: 25%;
   margin-top: 3px;
   word-break: break-all;
+}
+
+.col-20 {
+  float: left;
+  width: 20%;
+  margin-top: 3px;
+  word-break: break-all;
+}
+
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 3px;
+  word-break: break-word;
 }
 
 .col-30 {
@@ -175,15 +183,15 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
 
 
 .postcard {
-    border: 0px solid cyan;
+    border: 1px solid white;
     position: relative;
     margin: auto;
-    margin-bottom: 4ex;
-    border-radius: 5px;
-    padding-left: 0.6em;
-    padding-right: 0.6em;
+    border-radius: 0em;
+    padding-left: 0.4em;
+    padding-right: 0em;
     padding-top: 0.3em;
-    background-color: #EFEFFF;
+    padding-bottom: 0em;
+    background-color: black;
 }
 
 .activity-card {
@@ -218,7 +226,7 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
 }
 
 what {
-  text-shadow: 1px 1px cyan;
+  text-shadow: 1px 1px ##00ff11;
   font-weight: bold;
   text-transform: uppercase;
   color: black;
@@ -229,19 +237,19 @@ what {
 }
 
 .name {
-  text-shadow: 1px 1px cyan;
   font-weight: bold;
   text-transform: uppercase;
-  color: black;
+  color: #00ff11;
   font-family: 'VT323',monospace;
-  font-size: 18px;
+  font-size: 1.3em;
   word-break: break-word;
   margin-top: 0px;
-  margin-bottom: 0.3em;
+  margin-bottom: 0.1em;
 }
 
 .name a {
-  color: black;
+  color: #00ff11;
+  text-decoration: none;
 }
 
 .mention {
@@ -251,7 +259,7 @@ what {
 
 .postcard category {
   -webkit-text-stroke-width: 0.1em;
-  -webkit-text-stroke-color: green;
+  -webkit-text-stroke-color: cyan;
   color: white;
   text-transform: uppercase;
   font-family: 'Times New Roman',serif;
@@ -272,11 +280,6 @@ input[type=submit] {
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
-}
-
-
-.postcard input[type=submit], .postcard button {
-    font-size: 1em;
 }
 
 #post-button {
@@ -459,7 +462,6 @@ input[type=submit]:hover {
 }
 
 .tertiary-button {
-  padding: 1px 6px;
   text-align: center;
   border-radius: 5px;
   color: black;
@@ -472,23 +474,21 @@ input[type=submit]:hover {
 }
 
 .tertiary-button-disabled {
-  padding: 1px 6px;
   text-align: center;
   border-radius: 5px;
-  border: solid 2px #dbdbdb;
-  color: #dbdbdb;
-  background-color: #f0f0f0;
-  background: #f0f0f0;
+  border: solid 2px #5e5e5e;
+  background-color: #5e5e5e;
+  color: #242424;
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
 }
 
 .primary-button, .tertiary-button {
-  border-left: solid 2px gray;
-  border-top: solid 2px gray;
-  border-bottom: solid 2px black;
-  border-right: solid 2px black;
+  border-left: solid 2px white;
+  border-top: solid 2px white;
+  border-bottom: solid 2px gray;
+  border-right: solid 2px gray;
 }
 
 .primary-button a, .tertiary-button a {
@@ -522,7 +522,7 @@ input[type=submit]:hover {
 
 .item-type {
   -webkit-text-stroke-width: 0.1em;
-  -webkit-text-stroke-color: green;
+  -webkit-text-stroke-color: cyan;
   color: white;
   text-transform: uppercase;
   font-family: 'Times New Roman',serif;
@@ -531,6 +531,7 @@ input[type=submit]:hover {
   border: 0px;
   padding: 0px;
   background: none;
+  margin-bottom: 1em;
 }
 
 .vertical-center {
@@ -539,31 +540,43 @@ input[type=submit]:hover {
 
 .user-name {
   background-color: #BD6DF2;
-  padding: 0.3em 0.6em;
   text-align: center;
   cursor: pointer;
   border-radius: 5px;
   border:solid 0px black;
   font-family: 'VT323',monospace;
-  color: white;
+  color: black;
+  border-left: solid 2px #cc8ef5;
+  border-top: solid 2px #cc8ef5;
+  border-bottom: solid 2px gray;
+  border-right: solid 2px gray;
+
 }
 
 .user-name a {
-  color: white;
+  color: black;
   text-decoration: none;
 }
 
 a {
-  color: #6203fc;
+  color: white;
 }
 
 .rating {
-  background-color: #BD6DF2;
   color: white;
-  padding: 0.3em 0.6em;
   text-align: center;
   border-radius: 5px;
-  float:right;
+  font-size:0.8em;
+  margin:auto;
+  margin-bottom: 1em;
+}
+
+.actions {
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  font-size:0.8em;
+  margin:auto;
 }
 
 .center {
@@ -578,5 +591,11 @@ ul {
 li {
   font-size: 1em;
   margin: 0.5em;
+}
+
+.review {
+  color: white;
+  font-size: 0.8em;
+  word-break: break-word;
 }
 
