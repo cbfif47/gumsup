@@ -57,19 +57,21 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   font-size: 16px;
   text-transform: lowercase;
   color:#00ff11;
+  margin-bottom: 0.5em;
 }
 
 select {
   appearance: none;
   cursor: pointer;
+}
 
-
+::placeholder {
+  color: #007808;
 }
 
 .error, input[type=text].error {
   border: 2px solid red;
 }
-
 
 .container {
   border-radius: 5px;
@@ -79,7 +81,7 @@ select {
 
 .col-15 {
   float: left;
-  width: 25%;
+  width: 15%;
   margin-top: 3px;
   word-break: break-all;
 }
@@ -89,6 +91,7 @@ select {
   width: 20%;
   margin-top: 3px;
   word-break: break-all;
+  padding-right: 0.4em;
 }
 
 .col-25 {
@@ -179,16 +182,6 @@ select {
     float: right;
 }
 
-.postform {
-    margin-bottom: 20px;
-}
-
-.postform label {
-    color:black;
-    font-weight: bold;
-}
-
-
 .postcard {
     border: 1px solid white;
     position: relative;
@@ -199,14 +192,12 @@ select {
 }
 
 .activity-card {
-    border: 0px solid cyan;
+    border: 1px solid white;
     min-height:7ex;
     position: relative;
     margin: auto;
-    margin-bottom: 4ex;
-    border-radius: 5px;
     padding: 5px;
-    background-color: #EFEFFF;
+    background-color: black;
 }
 
 .unseen {
@@ -215,29 +206,6 @@ select {
 
 .userinfo {
     margin-bottom: 10px;
-}
-
-.userbadge {
-  background-color: blueviolet;
-  color: white;
-  padding: 4px 8px;
-  text-align: center;
-  border-radius: 5px;
-  float:right;
-  text-decoration: none;
-  font-family: 'VT323',monospace;
-  font-size: 18px;
-}
-
-what {
-  text-shadow: 1px 1px ##00ff11;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: black;
-  font-family: 'VT323',monospace;
-  font-size: 18px;
-  word-break: break-word;
-  margin-bottom: 10px;
 }
 
 .name {
@@ -257,48 +225,9 @@ what {
 }
 
 .mention {
-  color: black;
-  text-decoration: underline wavy 1px;
-}
-
-.postcard category {
-  -webkit-text-stroke-width: 0.1em;
-  -webkit-text-stroke-color: cyan;
-  color: white;
-  text-transform: uppercase;
-  font-family: 'Times New Roman',serif;
-  font-size: 1em;
-  word-break: break-word;
-}
-
-input[type=submit] {
-  padding: 2px 8px;
-  margin-bottom: 0px;
-  margin-top: 8px;
-  text-align: center;
-  border-radius: 5px;
-  color: black;
-  background-color: #dbdbdb;
-  background: #dbdbdb;
-  cursor: pointer;
-  display: inline;
-  text-decoration: none;
-  font-family: 'VT323', monospace;
-}
-
-#post-button {
-    float: right;
-    padding:0.2em 1em;
-    margin-right:0px;
-    font-size: 1.5em;
-  border: solid 2px black;
-}
-
-
-.disabled {
-    background-color: black;
-    color: white;
-
+  color: cyan;
+  text-decoration: underline wavy 0.8px;
+  font-weight: bold;
 }
 
 .tabs {
@@ -310,6 +239,7 @@ input[type=submit] {
   font-size: 16px;
   font-family: 'VT323',monospace;
   color: #00ff11;
+  margin-bottom: 0.5em;
 }
 
 .tabs > .tab {
@@ -328,27 +258,14 @@ input[type=submit] {
   padding: .3rem;
   width: 100%;
   text-align: center;
-  transition: 0.1s;
   border: 2px solid rgba(0,0,0,0);
   border-radius: 5px;
 }
 
 .tab > .tab-input:checked + .tab-box {
-  background: var(--background);
+  background: #00ff11;
+  color:black;
   border-color: var(--bar-color);
-}
-
-.original-post {
-    color:gray;
-    font-size: 0.9em;
-    border: solid 2px white;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-.original-post a {
-    color:gray;
-    text-decoration: none;
 }
 
 .time-since {
@@ -356,11 +273,6 @@ input[type=submit] {
     position:absolute;
     bottom:0.6em;
     right:0.6em;
-    color:gray;
-}
-.time-since-item {
-    font-size: 0.8em;
-    float:right;
     color:gray;
 }
 
@@ -434,16 +346,17 @@ input[type=submit] {
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
-    float: right;
-    padding:0.2em 1em;
-    margin-right:0px;
-    font-size: 1.5em;
+  float: right;
+  padding:0.2em 1em;
+  margin-right:0px;
+  font-size: 1.5em;
 }
 
 .secondary-button {
   background: none;
   border: none;
   float: right;
+  margin-top: 0.3em;
   font-size: 1.5em;
   text-decoration: underline;
   font-family: 'VT323', monospace;
@@ -515,8 +428,8 @@ input[type=submit] {
   font-size: 0.9em;
   color: white;
   background-color: black;
+  word-break: break-word;
 }
-
 
 .item-type {
   color: cyan;
@@ -527,6 +440,7 @@ input[type=submit] {
   border: 0px;
   padding: 0px;
   background: none;
+  cursor: default;
 }
 
 .vertical-center {
@@ -545,12 +459,6 @@ input[type=submit] {
   border-top: solid 2px #faacf4;
   border-bottom: solid 2px #91338a;
   border-right: solid 2px #91338a;
-
-}
-
-.user-name a {
-  color: black;
-  text-decoration: none;
 }
 
 a {
@@ -599,5 +507,20 @@ li {
 
 .likebutton {
   width: 3.2em;
+}
+
+input[type="checkbox"] {
+  font: inherit;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid black;
+  border-radius: 0.15em;
+  margin-top: 1em;
+}
+
+footer {
+  margin-top: 5em;
+  font-size: 0.5em;
+  float: right;
 }
 

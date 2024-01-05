@@ -849,6 +849,11 @@ class ItemDetailView(TemplateView):
 
         if request.user.is_authenticated:
             item = get_object_or_404(Item, id = item_id)
+            if ItemLike.objects.filter(user=request.user,item=item):
+                item.like_button = 'unlike'
+            else:
+                item.like_button = 'like'
+                
             context = {
                 'item': item
             }

@@ -26,12 +26,12 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-15 vertical-center">started:</div>
-      <div class="col-85">{{ form.started_date }}</div>
+      <div class="col-30 vertical-center">started:</div>
+      <div class="col-70">{{ form.started_date }}</div>
     </div>
     <div class="row">
-      <div class="col-15 vertical-center">ended:</div>
-      <div class="col-85">{{ form.ended_date }}</div>
+      <div class="col-30 vertical-center">ended:</div>
+      <div class="col-70">{{ form.ended_date }}</div>
     </div>
     <div class="row">
       <div class="col-100" style="padding-right: 2px;">
@@ -83,6 +83,11 @@
     
     <div class="row">
         {{ form.item_list }}
+    <div class="row ">
+    <div class="row">
+      <div class="col-30 vertical-center">hide from others:</div>
+      <div class="col-70">{{ form.hide_from_feed }}</div>
+    </div>
     <div class="row ">
         <input id="post-button" type="submit" value="save">
     </div>

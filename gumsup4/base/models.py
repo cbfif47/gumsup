@@ -75,7 +75,7 @@ class User(BaseModel, AbstractUser):
         return feed
 
     def item_feed(self):
-        feed = Item.objects.filter(user__followers__user=self).exclude(status=1)
+        feed = Item.objects.filter(user__followers__user=self).exclude(status=1).exclude(hide_from_feed=True)
         return feed
 
     def follower_list(self):
@@ -369,6 +369,7 @@ class Item(BaseModel):
     status = models.IntegerField(choices=STATUS_CHOICES,default=1)
     last_date = models.DateField(default=timezone.now)
     item_list = models.ForeignKey(ItemList, models.SET_DEFAULT,blank=True,null=True,default='')
+    hide_from_feed = models.BooleanField(default=False)
 
     def filter_items(ItemsQuerySet,status='',item_type='', item_list=''):
 

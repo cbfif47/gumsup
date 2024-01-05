@@ -85,7 +85,7 @@ class ItemFormMain(forms.ModelForm):
 class ItemFormFinished(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','review','rating','ended_date', 'started_date'}
+     fields = {'name','review','rating','ended_date', 'started_date','hide_from_feed'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it'
               }),
@@ -100,7 +100,7 @@ class ItemFormFinished(forms.ModelForm):
 class ItemEditForm(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','review','rating','ended_date', 'started_date','item_type','note','status','item_list'}
+     fields = {'name','review','rating','ended_date', 'started_date','item_type','note','status','item_list','hide_from_feed'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it'
               }),

@@ -11,7 +11,7 @@
         {% if item.user == request.user and item.item_list %}
           <a href="{% url 'view-item-list' item.item_list.id %}"><button class="list-name">{{ item.item_list }}</button></a>
         {% elif item.user != request.user %}
-          <button class="user-name"><a href="{% url 'user' item.user %}">{{ item.user }}</a></button>
+          <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
         {% endif %}
       </div>
     </div>

@@ -1,19 +1,21 @@
 {% load static %}
 {% block content %}
-<div class="row">
-  {% if selected_status is None and selected_item_type is None and selected_list is None %}
-  <strong><a>ALL</a></strong>
-  {% else %}
-  <a href ="?status={{ query_param }}">ALL</a>
-  {% endif %}
-  {% for status in statuses %}
-    {% if selected_status == status.1|lower %}
-      <strong><a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a></strong>
+{% if from != 'home' %}
+  <div class="row">
+    {% if selected_status is None and selected_item_type is None and selected_list is None %}
+    <strong><a>ALL</a></strong>
     {% else %}
-      <a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a>
+    <a href ="?status={{ query_param }}">ALL</a>
     {% endif %}
-  {% endfor %}
-</div>
+    {% for status in statuses %}
+      {% if selected_status == status.1|lower %}
+        <strong><a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a></strong>
+      {% else %}
+        <a href="?{{ item_type_param }}{{ item_list_param }}&status={{ status.0 }}{{ query_param }}">{{ status.1|upper }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
 <div class="row">
   {% if show_lists %}
     <div class="dropdown">
@@ -69,6 +71,6 @@
     nothing to see here!
   {% endif %}
   {% if items.has_next %}
-    <a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.next_page_number }}">more</a>
+    <a class="smalllink" href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.next_page_number }}">more</a>
   {% endif %}
     {% endblock %}
