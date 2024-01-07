@@ -230,6 +230,7 @@ table {
 .mention {
   color: cyan;
   text-decoration: underline wavy 0.8px;
+  -webkit-text-decoration: underline wavy 0.8px;
   font-weight: bold;
 }
 

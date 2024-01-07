@@ -755,8 +755,17 @@ class ItemsFeedView(FilterableItemsMixin,TemplateView):
             context['show_lists'] = False
             context['from'] = 'home'
 
-            popular = Item.objects.all().values('name').annotate(total=Count('name'),avg_rating=Avg('rating'),max_date=Max('last_date')).order_by('-total','-avg_rating','-max_date')[:3]
+            popular = Item.objects.all().values('name').annotate(total=Count('name')
+                ,avg_rating=Avg('rating')
+                ,max_date=Max('last_date')).order_by('-total','-avg_rating','-max_date')[:3]
+
+             # highest avg rating, at least 2 ratings
+            highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
+                ,avg_rating=Avg('rating')
+                ,max_date=Max('last_date')).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
+
             context['popular'] = popular
+            context['highest_rated'] = highest_rated
 
             return render(request, 'items/feed.html', context)
         else:

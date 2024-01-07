@@ -79,7 +79,7 @@ $(function() {
 
   $("#id_name").autocomplete({
     source: '/autocomplete-names',
-    delay: 500,
+    delay: 50,
     minLength: 3
   });
 });

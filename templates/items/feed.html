@@ -26,7 +26,30 @@
         </li>
       {% endfor %}
   </ul>
-</div>
+{% if highest_rated %}
+  </div><div class="row"><h2>highest rated:</h2>
+      <ul>
+        {% for pi in highest_rated %}
+        <li>
+          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} ratings<p class="rating" >
+            {% if pi.avg_rating >= 4.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating >= 3.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating >= 2.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating >= 1.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating %}
+                <img src="{% static 'starsmall.png' %}" height="14px">
+            {% else %}
+              no ratings
+            {% endif %}
+          </li>
+        {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
       {% include 'items/item_feed.html' %}
 
