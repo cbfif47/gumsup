@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}people you might know{% endblock %}
   {% block content %}
-  <h2>people you might know</h2>
+  <h1>people you might know</h1>
   <div class="row">
         <button class="tertiary-button"><a href="{%url 'search-items' %}">stuff</a></button>
         <button class="tertiary-button"><a href="{%url 'search-users' %}">people</a></button>
         <button class="tertiary-button-disabled">people you might know</button>
   </div>
   <div class="row">
-
+<table>
 {% for user in users %}
     {% include 'users/user-card.html' %}
   {% endfor %}
+</table>
 {% endblock %}

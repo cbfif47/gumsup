@@ -1,7 +1,7 @@
 {% load static %}
   {% block content %}
   <form action="{% url 'items' %}?from={{ from }}" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
-        {% csrf_token %}{{ form.user.as_hidden }}
+        {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
     </div>
     <div class="row">
         {{ form.name }}

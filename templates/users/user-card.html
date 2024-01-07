@@ -1,4 +1,5 @@
-<div class="postcard">
+<tr>
+<td class="postcard">
   <div class="row">
     <a href="{% url 'user' user %}">
     <div class="name">{{ user }}</div>
@@ -14,4 +15,5 @@
         joined {{ user.created|timesince }} ago
       </div>
   </div>
-</div>
+</td>
+</tr>

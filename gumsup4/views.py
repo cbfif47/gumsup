@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView, UpdateView
 from django.views import View
+from django.db.models import Count, Avg, Max
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
@@ -289,7 +290,7 @@ class UserFollowersView(TemplateView):
                             ,'has_new_activity': request.user.has_new_activity() 
                 }
                 return render(request, 'users/gummy.html', context)
-            elif user.is_private and request.user.is_following(user) == False:
+            elif user.is_private and request.user.is_following(user) == False and request.user != user:
                 return redirect(to='home')
             else:
                 followers = user.follower_list()
@@ -552,11 +553,18 @@ class SearchItemsView(FilterableItemsMixin,TemplateView):
         context = {}
         if request.user.is_authenticated:
             query = request.GET.get("q",'')
+            mode = request.GET.get("mode",'')
             if len(query) > 2:
-                raw_feed = Item.objects.filter(Q(name__icontains=query) #term matches
-                    & (Q(user=request.user) #owned by user
-                    | Q(user__is_private=False) #public user
-                    | Q(user__followers__user=request.user)),).distinct() #or one we're following
+                if mode == 'strict':
+                    raw_feed = Item.objects.filter(Q(name=query) #strict match
+                        & (Q(user=request.user) #owned by user
+                        | Q(user__is_private=False) #public user
+                        | Q(user__followers__user=request.user)),).distinct() #or one we're following
+                else:
+                    raw_feed = Item.objects.filter(Q(name__icontains=query) #term matches
+                        & (Q(user=request.user) #owned by user
+                        | Q(user__is_private=False) #public user
+                        | Q(user__followers__user=request.user)),).distinct() #or one we're following
                 context = self.make_filtered_context(raw_feed,request)
             else:
                 context = self.make_filtered_context(Item.objects.filter(name=''),request) #no results
@@ -712,6 +720,10 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             f = ItemFormMain(request.POST)
             if f.is_valid():                
                 new_item = f.save()
+
+                # log activity if its a save
+                if new_item.original_item:
+                    Activity.objects.create(user=new_item.original_item.user,save_item=new_item)
                 if request.GET.get('status', '') == 'done':
                     return redirect(to='finish-item',item_id=new_item.id)
                 else:
@@ -742,6 +754,9 @@ class ItemsFeedView(FilterableItemsMixin,TemplateView):
             context['form']= form
             context['show_lists'] = False
             context['from'] = 'home'
+
+            popular = Item.objects.all().values('name').annotate(total=Count('name'),avg_rating=Avg('rating'),max_date=Max('last_date')).order_by('-total','-avg_rating','-max_date')[:3]
+            context['popular'] = popular
 
             return render(request, 'items/feed.html', context)
         else:
@@ -853,7 +868,7 @@ class ItemDetailView(TemplateView):
                 item.like_button = 'unlike'
             else:
                 item.like_button = 'like'
-                
+
             context = {
                 'item': item
             }
@@ -872,23 +887,6 @@ class ItemDeleteView(TemplateView):
             back_to = request.GET.get('from', 'items')
             if item.user == request.user:
                 item.delete()
-
-            return redirect(to=back_to)
-        else:
-            return redirect(to='login')
-
-
-class ItemStartView(TemplateView):
-
-    def post(self, request, item_id, **kwargs):
-
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            back_to = request.GET.get('from', 'items')
-            if item.user == request.user:
-                item.status = 2
-                item.started_date = datetime.now()
-                item.save()
 
             return redirect(to=back_to)
         else:
@@ -983,6 +981,7 @@ class SaveItemView(TemplateView):
                 , user = request.user
                 ,name = item.name
                 ,item_type = item.item_type
+                ,original_item = item
                 )
             form = ItemFormMain(instance = new_item)
             form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
@@ -1000,12 +999,19 @@ class SaveItemView(TemplateView):
             return redirect(to='login')
 
     def post(self,request,post_id, *args, **kwargs):
+        # THIS ISNT ACTUALLY USED, THE SAVE POST FORM POINTS TO THE ITEMS VIEW
 
         if request.user.is_authenticated:
 
             f = ItemFormMain(request.POST)
+            original_item = get_object_or_404(Item, id = item_id)
+            f.original_item = original_item
+
             if f.is_valid():                
                 new_item = f.save()
+
+                #log activity
+                Activity.objects.create(user=original_item.user,save_item=new_item)
                 return redirect(to=request.GET.get('from', 'home'))
             else:
                 for field in f.errors:
@@ -1047,4 +1053,42 @@ def LikeItem(request,item_id):
             return HttpResponse("unlike") # Sending an success response
     else:
         return HttpResponse("Request method is not a GET")
+
+
+def StartItem(request,item_id):
+    if request.method == 'GET' and request.user.is_authenticated:
+        item = get_object_or_404(Item, id = item_id)
+        if item.user == request.user:
+            item.status = 2
+            item.started_date = datetime.now()
+            item.save()
+            return HttpResponse("tertiary-button-disabled") # Sending an success response
+        else:
+            return HttpResponse("tertiary-button") # dont change the class
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+class ItemStartView(TemplateView):
+
+    def post(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            back_to = request.GET.get('from', 'items')
+            if item.user == request.user:
+                item.status = 2
+                item.started_date = datetime.now()
+                item.save()
+
+            return redirect(to=back_to)
+        else:
+            return redirect(to='login')
+
+def AutocompleteNames(request):
+    if request.method == 'GET' and request.user.is_authenticated:
+        term = request.GET.get('term', 'xxx')
+        # search for it containing the term, order by name (need that for distinct to work), only get 5
+        names = list(Item.objects.filter(Q(name__icontains=term)).order_by('name').values_list('name',flat=True).distinct()[:5])
+        return JsonResponse(names,safe=False)
         

@@ -70,9 +70,9 @@ class ItemFormMain(forms.ModelForm):
 
   class Meta:
    model = Item
-   fields = {'name','item_type','note','user','item_list'}
+   fields = {'name','item_type','note','user','item_list','original_item'}
    widgets = {
-          "name": forms.TextInput(attrs={'placeholder': 'what is it'
+          "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input'
             }),
           "item_list": forms.Select(),
           "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'

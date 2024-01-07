@@ -18,9 +18,11 @@
 </form>
 </div>
 {% if users %}
+  <table>
   {% for user in users %}
       {% include 'users/user-card.html' %}
     {% endfor %}
+  </table>
 {% elif query == '' %}
   search for somebody above
 {% else %}

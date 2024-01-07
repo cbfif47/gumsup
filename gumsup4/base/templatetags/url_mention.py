@@ -80,3 +80,7 @@ def itemtypeverb(item_type):
         return 'watching'
     elif item_type == "LIFE":
         return 'living'
+
+@register.filter(name="ratingtoimage",is_safe=True)
+def ratingtoimage(rating):
+    return '''<img src="{% static 'starsmall.png' %}" height="14px">'''

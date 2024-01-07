@@ -283,36 +283,6 @@ class FollowRequest(BaseModel):
         ordering = ["-created"]
 
 
-class Activity(BaseModel):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE,related_name="activity_for")
-    follow = models.ForeignKey(
-        Follow, on_delete=models.CASCADE, null=True,blank=True,default=None)
-    repost = models.ForeignKey(
-        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="repost_activity")
-    saved_post = models.ForeignKey(
-        SavedPost, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="saved_post_activity")
-    seen = models.BooleanField(default=False)
-    follow_request = models.ForeignKey(
-        FollowRequest, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="follow_request_activity")
-    mention = models.ForeignKey(
-        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="mention_activity")
-
-    def __str__(self):
-        if self.follow:
-            description = self.follow.user.username + ' followed ' + self.user.username
-        elif self.repost:
-            description = self.repost.user.username + ' reposted ' + self.user.username
-        else:
-            description = self.saved_post.user.username + ' saved a post by ' + self.user.username
-        return description
-
-    class Meta:
-        """Metadata."""
-
-        ordering = ["-created"]
-
-
 class ItemList(BaseModel):
     user = models.ForeignKey(
         User, verbose_name="List created By", on_delete=models.CASCADE,related_name="list_by")
@@ -408,6 +378,17 @@ class Item(BaseModel):
             self.last_date = timezone.now()
         super().save(*args, **kwargs)
 
+        # log mentions, save item activity is in the view
+        mentions = re.findall("@[-\w]*",self.review)
+        if mentions:
+            for mention in mentions:
+                username = mention.replace("@","")
+                user = User.objects.filter(username=username.lower()).first()
+                existing_save = Activity.objects.filter(user=user,save_item=self)
+                existing_mention = Activity.objects.filter(user=user,mention_item=self)
+                if not existing_save and not existing_mention:
+                    Activity.objects.create(user=user,mention_item=self)
+
     def __str__(self):
         return f"{self.name}"
 
@@ -423,8 +404,42 @@ class ItemLike(BaseModel):
     item = models.ForeignKey(
         Item, on_delete=models.CASCADE,related_name="liked")
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        Activity.objects.create(user=self.item.user,like_item=self)
+
     def __str__(self):
         return f"By {self.user}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class Activity(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="activity_for")
+    follow = models.ForeignKey(
+        Follow, on_delete=models.CASCADE, null=True,blank=True,default=None)
+    repost = models.ForeignKey(
+        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="repost_activity")
+    saved_post = models.ForeignKey(
+        SavedPost, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="saved_post_activity")
+    seen = models.BooleanField(default=False)
+    follow_request = models.ForeignKey(
+        FollowRequest, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="follow_request_activity")
+    mention = models.ForeignKey(
+        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="mention_activity")
+    mention_item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="mention_item_activity")
+    save_item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="save_item_activity")
+    like_item = models.ForeignKey(
+        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="like_item_activity")
+
+    def __str__(self):
+        return f"For {self.user} on {self.created}"
 
     class Meta:
         """Metadata."""

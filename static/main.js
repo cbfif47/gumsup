@@ -52,3 +52,34 @@ $('.likebutton').click(function(){
         }
      })
 });
+
+$('.startbutton').click(function(){
+        if(!confirm('Mark this as started?')) {
+            e.preventDefault();
+        }
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/items/" + catid + "/start",
+        data:{
+                 item_id: catid
+        },
+        success: function( data ) 
+        {
+            $( '#start'+ catid ).removeClass("tertiary-button"),
+            $( '#start'+ catid ).addClass(data);
+        }
+     })
+});
+
+$(function() {
+  var itemNames = ["hey","hey dude","heys for horses"];
+
+  $("#id_name").autocomplete({
+    source: '/autocomplete-names',
+    delay: 500,
+    minLength: 3
+  });
+});

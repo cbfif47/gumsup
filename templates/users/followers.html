@@ -4,9 +4,11 @@
 
   <h2>{{ title }}</h2>
   {% if users %}
+    <table>
     {% for user in users %}
     {% include 'users/user-card.html' %}
     {% endfor %}
+  </table>
   {% else %}
     None!
   {% endif %}

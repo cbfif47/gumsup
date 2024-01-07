@@ -59,9 +59,11 @@
 {% endif %}
 </div><br>
   {% if items %}
+  <table>
     {% for item in items %}
       {% include 'items/item_card.html' %}
     {% endfor %}
+  </table>
   {% elif is_search and query == '' %}
     search something above
   {% elif from == 'home' %}
