@@ -376,6 +376,12 @@ class Item(BaseModel):
             self.last_date = self.ended_date
         else:
             self.last_date = timezone.now()
+        # for lowercase
+        self.name = self.name.lower()
+        if self.note:
+            self.note = self.note.lower()
+        if self.review:
+            self.review = self.review.lower()
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view
