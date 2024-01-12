@@ -38,7 +38,7 @@
     </div>
     <div class="col-30">
       <div class="row">
-        <div class="rating">
+        <div class="rating" id="rating{{item.id}}">
             {% if item.rating == 1%}
               <img src="{% static 'starsmall.png' %}" height="14px">
             {% elif item.rating == 2 %}
@@ -73,7 +73,7 @@
             {% endif %}
           {% else %}
             <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
-            <button class="tertiary-button likebutton" id="like{{item.id}}"data-catid="{{ item.id }}">{{ item.like_button }}</button>
+            <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
           {% endif %}
         </div>
       </div>

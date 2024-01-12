@@ -72,7 +72,18 @@
   {% else %}
     nothing to see here!
   {% endif %}
+  {% if items.has_previous or items.has_next %}
+    <div class="pagination">
+  {% endif %}
+  {% if items.has_previous %}
+    <a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page=1">first</a>
+    <a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.previous_page_number }}">previous</a>
+  {% endif %}
   {% if items.has_next %}
-    <a class="smalllink" href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.next_page_number }}">more</a>
+    <a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.next_page_number }}">next</a>
+    <a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}&page={{ items.paginator.num_pages }}">last</a>
+  {% endif %}
+  {% if items.has_previous or items.has_next %}
+    </div>
   {% endif %}
     {% endblock %}

@@ -10,7 +10,7 @@ h1, h2 {
 }
 
 main {
-    max-width:60ex;
+    max-width:65ex;
     margin: auto;
 }
 
@@ -114,11 +114,26 @@ select {
   word-break: break-all;
 }
 
+.col-75 {
+  width: 75%;
+  float: left;
+  margin-top: 3px;
+  word-break: break-word;
+}
+
 .col-50 {
   float: left;
   width: 50%;
   margin-top: 3px;
   word-break: break-all;
+}
+
+.col-60 {
+  float: left;
+  width: 60%;
+  margin-top: 3px;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
 }
 
 .col-100 {
@@ -127,11 +142,16 @@ select {
   margin-top: 3px;
 }
 
+.col-80 {
+  float: left;
+  width: 80%;
+  margin-top: 3px;
+}
+
 .col-85 {
   float: left;
-  width: 75%;
+  width: 85%;
   margin-top: 3px;
-  word-break: break-all;
 }
 
 /* Clear floats after the columns */
@@ -422,8 +442,15 @@ table {
   margin-top: 5px;
 }
 
+.pagination {
+  font-size: 0.8em;
+  margin-top: 5px;
+  text-align: center;
+}
+
 .list-name {
   padding: 0.1em 0.2em;
+  margin-left: 1px;
   text-align: center;
   cursor: pointer;
   border:dotted 1px white;
@@ -471,7 +498,7 @@ a {
 
 .rating {
   color: #878787;
-  text-align: center;
+  text-align: right;
   border-radius: 5px;
   font-size:0.8em;
   margin:auto;
@@ -563,3 +590,10 @@ footer {
     cursor: pointer;
 }
 
+.summary-card {
+  border-left: solid 3px white;
+  padding-left: 0.5em;
+  padding-right: 0.2em;
+  word-break: break-word;
+  margin-bottom: 1em;
+}

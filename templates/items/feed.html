@@ -5,33 +5,14 @@
 {% endblock %}
   {% block content %}
   <h1>REX with FRIENDS</h1>
-  <div class="row"><h2>most posted:</h2>
-    <ul>
+  <h2>most posted recently:</h2>
       {% for pi in popular %}
-      <li>
-        <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} posts<p class="rating" >
-          {% if pi.avg_rating >= 4.5 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          {% elif pi.avg_rating >= 3.5 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          {% elif pi.avg_rating >= 2.5 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          {% elif pi.avg_rating >= 1.5 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          {% elif pi.avg_rating %}
-              <img src="{% static 'starsmall.png' %}" height="14px">
-          {% else %}
-            no ratings
-          {% endif %}
-        </li>
-      {% endfor %}
-  </ul>
-{% if highest_rated %}
-  </div><div class="row"><h2>highest rated:</h2>
-      <ul>
-        {% for pi in highest_rated %}
-        <li>
-          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} ratings<p class="rating" >
+      <div class="row summary-card">
+        <div class="col-75">
+          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} posts
+        </div>
+        <div class="col-25">
+          <div class="rating" >
             {% if pi.avg_rating >= 4.5 %}
                 <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
             {% elif pi.avg_rating >= 3.5 %}
@@ -45,10 +26,38 @@
             {% else %}
               no ratings
             {% endif %}
-          </li>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+{% if highest_rated %}
+<br>
+<h2>highest rated recently:</h2>
+        {% for pi in highest_rated %}
+      <div class="row summary-card">
+        <div class="col-75">
+          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} ratings
+        </div>
+        <div class="col-25">
+          <div class="rating">
+            {% if pi.avg_rating >= 4.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating >= 3.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating >= 2.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating >= 1.5 %}
+                <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+            {% elif pi.avg_rating %}
+                <img src="{% static 'starsmall.png' %}" height="14px">
+            {% else %}
+              no ratings
+            {% endif %}
+          </div>
+        </div>
         {% endfor %}
-    </ul>
-  </div>
+    </div>
+    <br>
 {% endif %}
 
       {% include 'items/item_feed.html' %}

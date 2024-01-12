@@ -70,12 +70,12 @@ $('.startbutton').click(function(){
         {
             $( '#start'+ catid ).removeClass("tertiary-button"),
             $( '#start'+ catid ).addClass(data);
+            $( '#rating'+ catid ).text('happening now');
         }
      })
 });
 
 $(function() {
-  var itemNames = ["hey","hey dude","heys for horses"];
 
   $("#id_name").autocomplete({
     source: '/autocomplete-names',

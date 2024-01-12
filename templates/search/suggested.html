@@ -6,8 +6,7 @@
         <button class="tertiary-button"><a href="{%url 'search-items' %}">stuff</a></button>
         <button class="tertiary-button"><a href="{%url 'search-users' %}">people</a></button>
         <button class="tertiary-button-disabled">people you might know</button>
-  </div>
-  <div class="row">
+  </div><br>
 <table>
 {% for user in users %}
     {% include 'users/user-card.html' %}

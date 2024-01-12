@@ -3,5 +3,22 @@
 {% block title %}{{ item.name }}{% endblock %}
 {% load static %}
   {% block content %}
+  <h1>{{ item.name }} from {{ item.user }}</h1>
   {% include 'items/item_card.html' %}
+  {% if item.started_date %}
+  <p>started: {{ item.started_date}}</p>
+  {% endif %}
+  {% if item.ended_date %}
+  <p>ended: {{ item.ended_date}}</p>
+  {% endif %}
+  {% if item.original_item %}
+  <p>saved from: <a href="{% url 'view-item' item.original_item.id %}">{{ item.original_item}}</a></p>
+  {% endif %}
+  {% if item.status == 3 or item.status == 4 %}
+  <p>original note: {{ item.note}}</p>
+  {% endif %}
     {% endblock %}
+  }
+  }
+  }
+  }
