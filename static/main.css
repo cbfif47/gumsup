@@ -597,3 +597,7 @@ footer {
   word-break: break-word;
   margin-bottom: 1em;
 }
+
+.form-authorx {
+  display: none;
+}

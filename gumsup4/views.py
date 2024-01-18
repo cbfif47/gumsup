@@ -1100,4 +1100,12 @@ def AutocompleteNames(request):
         # search for it containing the term, order by name (need that for distinct to work), only get 5
         names = list(Item.objects.filter(Q(name__icontains=term)).order_by('name').values_list('name',flat=True).distinct()[:5])
         return JsonResponse(names,safe=False)
+
+
+def AutocompleteAuthors(request):
+    if request.method == 'GET' and request.user.is_authenticated:
+        term = request.GET.get('term', 'xxx')
+        # search for it containing the term, order by name (need that for distinct to work), only get 5
+        names = list(Item.objects.filter(Q(author__icontains=term)).order_by('author').values_list('author',flat=True).distinct()[:5])
+        return JsonResponse(names,safe=False)
         

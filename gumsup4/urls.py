@@ -31,6 +31,7 @@ urlpatterns = [
     path("items/", views.ItemsView.as_view(), name="items"),
     path("", views.ItemsFeedView.as_view(), name="home"),
     path("autocomplete-names/", views.AutocompleteNames, name="autocomplete-names"),
+    path("autocomplete-authors/", views.AutocompleteAuthors, name="autocomplete-authors"),
     path("items/<item_id>", views.ItemDetailView.as_view(), name="view-item"),
     path("items/<item_id>/edit", views.ItemEditView.as_view(), name="edit-item"),
     path("items/<item_id>/start", views.StartItem, name="start-item"),

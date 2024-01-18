@@ -14,11 +14,5 @@
   {% if item.original_item %}
   <p>saved from: <a href="{% url 'view-item' item.original_item.id %}">{{ item.original_item}}</a></p>
   {% endif %}
-  {% if item.status == 3 or item.status == 4 %}
-  <p>original note: {{ item.note}}</p>
-  {% endif %}
     {% endblock %}
-  }
-  }
-  }
-  }
+

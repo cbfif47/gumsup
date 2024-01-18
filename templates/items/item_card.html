@@ -28,11 +28,8 @@
       </div>
       <div class="row">
         <div class="review">
-          {% if item.ended_date %}
-            {{ item.review|lower|striptags|url_mention }}
-          {% else %}
+          {% if item.author %}<strong>{{ item.author|upper }}</strong><br>{% endif %}
             {{ item.note|lower|striptags|url_mention }}
-          {% endif %}
         </div>
       </div>
     </div>

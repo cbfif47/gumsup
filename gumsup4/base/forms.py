@@ -70,12 +70,13 @@ class ItemFormMain(forms.ModelForm):
 
   class Meta:
    model = Item
-   fields = {'name','item_type','note','user','item_list','original_item'}
+   fields = {'name','item_type','note','user','item_list','original_item','author'}
    widgets = {
           "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input'
             }),
+          "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
           "item_list": forms.Select(),
-          "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'
+          "note": forms.Textarea(attrs={'placeholder': 'note/review'
             ,"rows": 3}),
           "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
     }
@@ -85,11 +86,12 @@ class ItemFormMain(forms.ModelForm):
 class ItemFormFinished(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','review','rating','ended_date', 'started_date','hide_from_feed'}
+     fields = {'name','note','rating','ended_date', 'started_date','hide_from_feed','author','item_type'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it'
               }),
-            "review": forms.Textarea(attrs={'placeholder': 'what did you think?'
+          "author": forms.TextInput(attrs={'placeholder': 'who wrote it'}),
+            "note": forms.Textarea(attrs={'placeholder': 'what did you think?'
               ,"rows": 3}),
             "ended_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
             "started_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
@@ -100,14 +102,13 @@ class ItemFormFinished(forms.ModelForm):
 class ItemEditForm(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','review','rating','ended_date', 'started_date','item_type','note','status','item_list','hide_from_feed'}
+     fields = {'name','rating','ended_date', 'started_date','item_type','note','status','item_list','hide_from_feed','author'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it'
               }),
+          "author": forms.TextInput(attrs={'placeholder': 'who wrote it'}),
             "item_list": forms.Select(),
-            "note": forms.Textarea(attrs={'placeholder': 'lil note for the future'
-              ,"rows": 3}),
-            "review": forms.Textarea(attrs={'placeholder': 'what did you think?'
+            "note": forms.Textarea(attrs={'placeholder': 'note/review'
               ,"rows": 3}),
             "ended_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
             "started_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),

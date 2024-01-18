@@ -25,11 +25,11 @@ def dayssince(value):
     "Returns number of days between today and value."
     today = timezone.now().date()
     diff  = today - value
-    if diff.days - 1 > 1:
+    if diff.days > 1:
         return '%s days ago' % diff.days
-    elif diff.days - 1 == 1:
+    elif diff.days == 1:
         return 'yesterday'
-    elif diff.days - 1 == 0:
+    elif diff.days == 0:
         return 'today'
     else:
         # Date is in the future; return formatted date.

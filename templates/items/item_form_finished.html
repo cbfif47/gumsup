@@ -6,12 +6,17 @@
   <h1>Done with {{ form.name.value }}</h1>
 
   <form action="" method="post" novalidate class="postform">
-        {% csrf_token %}{{ form.user.as_hidden }}
+        {% csrf_token %}{{ form.user.as_hidden }}{{ form.item_type.as_hidden }}
     <div class="row">
         {{ form.name }}
     </div>
+    {% if form.item_type.value == 'BOOK' %}
+      <div class="row">
+          {{ form.author }}
+      </div>
+    {% endif %}
     <div class="row">
-        {{ form.review }}
+        {{ form.note }}
     </div>
   <div class="row">
     <div class="tabs">

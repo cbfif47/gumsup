@@ -4,14 +4,6 @@
         {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
     </div>
     <div class="row">
-        {{ form.name }}
-    </div>
-    <div class="row">
-      <div class="col-100">
-        {{ form.note }}
-      </div>
-    </div>
-    <div class="row">
       <div class="tabs">
           {% for radio in form.item_type %}
             <label class="tab" for="{{ radio.id_for_label }}">
@@ -19,6 +11,17 @@
               <div class="tab-box">{{ radio.choice_label|upper }}</div>
             </label>
           {% endfor %}
+      </div>
+    </div>
+    <div class="row">
+        {{ form.name }}
+    </div>
+    <div class="row form-author">
+        {{ form.author }}
+    </div>
+    <div class="row">
+      <div class="col-100">
+        {{ form.note }}
       </div>
     </div>
     <div class="row">

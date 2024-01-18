@@ -325,7 +325,8 @@ class Item(BaseModel):
     user = models.ForeignKey(
         User, verbose_name="Created By", on_delete=models.CASCADE,related_name="created_by")
 
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=75, blank=False)
+    author = models.CharField(max_length=40,blank=True,null=True,default='')
     item_type = models.CharField(max_length=50
         , choices = TYPE_CHOICES
         , default='MOVIE'
