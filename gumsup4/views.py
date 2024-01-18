@@ -11,7 +11,8 @@ from django.contrib import messages
 from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike
 from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, F
+from django.db.models.functions import Trunc
 from .base.utilities import get_button_text
 from datetime import datetime
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
@@ -1108,4 +1109,38 @@ def AutocompleteAuthors(request):
         # search for it containing the term, order by name (need that for distinct to work), only get 5
         names = list(Item.objects.filter(Q(author__icontains=term)).order_by('author').values_list('author',flat=True).distinct()[:5])
         return JsonResponse(names,safe=False)
+
+
+class StatsView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+
+        if request.user.is_authenticated:
+
+            item_types = Item.objects.filter(user=request.user,
+                ended_date__gte="2024-01-01").values("item_type").annotate(count=Count("id"),rating=Avg("rating"))
+            items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month"))
+            months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").dates("ended_date", "month")
+            item_type_months = Item.objects.filter(user=request.user,
+                ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month")
+                ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
+            starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
+                ,end_month=Trunc("ended_date","month")).filter(
+                    Q(ended_date__isnull=True)
+                    | ~Q(month=F("end_month"))
+                ).order_by("month")
+
+            context = {
+                'item_types_count':item_types.order_by('-count'),
+                'item_types_rating': item_types.order_by('-rating'),
+                'items': items,
+                'months': months,
+                'item_type_months': item_type_months,
+                'starts': starts,
+                'start_months': starts.distinct("month")
+            }
+
+            return render(request, 'items/stats.html', context)
+        else:
+            return redirect(to='login')
         

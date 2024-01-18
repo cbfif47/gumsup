@@ -5,6 +5,7 @@ from django.utils import timezone
 import re
 register = template.Library()
 from ..models import User
+import math
 
 @register.filter(name='url_mention', is_safe=True)
 @stringfilter
@@ -81,6 +82,29 @@ def itemtypeverb(item_type):
     elif item_type == "LIFE":
         return 'living'
 
+@register.filter(name='itemtypepast', is_safe=True)
+def itemtypepast(item_type):
+    if item_type == "MOVIE":
+        return 'watched'
+    elif item_type == "BOOK":
+        return 'read'
+    elif item_type == "TV":
+        return 'watched'
+    elif item_type == "LIFE":
+        return 'lived'
+
 @register.filter(name="ratingtoimage",is_safe=True)
 def ratingtoimage(rating):
     return '''<img src="{% static 'starsmall.png' %}" height="14px">'''
+
+@register.filter(name="ratingtobar",is_safe=True)
+def ratingtobar(rating):
+    r = rating - 1
+    r = r * 7
+    r = math.floor(r)
+    txt = ''
+
+    for i in range(r):
+        txt = txt + '-'
+
+    return txt

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load url_mention %}
+{% block title %}my stuff
+{% endblock %}
+  {% block content %}
+    <h1>stats</h1>
+    <h3>finished this year</h3>
+
+    {% for item_type in item_types_count %}
+      <div class="row">
+        <div class="col-15">
+          <stat-type>{{ item_type.item_type|lower}}</stat-type>
+        </div>
+        <div class="col-85">
+          {% for item in items %}{% if item.item_type == item_type.item_type %}<a href="{% url 'view-item' item.id %}" class="stat-bar">-</a>{% endif %}{% endfor %} {{ item_type.count}}
+        </div>
+      </div>
+    {% endfor %}
+    <h3>AVERAGE RATING</h3>
+    {% for item_type in item_types_rating %}
+      <div class="row">
+        <div class="col-15">
+          <stat-type>{{ item_type.item_type|lower}}</stat-type>
+        </div>
+        <div class="col-85">
+          {{ item_type.rating|ratingtobar }} {{ item_type.rating}}
+        </div>
+      </div>
+    {% endfor %}
+
+<br><br>
+    {% for month in months %}
+      <h3>{{ month|date:"F" }}</h3>
+        <hr class="stats">
+      {% for item_type in item_type_months %}
+        {% if item_type.month == month %}
+          <div class="row">
+            <div class="col-15">
+              <stat-type>{{ item_type.item_type|lower }}</stat-type>
+            </div>
+            <div class="col-85">
+              {% for item in items %}
+                {% if item.month == month and item.item_type == item_type.item_type %}
+                  <div class="row">- <a href="{% url 'view-item' item.id %}">{{ item }}</a></div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% for start_month in start_months %}
+        {% if start_month.month == month %}
+          <div class="row">
+            <div class="col-15">
+              <stat-type>started</stat-type>
+            </div>
+            <div class="col-85">
+              {% for item in starts %}
+                {% if item.month == month %}
+                  <div class="row">- <a href="{% url 'view-item' item.id %}">{{ item.name }}</a></div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        <hr class="stats">
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endblock %}

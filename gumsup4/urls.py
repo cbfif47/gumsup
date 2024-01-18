@@ -29,6 +29,7 @@ router.register(r'posts', viewsets.PostViewset, 'post')
 urlpatterns = [
     path("oldfeed", views.PostsPageView.as_view(), name='oldfeed'),
     path("items/", views.ItemsView.as_view(), name="items"),
+    path("stats/", views.StatsView.as_view(), name="stats"),
     path("", views.ItemsFeedView.as_view(), name="home"),
     path("autocomplete-names/", views.AutocompleteNames, name="autocomplete-names"),
     path("autocomplete-authors/", views.AutocompleteAuthors, name="autocomplete-authors"),
