@@ -4,7 +4,7 @@
 from .base import *
 
 
-DEBUG = False
+DEBUG = True
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = ['.rexwithfriends.com']
 
