@@ -24,7 +24,7 @@ def url_mention(text):
 @register.filter(name='dayssince', is_safe=True)
 def dayssince(value):
     "Returns number of days between today and value."
-    today = timezone.now().date()
+    today = timezone.localdate()
     diff  = today - value
     if diff.days > 1:
         return '%s days ago' % diff.days

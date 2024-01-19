@@ -70,18 +70,6 @@
           </div>
           </label>
       </div>
-      <div class="row tabs">
-        {% for radio in form.status %}
-        <label class="tab" for="{{ radio.id_for_label }}">
-        {{ radio.tag }}
-          <div class="tab-box">{{ radio.choice_label|upper }}</div>
-        </label>
-        {% endfor %}
-    </div>
-    
-    <div class="row">
-        {{ form.item_list }}
-    <div class="row ">
     <div class="row">
       <div class="col-30 vertical-center word-break">hide from others:</div>
       <div class="col-70">{{ form.hide_from_feed }}</div>
