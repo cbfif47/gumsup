@@ -891,6 +891,21 @@ class ItemDetailView(TemplateView):
 
 class ItemDeleteView(TemplateView):
 
+    def get(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            back_to = request.GET.get('from', 'items')
+            if item.user == request.user:
+                context = {
+                    'item': item
+                    }
+                return render(request, 'items/delete-item.html', context)
+            else:
+                return redirect(to=back_to)
+        else:
+            return redirect(to='login')
+
     def post(self, request, item_id, **kwargs):
 
         if request.user.is_authenticated:

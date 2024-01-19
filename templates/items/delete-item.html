@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ item.name }}{% endblock %}
+  {% block content %}
+  <h1>{{ item.name }}</h1>
+  Are you sure you want to delete {{item.name }}???
+  <form method="POST" action="{% url 'delete-item' item.id %}?from=items">
+              {% csrf_token %}
+      <div class="row">
+          <button class="primary-button" type="submit">delete</button>
+      </div>
+  </form>
+  <a href="/"><button class="secondary-button">nevermind</button></a>
+    {% endblock %}
+  }
+  }
+
