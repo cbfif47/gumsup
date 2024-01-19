@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}feed{% endblock %}
-{% load static %}
+{% block title %}edit{% endblock %}
   {% block content %}
-<h1>this is only a test</h1>
   <form action="" method="post" novalidate class="postform">
         {% csrf_token %}
     <div class="row tabs">
@@ -14,16 +12,88 @@
         </label>
         {% endfor %}
     </div>
-
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
+        {{ form.name }}
+      </div>
+      <div class="row form-author">
+          {{ form.author }}
+      </div>
+    </div>
+    </div>
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
+        {{ form.note }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-30 vertical-center">started:</div>
+      <div class="col-70">{{ form.started_date }}</div>
+    </div>
+    <div class="row">
+      <div class="col-30 vertical-center">ended:</div>
+      <div class="col-70">{{ form.ended_date }}</div>
+    </div>
+    <div class="row">
+      <div class="col-100" style="padding-right: 2px;">
+        {{ form.review }}
+      </div>
+    </div>
+      <div class="row tabs">
+          <label for="{{ form.rating.1.id_for_label }}">
+          {{ form.rating.1.tag }}
+            <div class="tab-box col-20-nm"><img src="{% static 'starsmall.png' %}" height="14px"></div>
+          </label>
+          <label for="{{ form.rating.2.id_for_label }}">
+          {{ form.rating.2.tag }}
+            <div class="tab-box col-20-nm">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+          <label for="{{ form.rating.3.id_for_label }}">
+          {{ form.rating.3.tag }}
+            <div class="tab-box col-20-nm">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+          <label for="{{ form.rating.4.id_for_label }}">
+          {{ form.rating.4.tag }}
+            <div class="tab-box col-20-nm">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+          <label for="{{ form.rating.5.id_for_label }}">
+          {{ form.rating.5.tag }}
+            <div class="tab-box col-20-nm">
+              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+          </div>
+          </label>
+      </div>
+      <div class="row tabs">
+        {% for radio in form.status %}
+        <label for="{{ radio.id_for_label }}">
+        {{ radio.tag }}
+          <div class="tab-box col-25-nm">{{ radio.choice_label|upper }}</div>
+        </label>
+        {% endfor %}
+    </div>
+    
+    <div class="row">
+        {{ form.item_list }}
+    <div class="row ">
+    <div class="row">
+      <div class="col-30 vertical-center word-break">hide from others:</div>
+      <div class="col-70">{{ form.hide_from_feed }}</div>
+    </div>
     <div class="row ">
         <input class="primary-button" type="submit" value="save">
     </div>
     </form>
 
-    <form method="POST" action="{% url 'delete-item' item.id %}?from=items">
+            <form method="POST" action="{% url 'delete-item' item.id %}?from=items">
               {% csrf_token %}
       <div class="row">
-          <button class="secondary-button" type="submit">delete</button>
+          <button class="secondary-button" type="submit" onclick="clicked(event)">delete</button>
       </div>
-    </form>
+            </form>
     {% endblock %}
