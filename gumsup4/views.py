@@ -1145,4 +1145,26 @@ class StatsView(TemplateView):
             return render(request, 'items/stats.html', context)
         else:
             return redirect(to='login')
+
+
+class ItemEditViewTest(TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+
+        if request.user.is_authenticated:
+            item = get_object_or_404(Item, id = item_id)
+            if item.user == request.user:
+                form = ItemEditForm(instance=item)
+                form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
+                form.fields['item_list'].empty_label= None
+                context= {
+                    'form': form,
+                    'item': item
+                }
+
+                return render(request, 'items/edit_item2.html', context)
+            else:
+                return redirect(to='home')
+        else:
+            return redirect(to='login')
         

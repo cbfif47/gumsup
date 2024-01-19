@@ -35,6 +35,7 @@ urlpatterns = [
     path("autocomplete-authors/", views.AutocompleteAuthors, name="autocomplete-authors"),
     path("items/<item_id>", views.ItemDetailView.as_view(), name="view-item"),
     path("items/<item_id>/edit", views.ItemEditView.as_view(), name="edit-item"),
+    path("items/<item_id>/edit2", views.ItemEditViewTest.as_view(), name="edit-item-test"),
     path("items/<item_id>/start", views.StartItem, name="start-item"),
     path("items/<item_id>/delete", views.ItemDeleteView.as_view(), name="delete-item"),
     path("items/<item_id>/finish", views.FinishItemView.as_view(), name="finish-item"),
