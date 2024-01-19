@@ -19,4 +19,11 @@
         <input class="primary-button" type="submit" value="save">
     </div>
     </form>
+
+    <form method="POST" action="{% url 'delete-item' item.id %}?from=items">
+              {% csrf_token %}
+      <div class="row">
+          <button class="secondary-button" type="submit">delete</button>
+      </div>
+    </form>
     {% endblock %}
