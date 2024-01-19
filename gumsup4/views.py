@@ -1117,8 +1117,10 @@ class StatsView(TemplateView):
 
         if request.user.is_authenticated:
 
-            item_types = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01").values("item_type").annotate(count=Count("id"),rating=Avg("rating"))
+            item_types_count = Item.objects.filter(user=request.user,
+                ended_date__gte="2024-01-01").values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
+            item_types_rating = Item.objects.filter(user=request.user,
+                ended_date__gte="2024-01-01").values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
             items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month"))
             months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").dates("ended_date", "month")
             item_type_months = Item.objects.filter(user=request.user,
@@ -1131,8 +1133,8 @@ class StatsView(TemplateView):
                 ).order_by("month")
 
             context = {
-                'item_types_count':item_types.order_by('-count'),
-                'item_types_rating': item_types.order_by('-rating'),
+                'item_types_count':item_types_count,
+                'item_types_rating': item_types_rating,
                 'items': items,
                 'months': months,
                 'item_type_months': item_type_months,
