@@ -1121,7 +1121,7 @@ class StatsView(TemplateView):
                 ended_date__gte="2024-01-01").values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
             item_types_rating = Item.objects.filter(user=request.user,
                 ended_date__gte="2024-01-01").values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
-            items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month"))
+            items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month")).order_by("ended_date")
             months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").dates("ended_date", "month")
             item_type_months = Item.objects.filter(user=request.user,
                 ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month")
@@ -1130,7 +1130,7 @@ class StatsView(TemplateView):
                 ,end_month=Trunc("ended_date","month")).filter(
                     Q(ended_date__isnull=True)
                     | ~Q(month=F("end_month"))
-                ).order_by("month")
+                )
 
             context = {
                 'item_types_count':item_types_count,
@@ -1138,8 +1138,8 @@ class StatsView(TemplateView):
                 'items': items,
                 'months': months,
                 'item_type_months': item_type_months,
-                'starts': starts,
-                'start_months': starts.distinct("month")
+                'starts': starts.order_by("started_date"),
+                'start_months': starts.order_by("month").distinct("month")
             }
 
             return render(request, 'items/stats.html', context)

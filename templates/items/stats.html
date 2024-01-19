@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load url_mention %}
-{% block title %}my stuff
+{% block title %}my stats
 {% endblock %}
   {% block content %}
-    <h1>stats</h1>
+    <h1>my stats</h1>
     <h3>finished this year</h3>
 
     {% for item_type in item_types_count %}
@@ -24,7 +24,7 @@
           <stat-type>{{ item_type.item_type|lower}}</stat-type>
         </div>
         <div class="col-85">
-          {{ item_type.rating|ratingtobar }} {{ item_type.rating}}
+          {{ item_type.rating|ratingtobar }} {{ item_type.rating|floatformat:1 }}
         </div>
       </div>
     {% endfor %}
@@ -42,7 +42,11 @@
             <div class="col-85">
               {% for item in items %}
                 {% if item.month == month and item.item_type == item_type.item_type %}
-                  <div class="row">- <a href="{% url 'view-item' item.id %}">{{ item }}</a></div>
+                  <div class="row">- <a href="{% url 'view-item' item.id %}">{{ item }}</a>
+                    {% if item.rating %}
+                      {{ item.rating }}
+                      {% endif %}
+                  </div>
                 {% endif %}
               {% endfor %}
             </div>
