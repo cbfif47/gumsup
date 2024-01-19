@@ -23,22 +23,12 @@
     </div>
     </div>
     <div class="row">
-      <div class="col-100">
-        {{ form.note }}
-      </div>
-    </div>
-    <div class="row">
       <div class="col-30 vertical-center">started:</div>
       <div class="col-70">{{ form.started_date }}</div>
     </div>
     <div class="row">
       <div class="col-30 vertical-center">ended:</div>
       <div class="col-70">{{ form.ended_date }}</div>
-    </div>
-    <div class="row">
-      <div class="col-100">
-        {{ form.review }}
-      </div>
     </div>
       <div class="row tabs">
           <label class="tab" for="{{ form.rating.1.id_for_label }}">
@@ -81,10 +71,6 @@
     
     <div class="row">
         {{ form.item_list }}
-    </div>
-    <div class="row">
-      <div class="col-30 vertical-center word-break">hide from others:</div>
-      <div class="col-70">{{ form.hide_from_feed }}</div>
     </div>
     <div class="row ">
         <input class="primary-button" type="submit" value="save">
