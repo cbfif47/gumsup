@@ -91,10 +91,6 @@
     </div>
     </form>
 
-            <form method="POST" action="{% url 'delete-item' item.id %}?from=items">
-              {% csrf_token %}
-      <div class="row">
-          <button class="secondary-button" type="submit" onclick="clicked(event)">delete</button>
-      </div>
-            </form>
+            
+    <a href="{% url 'delete-item' item.id %}"><button class="secondary-button">delete</button></a>
     {% endblock %}
