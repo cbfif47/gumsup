@@ -862,6 +862,7 @@ class ItemEditView(TemplateView):
                 context = {
                             'form': f
                             ,'messages': ["U forgot some fields"]
+                            , 'item': item
                         }
                 return render(request, "items/edit_item.html", context)
         else:
