@@ -4,9 +4,9 @@
         {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
       <div class="row tabs">
           {% for radio in form.item_type %}
-            <label for="{{ radio.id_for_label }}">
+            <label class="tab" for="{{ radio.id_for_label }}">
               {{ radio.tag }}
-              <div class="tab-box col-25-nm">{{ radio.choice_label|upper }}</div>
+              <div class="tab-box">{{ radio.choice_label|upper }}</div>
             </label>
           {% endfor %}
       </div>
