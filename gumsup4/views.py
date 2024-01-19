@@ -1118,13 +1118,13 @@ class StatsView(TemplateView):
         if request.user.is_authenticated:
 
             item_types_count = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01").values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
+                ended_date__gte="2024-01-01",status=3).values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
             item_types_rating = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01").values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
-            items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month")).order_by("ended_date")
-            months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01").dates("ended_date", "month")
+                ended_date__gte="2024-01-01",status=3).values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
+            items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")).order_by("ended_date")
+            months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).dates("ended_date", "month")
             item_type_months = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01").annotate(month=Trunc("ended_date","month")
+                ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")
                 ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
             starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
                 ,end_month=Trunc("ended_date","month")).filter(

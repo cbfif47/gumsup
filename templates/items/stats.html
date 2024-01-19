@@ -5,8 +5,8 @@
 {% endblock %}
   {% block content %}
     <h1>my stats</h1>
+<div class="container">
     <h3>finished this year</h3>
-
     {% for item_type in item_types_count %}
       <div class="row">
         <div class="col-15">
@@ -17,6 +17,8 @@
         </div>
       </div>
     {% endfor %}
+  </div>
+<div class="container">
     <h3>AVERAGE RATING</h3>
     {% for item_type in item_types_rating %}
       <div class="row">
@@ -28,11 +30,12 @@
         </div>
       </div>
     {% endfor %}
+</div>
 
 <br><br>
     {% for month in months %}
+<div class="container">
       <h3>{{ month|date:"F" }}</h3>
-        <hr class="stats">
       {% for item_type in item_type_months %}
         {% if item_type.month == month %}
           <div class="row">
@@ -67,8 +70,8 @@
               {% endfor %}
             </div>
           </div>
-        <hr class="stats">
         {% endif %}
       {% endfor %}
     {% endfor %}
+          </div>
   {% endblock %}

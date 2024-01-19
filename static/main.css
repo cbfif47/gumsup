@@ -44,7 +44,7 @@ h3 {
   text-align: center;
   font-size: 1.3em;
   margin-bottom: 0.1em;
-  margin-top: 2em;
+  margin-top: 0em;
   letter-spacing: 0.2em;
 }
 
@@ -85,9 +85,10 @@ select {
 }
 
 .container {
-  border-radius: 5px;
+  border: dotted 1px white;
   background-color: black;
-  padding: 20px;
+  padding: 3%;
+  margin-bottom: 1em;
 }
 
 .col-15 {
@@ -231,7 +232,7 @@ table {
   border-collapse: collapse;
 }
 .postcard {
-    border: 1px solid white;
+    border: 1px dotted white;
     position: relative;
     margin: auto;
     border-radius: 0em;
