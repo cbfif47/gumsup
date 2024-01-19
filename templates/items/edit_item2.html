@@ -39,36 +39,7 @@
         {{ form.review }}
       </div>
     </div>
-      <div class="row tabs">
-          <label for="{{ form.rating.1.id_for_label }}">
-          {{ form.rating.1.tag }}
-            <div class="tab-box col-20-nm"><img src="{% static 'starsmall.png' %}" height="14px"></div>
-          </label>
-          <label for="{{ form.rating.2.id_for_label }}">
-          {{ form.rating.2.tag }}
-            <div class="tab-box col-20-nm">
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          </div>
-          </label>
-          <label for="{{ form.rating.3.id_for_label }}">
-          {{ form.rating.3.tag }}
-            <div class="tab-box col-20-nm">
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          </div>
-          </label>
-          <label for="{{ form.rating.4.id_for_label }}">
-          {{ form.rating.4.tag }}
-            <div class="tab-box col-20-nm">
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          </div>
-          </label>
-          <label for="{{ form.rating.5.id_for_label }}">
-          {{ form.rating.5.tag }}
-            <div class="tab-box col-20-nm">
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-          </div>
-          </label>
-      </div>
+ 
       <div class="row tabs">
         {% for radio in form.status %}
         <label for="{{ radio.id_for_label }}">
@@ -88,5 +59,12 @@
     <div class="row ">
         <input class="primary-button" type="submit" value="save">
     </div>
-  </form>
+    </form>
+
+            <form method="POST" action="{% url 'delete-item' item.id %}?from=items">
+              {% csrf_token %}
+      <div class="row">
+          <button class="secondary-button" type="submit" onclick="clicked(event)">delete</button>
+      </div>
+            </form>
     {% endblock %}
