@@ -20,10 +20,10 @@
     </div>
     </form>
 
-            <form method="POST" action="{% url 'delete-item' item.id %}?from=items" style="display:inline;">
+    <form method="POST" action="{% url 'delete-item' item.id %}?from=items" style="display:inline;">
               {% csrf_token %}
       <div class="row">
-          <button class="secondary-button" type="submit" onclick="clicked(event)">delete</button>
+          <button class="secondary-button" type="submit">delete</button>
       </div>
-            </form>
+    </form>
     {% endblock %}

@@ -5,7 +5,6 @@
   {% block content %}
   <form action="" method="post" novalidate class="postform">
         {% csrf_token %}
-    </div>
     <div class="row tabs">
         {% for radio in form.item_type %}
         <label for="{{ radio.id_for_label }}">
