@@ -6,7 +6,7 @@
   <form action="{% url 'edit-item' item.id %}" method="post" novalidate class="postform">
         {% csrf_token %}
  
-    <div class="row ">
+    <div class="row">
         <input class="primary-button" type="submit" value="save">
     </div>
     </form>
