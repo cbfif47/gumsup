@@ -15,8 +15,8 @@ class PostForm(forms.ModelForm):
               ,"rows": 3}),
             "url": forms.TextInput(attrs={"placeholder": "url (optional)"
               }),
-            "category": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
-            "superlike": forms.CheckboxInput(attrs={"class":"tab-input","name":"tab-input"})
+            "category": forms.RadioSelect(attrs={"class":"tab-input"}),
+            "superlike": forms.CheckboxInput(attrs={"class":"tab-input"})
       }
 
 class UserEditForm(forms.ModelForm):
@@ -78,7 +78,7 @@ class ItemFormMain(forms.ModelForm):
           "item_list": forms.Select(),
           "note": forms.Textarea(attrs={'placeholder': 'note/review'
             ,"rows": 3}),
-          "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
+          "item_type": forms.RadioSelect(attrs={"class":"tab-input"})
     }
 
 
@@ -95,7 +95,7 @@ class ItemFormFinished(forms.ModelForm):
               ,"rows": 3}),
             "ended_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
             "started_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
-            "rating": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
+            "rating": forms.RadioSelect(attrs={"class":"tab-input"})
       }
 
 
@@ -112,9 +112,9 @@ class ItemEditForm(forms.ModelForm):
               ,"rows": 3}),
             "ended_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
             "started_date": forms.DateInput(attrs={'class':'datepicker','type':'date'}),
-            "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
-            "status": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
-            "item_type": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"}),
-            "rating": forms.RadioSelect(attrs={"class":"tab-input","name":"tab-input"})
+            "item_type": forms.RadioSelect(attrs={"class":"tab-input"}),
+            "status": forms.RadioSelect(attrs={"class":"tab-input"}),
+            "item_type": forms.RadioSelect(attrs={"class":"tab-input"}),
+            "rating": forms.RadioSelect(attrs={"class":"tab-input"})
       }
 
