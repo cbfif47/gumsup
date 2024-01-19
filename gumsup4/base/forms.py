@@ -104,9 +104,9 @@ class ItemEditForm(forms.ModelForm):
      model = Item
      fields = {'name','rating','ended_date', 'started_date','item_type','note','status','item_list','hide_from_feed','author'}
      widgets = {
-            "name": forms.TextInput(attrs={'placeholder': 'what is it'
+            "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input'
               }),
-          "author": forms.TextInput(attrs={'placeholder': 'who wrote it'}),
+          "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
             "item_list": forms.Select(),
             "note": forms.Textarea(attrs={'placeholder': 'note/review'
               ,"rows": 3}),
