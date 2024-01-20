@@ -3,7 +3,7 @@
 {% block title %}edit {{item.name}}{% endblock %}
 {% block content %}
   <h1>{{ item.name }}</h1>
-  <form action="{% url 'edit-item' item.id %}" method="post" novalidate class="postform">
+  <form action="{% url 'edit-item' item.id %}" method="post" novalidate class="postform" name="editform">
         {% csrf_token %}
     <div class="row">
       <div class="col-30 vertical-center word-break">hide from others:</div>
