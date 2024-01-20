@@ -24,6 +24,14 @@
         {{ form.note }}
       </div>
     </div>
+      <div class="row tabs">
+        {% for radio in form.status %}
+          <label class="tab" for="{{ radio.id_for_label }}">
+            {{ radio.tag }}
+            <div class="tab-box">{{ radio.choice_label|upper }}</div>
+          </label>
+        {% endfor %}
+      </div>
     <div class="row">
       <div class="col-100">
         {{ form.item_list }}
@@ -36,9 +44,6 @@
     <div class="row ">
         <input class="primary-button" type="submit" value="save" >
     </div>
-      <div class="row">
-          <button class="secondary-button" type="submit" formaction="{% url 'items' %}?status=done&from={{ from }}">finished it</button>
-      </div>
     </form>
     <a href="{% url 'delete-item' item.id %}"><button class="secondary-button">delete</button></a>
 {% endblock %}
