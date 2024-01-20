@@ -655,3 +655,8 @@ stat-type {
 hr.stats {
   border: dotted 0.7px white;
 }
+
+.ui-datepicker {
+  background-color: black;
+  padding:15px;
+}

@@ -106,3 +106,8 @@ $(function() {
   // page-load:
   }).change();
 });
+
+$( function() {
+    $( "#id_ended_date" ).datepicker();
+    $( "#id_started_date" ).datepicker();
+  } );

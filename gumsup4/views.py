@@ -16,6 +16,7 @@ from django.db.models.functions import Trunc
 from .base.utilities import get_button_text
 from datetime import datetime
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
+from django.utils import timezone
 
 class HomePageView(TemplateView):
     template_name = "base.html"
@@ -781,8 +782,8 @@ class FinishItemView(TemplateView):
             item = get_object_or_404(Item, id = item_id)
             if item.user == request.user:
                 if item.started_date is None:
-                    item.started_date = datetime.now()
-                item.ended_date = datetime.now()
+                    item.started_date = timezone.localdate()
+                item.ended_date = timezone.localdate()
                 form = ItemFormFinished(instance=item)
                 context= {
                     'form': form
