@@ -431,6 +431,7 @@ table {
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
+  font-weight: normal;
 }
 
 .tertiary-button-disabled {
