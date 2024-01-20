@@ -3,15 +3,38 @@
 {% block title %}edit {{item.name}}{% endblock %}
 {% block content %}
   <h1>{{ item.name }}</h1>
-  <form action="{% url 'edit-item' item.id %}" method="post" novalidate class="postform" name="editform">
-        {% csrf_token %}
+    <form action="{% url 'items' %}?from={{ from }}" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
+        {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
+      <div class="row tabs">
+          {% for radio in form.item_type %}
+            <label class="tab" for="{{ radio.id_for_label }}">
+              {{ radio.tag }}
+              <div class="tab-box">{{ radio.choice_label|upper }}</div>
+            </label>
+          {% endfor %}
+      </div>
     <div class="row">
-      <div class="col-30 vertical-center word-break">hide from others:</div>
-      <div class="col-70">{{ form.hide_from_feed }}</div>
+        {{ form.name }}
+    </div>
+    <div class="row form-author">
+        {{ form.author }}
     </div>
     <div class="row">
-        <input class="primary-button" type="submit" value="save">
+      <div class="col-100">
+        {{ form.note }}
+      </div>
     </div>
+    <div class="row">
+      <div class="col-100">
+        {{ form.item_list }}
+      </div>
+    </div>
+    <div class="row ">
+        <input class="primary-button" type="submit" value="save for later" >
+    </div>
+      <div class="row">
+          <button class="secondary-button" type="submit" formaction="{% url 'items' %}?status=done&from={{ from }}">finished it</button>
+      </div>
     </form>
     <a href="{% url 'delete-item' item.id %}"><button class="secondary-button">delete</button></a>
 {% endblock %}
