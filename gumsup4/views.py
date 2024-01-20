@@ -1175,7 +1175,8 @@ class ItemEditViewTest(TemplateView):
                 form.fields['item_list'].empty_label= None
                 context= {
                     'form': form,
-                    'item': item
+                    'item': item,
+                    'from': 'items'
                 }
 
                 return render(request, 'items/edit_item2.html', context)
