@@ -3,7 +3,7 @@
 {% block title %}edit {{item.name}}{% endblock %}
 {% block content %}
   <h1>{{ item.name }}</h1>
-    <form action="{% url 'items' %}?from={{ from }}" method="post" novalidate class="postform" name="editform">
+    <form action="{% url 'edit-item' item.id %}" method="post" novalidate class="postform" name="editform">
         {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
       <div class="row tabs">
           {% for radio in form.item_type %}

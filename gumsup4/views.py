@@ -834,7 +834,7 @@ class ItemEditView(TemplateView):
                     'item': item
                 }
 
-                return render(request, 'items/edit_item.html', context)
+                return render(request, 'items/edit_item2.html', context)
             else:
                 return redirect(to='home')
         else:

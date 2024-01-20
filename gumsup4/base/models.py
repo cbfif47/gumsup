@@ -376,7 +376,7 @@ class Item(BaseModel):
         elif self.status == 4 and self.ended_date:
             self.last_date = self.ended_date
         else:
-            self.last_date = timezone.now()
+            self.last_date = timezone.localtime()
         # for lowercase
         self.name = self.name.lower()
         if self.note:
