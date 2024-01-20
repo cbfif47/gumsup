@@ -3,7 +3,7 @@
 {% block title %}edit {{item.name}}{% endblock %}
 {% block content %}
   <h1>{{ item.name }}</h1>
-    <form action="{% url 'items' %}?from={{ from }}" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
+    <form action="{% url 'items' %}?from={{ from }}" method="post" novalidate class="postform" name="editform">
         {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
       <div class="row tabs">
           {% for radio in form.item_type %}
@@ -29,8 +29,12 @@
         {{ form.item_list }}
       </div>
     </div>
+    <div class="row">
+      <div class="col-30 vertical-center word-break">hide from others:</div>
+      <div class="col-70">{{ form.hide_from_feed }}</div>
+    </div>
     <div class="row ">
-        <input class="primary-button" type="submit" value="save for later" >
+        <input class="primary-button" type="submit" value="save" >
     </div>
       <div class="row">
           <button class="secondary-button" type="submit" formaction="{% url 'items' %}?status=done&from={{ from }}">finished it</button>
