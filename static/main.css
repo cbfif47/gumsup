@@ -853,7 +853,7 @@ hr.stats {
   float: left;
   width: 85px;
   margin-top: 3px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .item-card-left {
@@ -861,19 +861,19 @@ hr.stats {
   width: 70px;
   padding-right:10px;
   margin-top: 3px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .item-card-middle {
   float: left;
   width: calc(100% - 85px - 70px);
   margin-top: 3px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .popular-left {
   float: left;
   width: calc(100% - 85px);
   margin-top: 3px;
-  word-break: break-all;
+  word-break: break-word;
 }
