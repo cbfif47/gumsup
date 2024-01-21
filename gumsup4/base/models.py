@@ -384,12 +384,10 @@ class Item(BaseModel):
         self.name = self.name.lower()
         if self.note:
             self.note = self.note.lower()
-        if self.review:
-            self.review = self.review.lower()
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view
-        mentions = re.findall("@[-\w]*",self.review)
+        mentions = re.findall("@[-\w]*",self.note)
         if mentions:
             for mention in mentions:
                 username = mention.replace("@","")

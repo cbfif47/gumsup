@@ -68,7 +68,6 @@ $('.startbutton').click(function(){
         },
         success: function( data ) 
         {
-            $( '#start'+ catid ).removeClass("tertiary-button"),
             $( '#start'+ catid ).addClass(data);
             $( '#rating'+ catid ).text('happening now');
         }

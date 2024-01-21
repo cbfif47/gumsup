@@ -92,7 +92,7 @@ class ItemFormFinished(forms.ModelForm):
               }),
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
             "note": forms.Textarea(attrs={'placeholder': 'what did you think?'
-              ,"rows": 3}),
+              ,"rows": 5}),
             "ended_date": forms.TextInput(),
             "started_date": forms.TextInput(),
             "rating": forms.RadioSelect(attrs={"class":"tab-input"})
@@ -109,7 +109,7 @@ class ItemEditForm(forms.ModelForm):
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
             "item_list": forms.Select(),
             "note": forms.Textarea(attrs={'placeholder': 'note/review'
-              ,"rows": 3}),
+              ,"rows": 5}),
             "ended_date": forms.TextInput(),
             "started_date": forms.TextInput(),
             "item_type": forms.RadioSelect(attrs={"class":"tab-input"}),

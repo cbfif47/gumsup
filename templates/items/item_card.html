@@ -37,7 +37,7 @@
             {% endif %}
           </div>
     </div>
-    <div class="item-card-right {% if item.rating or item.status == 2 %}tall{% else %}short{% endif %}">
+    <div class="item-card-right">
             <button class="item-type">{{ item.item_type }}</button><br>
             <div class="rating" id="rating{{item.id}}">
                 {% if item.rating == 1%}

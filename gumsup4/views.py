@@ -1098,9 +1098,9 @@ def StartItem(request,item_id):
             item.status = 2
             item.started_date = datetime.now()
             item.save()
-            return HttpResponse("tertiary-button-disabled") # Sending an success response
+            return HttpResponse("disabled") # Sending an success response
         else:
-            return HttpResponse("tertiary-button") # dont change the class
+            return HttpResponse("") # dont change the class
     else:
         return HttpResponse("Request method is not a GET")
 
