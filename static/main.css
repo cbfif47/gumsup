@@ -12,6 +12,7 @@ h1, h2, h3 {
 main {
     max-width:65ex;
     margin: auto;
+    font-size: 16px;
 }
 
 
@@ -35,6 +36,7 @@ h2 {
   text-align: left;
   font-size: 1.3em;
   padding-bottom: 0em;
+  margin-bottom: 0.4em;
 }
 
 h3 {
@@ -241,11 +243,11 @@ table {
 }
 
 .activity-card {
-    border: 1px solid white;
+    border: 1px dotted white;
     min-height:7ex;
     position: relative;
     margin: auto;
-    padding: 5px;
+    padding: 0.5em;
     background-color: black;
 }
 
@@ -481,6 +483,12 @@ table {
   margin-top: 5px;
 }
 
+.backlink {
+  font-size: 0.8em;
+  float: left;
+  margin-top: 5px;
+}
+
 .pagination {
   font-size: 0.8em;
   margin-top: 5px;
@@ -522,7 +530,7 @@ table {
   text-align: left;
   padding: 0px;
   padding-right: 3px;
-  font-size:1em;
+  font-size:1.1em;
   cursor: pointer;
   border-radius: 5px;
   border:solid 0px black;
@@ -537,15 +545,22 @@ a {
 .rating {
   color: #878787;
   text-align: right;
-  font-size:0.8em;
   margin-top:0.5em;
+  font-size:1em;
+  font-size:0.8em;
+  font-style: italic;
+}
+
+.summary-rating {
+  color: #878787;
+  text-align: right;
+  font-size:0.8em;
   font-style: italic;
 }
 
 .since-finished {
   color: #878787;
-  font-family: 'VT323',monospace;
-  font-size:1em;
+  font-size:0.8em;
   word-break: break-word;
   display: inline;
 }
@@ -557,7 +572,7 @@ a {
   font-size:0.8em;
   margin:auto;
   right: 5px;
-  bottom: 5px;
+  bottom: 2px;
   position:absolute;
 }
 
@@ -577,7 +592,7 @@ li {
 
 .review {
   color: white;
-  font-size: 0.8em;
+  font-size: 0.85em;
   word-break: break-word;
   margin-bottom: 2em;
 }
@@ -652,11 +667,11 @@ footer {
 
 
 .summary-card {
-  border-left: solid 3px white;
+  border-left: solid 2px white;
   padding-left: 0.5em;
   padding-right: 0.2em;
   word-break: break-word;
-  margin-bottom: 1em;
+  margin-bottom: 0.4em;
 }
 
 .stat-bar {
@@ -852,14 +867,21 @@ hr.stats {
 
 .item-card-right {
   float: left;
-  width: 7.5em;
+  width: 6em;
   margin-top: 3px;
-  min-height: 5.8em;
+}
+
+.tall {
+  min-height: 5.3em;
+}
+
+.short {
+  min-height: 4em;
 }
 
 .item-card-left {
   float: left;
-  width: calc(100% - 7.5em);
+  width: calc(100% - 6em);
   margin-top: 3px;
   word-break: break-word;
 }

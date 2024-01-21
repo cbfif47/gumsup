@@ -3,7 +3,9 @@
 {% block title %}{{ item.name }}{% endblock %}
   {% block content %}
   <h1>{{ item.name }} from {{ item.user }}</h1>
-  {% include 'items/item_card.html' %}
+  <table>
+    {% include 'items/item_card.html' %}
+  </table>
   {% if item.started_date %}
   <p>started: {{ item.started_date}}</p>
   {% endif %}

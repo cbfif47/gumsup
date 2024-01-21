@@ -336,7 +336,6 @@ class Item(BaseModel):
         , default='MOVIE'
         , verbose_name="Type", blank=False)
     note = models.TextField(max_length=250,blank=True,null=True,default='')
-    review = models.TextField(max_length=250,blank=True,null=True,default='')
     rating = models.IntegerField(choices=RATING_CHOICES,blank=True,null=True)
     original_item = models.ForeignKey(
         'Item', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')

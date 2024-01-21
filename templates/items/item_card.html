@@ -24,7 +24,7 @@
         {% endif %}
             {% if item.status == 3 %}
               <div class="since-finished">
-                {{ item.item_type|itemtypepast}} {{item.last_date|dayssince}}
+                {{item.last_date|dayssince}}
               </div>
             {% elif item.status == 1 %}
               <div class="since-finished">
@@ -37,7 +37,7 @@
             {% endif %}
           </div>
     </div>
-    <div class="item-card-right">
+    <div class="item-card-right {% if item.rating or item.status == 2 %}tall{% else %}short{% endif %}">
             <button class="item-type">{{ item.item_type }}</button><br>
             <div class="rating" id="rating{{item.id}}">
                 {% if item.rating == 1%}

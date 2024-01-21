@@ -12,7 +12,7 @@
           <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} posts
         </div>
         <div class="popular-right">
-          <div class="rating" >
+          <div class="summary-rating" >
             {% if pi.avg_rating >= 4.5 %}
                 <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
             {% elif pi.avg_rating >= 3.5 %}
@@ -39,7 +39,7 @@
           <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} ratings
         </div>
         <div class="popular-right">
-          <div class="rating" style="float: right;">
+          <div class="summary-rating" style="float: right;">
             {% if pi.avg_rating >= 4.5 %}
                 <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
             {% elif pi.avg_rating >= 3.5 %}
@@ -57,7 +57,7 @@
         </div>
       </div>
         {% endfor %}
-    <br>
+    <br><br>
 {% endif %}
 
       {% include 'items/item_feed.html' %}

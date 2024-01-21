@@ -100,7 +100,7 @@ def ratingtoimage(rating):
 @register.filter(name="ratingtobar",is_safe=True)
 def ratingtobar(rating):
     r = rating - 1
-    r = r * 7
+    r = r * 6
     r = math.floor(r)
     txt = ''
 
