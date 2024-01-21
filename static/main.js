@@ -77,7 +77,7 @@ $('.startbutton').click(function(){
 
 $(function() {
 
-  $("#id_name").autocomplete({
+  $("#id_name_item").autocomplete({
     source: '/autocomplete-names',
     delay: 50,
     minLength: 3
@@ -98,10 +98,7 @@ $(function() {
     // this, in the anonymous function, refers to the changed-<input>:
     // select the element(s) you want to show/hide:
     $('.form-author')
-        // pass a Boolean to the method, if the numeric-value of the changed-<input>
-        // is exactly equal to 2 and that <input> is checked, the .business-fields
-        // will be shown:
-        .toggle(this.value === 'BOOK' && this.checked);
+        .toggle(this.value === 'BOOK');
   // trigger the change event, to show/hide the .business-fields element(s) on
   // page-load:
   }).change();

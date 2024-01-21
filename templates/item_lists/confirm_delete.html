@@ -1,4 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}LIST{% endblock %}
+  {% block content %}
+  <h1>deleting list</h1>
 <form method="post">{% csrf_token %}
 <p>Are you sure you want to delete "{{ object.name }}"?</p>
-<input type="submit" value="Confirm">
+      <div class="row">
+<input type="submit" value="delete" class="primary-button">
+</div>
 </form>
+  <a href="/"><button class="secondary-button">nevermind</button></a>
+  {% endblock %}

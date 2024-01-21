@@ -4,7 +4,7 @@
 <tr>
 <td class="postcard">
   <div class="row">
-    <div class="col-20">
+    <div class="item-card-left">
       <div class="row">
         <button class="item-type">{{ item.item_type }}</button>
       </div>
@@ -16,7 +16,7 @@
         {% endif %}
       </div>
     </div>
-    <div class="col-50">
+    <div class="item-card-middle">
       <div class="row">
         <div class="name">
           {% if item.user == request.user %}
@@ -33,7 +33,7 @@
         </div>
       </div>
     </div>
-    <div class="col-30">
+    <div class="item-card-right">
       <div class="row">
         <div class="rating" id="rating{{item.id}}">
             {% if item.rating == 1%}
@@ -61,7 +61,7 @@
             {% if item.status == 1 %}
               <button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
             {% elif item.status == 2 %}
-              <button type="disabled" class="tertiary-button-disabled" />start</button>
+              <button type="disabled" class="tertiary-button disabled" />start</button>
             {% endif %}
             {% if item.ended_date is None %}
                 <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">

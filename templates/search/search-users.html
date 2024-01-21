@@ -3,9 +3,9 @@
   {% block content %}
   <h1>search</h1>
   <div class="row">
-        <button class="tertiary-button"><a href="{%url 'search-items' %}">stuff</a></button>
-        <button class="tertiary-button-disabled">people</button>
-        <button class="tertiary-button"><a href="{%url 'suggested' %}">people you might know</a></button>
+        <button class="search-button"><a href="{%url 'search-items' %}">stuff</a></button>
+        <button class="search-button disabled">people</button>
+        <button class="search-button"><a href="{%url 'suggested' %}">people you might know</a></button>
   </div><br>
   <div class="row">
 <form action="{% url 'search-users' %}" method="get">

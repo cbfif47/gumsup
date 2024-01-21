@@ -382,10 +382,7 @@ table {
 
 .show {display:block;}
 
-.primary-button {
-  padding: 2px 8px;
-  margin-bottom: 0px;
-  margin-top: 8px;
+.primary-button, .search-button {
   text-align: center;
   border-radius: 5px;
   color: black;
@@ -395,6 +392,13 @@ table {
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
+}
+
+.primary-button {
+  margin-bottom: 0px;
+  margin-top: 8px;
+  text-align: center;
+  border-radius: 5px;
   float: right;
   padding:0.2em 1em;
   margin-right:0px;
@@ -439,27 +443,41 @@ table {
   border-radius: 5px;
   padding: 0.2em;
   margin-bottom: 0.3em;
-  border-left: solid 2px #878787;
-  border-top: solid 2px #878787;
-  border-bottom: solid 2px #363636;
-  border-right: solid 2px #363636;
-  background-color: #5e5e5e;
   color: #363636;
   display: inline;
   text-decoration: none;
   font-family: 'VT323', monospace;
 }
 
-.primary-button, .tertiary-button {
+.search-button {
+  margin-bottom: 0px;
+  margin-top: 8px;
+  text-align: center;
+  border-radius: 5px;
+  padding:0.1em 0.5em;
+  margin-right:0px;
+  font-size: 1.3em;
+}
+
+.primary-button, .tertiary-button, .search-button {
   border-left: solid 2px white;
   border-top: solid 2px white;
   border-bottom: solid 2px gray;
   border-right: solid 2px gray;
 }
 
-.primary-button a, .tertiary-button a {
+.primary-button a, .tertiary-button a, .search-button a {
   text-decoration: none;
   color: black;
+}
+
+.disabled {
+  border-left: solid 2px #878787;
+  border-top: solid 2px #878787;
+  border-bottom: solid 2px #363636;
+  border-right: solid 2px #363636;
+  background-color: #5e5e5e;
+  cursor: default;
 }
 
 .smalllink {
@@ -629,6 +647,7 @@ footer {
   position: absolute;
   width: 1px;
 }
+
 
 
 .summary-card {
@@ -828,4 +847,33 @@ hr.stats {
 .ui-datepicker-rtl .ui-datepicker-group-middle .ui-datepicker-header {
   border-right-width: 0;
   border-left-width: 1px;
+}
+
+.item-card-right {
+  float: left;
+  width: 85px;
+  margin-top: 3px;
+  word-break: break-all;
+}
+
+.item-card-left {
+  float: left;
+  width: 70px;
+  padding-right:10px;
+  margin-top: 3px;
+  word-break: break-all;
+}
+
+.item-card-middle {
+  float: left;
+  width: calc(100% - 85px - 70px);
+  margin-top: 3px;
+  word-break: break-all;
+}
+
+.popular-left {
+  float: left;
+  width: calc(100% - 85px);
+  margin-top: 3px;
+  word-break: break-all;
 }

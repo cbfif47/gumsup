@@ -8,10 +8,10 @@
   <h2>most posted recently:</h2>
       {% for pi in popular %}
       <div class="row summary-card">
-        <div class="col-75">
+        <div class="popular-left">
           <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} posts
         </div>
-        <div class="col-25">
+        <div class="item-card-right">
           <div class="rating" >
             {% if pi.avg_rating >= 4.5 %}
                 <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
@@ -35,10 +35,10 @@
 <h2>highest rated recently:</h2>
         {% for pi in highest_rated %}
       <div class="row summary-card">
-        <div class="col-75">
+        <div class="popular-left">
           <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} ratings
         </div>
-        <div class="col-25">
+        <div class="item-card-right">
           <div class="rating">
             {% if pi.avg_rating >= 4.5 %}
                 <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">

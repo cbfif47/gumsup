@@ -45,7 +45,7 @@
             <div class="col-85">
               {% for item in items %}
                 {% if item.month == month and item.item_type == item_type.item_type %}
-                  <div class="row">- <a href="{% url 'view-item' item.id %}">{{ item }}</a>
+                  <div class="row">- <a href="{% url 'view-item' item.id %}" style="text-decoration: none;">{{ item }}</a>
                     {% if item.rating %}
                       {{ item.rating }}
                       {% endif %}
@@ -56,22 +56,6 @@
           </div>
         {% endif %}
       {% endfor %}
-      {% for start_month in start_months %}
-        {% if start_month.month == month %}
-          <div class="row">
-            <div class="col-15">
-              <stat-type>started</stat-type>
-            </div>
-            <div class="col-85">
-              {% for item in starts %}
-                {% if item.month == month %}
-                  <div class="row">- <a href="{% url 'view-item' item.id %}">{{ item.name }}</a></div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-      {% endfor %}
+      </div>
     {% endfor %}
-          </div>
   {% endblock %}

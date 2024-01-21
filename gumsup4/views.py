@@ -711,6 +711,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             context['form']= form
             context['show_lists'] = True
             context['from'] = 'items'
+            context['has_lists'] = ItemList.objects.filter(user=request.user).count() > 1
 
             return render(request, 'items/items.html', context)
         else:
@@ -971,6 +972,12 @@ class ItemListDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.user == request.user:
+            #reassign to default list if needed
+            default_list = ItemList.objects.get(user=request.user,is_default=True)
+            items = Item.objects.filter(item_list=self.object)
+            for item in items:
+                item.item_list = default_list
+                item.save()
             success_url = self.get_success_url()
             self.object.delete()
             return redirect(success_url)
@@ -1018,6 +1025,7 @@ class SaveItemView(TemplateView):
                 'form': form,
                 'has_new_activity': request.user.has_new_activity() ,
                 'item_lists': ItemList.objects.filter(user = request.user),
+                'original_item': item,
                 'from': request.GET.get('from', '')
             }
 
@@ -1143,20 +1151,20 @@ class StatsView(TemplateView):
             item_type_months = Item.objects.filter(user=request.user,
                 ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")
                 ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
-            starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
-                ,end_month=Trunc("ended_date","month")).filter(
-                    Q(ended_date__isnull=True)
-                    | ~Q(month=F("end_month"))
-                )
+            #starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
+            #    ,end_month=Trunc("ended_date","month")).filter(
+            #        Q(ended_date__isnull=True)
+            #        | ~Q(month=F("end_month"))
+            #    )
 
             context = {
                 'item_types_count':item_types_count,
                 'item_types_rating': item_types_rating,
                 'items': items,
                 'months': months,
-                'item_type_months': item_type_months,
-                'starts': starts.order_by("started_date"),
-                'start_months': starts.order_by("month").distinct("month")
+                'item_type_months': item_type_months
+                #'starts': starts.order_by("started_date"),
+                #'start_months': starts.order_by("month").distinct("month")
             }
 
             return render(request, 'items/stats.html', context)

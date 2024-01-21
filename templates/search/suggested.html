@@ -3,9 +3,9 @@
   {% block content %}
   <h1>people you might know</h1>
   <div class="row">
-        <button class="tertiary-button"><a href="{%url 'search-items' %}">stuff</a></button>
-        <button class="tertiary-button"><a href="{%url 'search-users' %}">people</a></button>
-        <button class="tertiary-button-disabled">people you might know</button>
+        <button class="search-button"><a href="{%url 'search-items' %}">stuff</a></button>
+        <button class="search-button"><a href="{%url 'search-users' %}">people</a></button>
+        <button class="search-button disabled">people you might know</button>
   </div><br>
 <table>
 {% for user in users %}

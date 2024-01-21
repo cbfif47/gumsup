@@ -72,7 +72,7 @@ class ItemFormMain(forms.ModelForm):
    model = Item
    fields = {'name','item_type','note','user','item_list','original_item','author'}
    widgets = {
-          "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input'
+          "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
             }),
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
           "item_list": forms.Select(),
@@ -88,9 +88,9 @@ class ItemFormFinished(forms.ModelForm):
      model = Item
      fields = {'name','note','rating','ended_date', 'started_date','hide_from_feed','author','item_type'}
      widgets = {
-            "name": forms.TextInput(attrs={'placeholder': 'what is it'
+            "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
               }),
-          "author": forms.TextInput(attrs={'placeholder': 'who wrote it'}),
+          "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
             "note": forms.Textarea(attrs={'placeholder': 'what did you think?'
               ,"rows": 3}),
             "ended_date": forms.TextInput(),
@@ -104,7 +104,7 @@ class ItemEditForm(forms.ModelForm):
      model = Item
      fields = {'name','rating','ended_date', 'started_date','item_type','note','status','item_list','hide_from_feed','author'}
      widgets = {
-            "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input'
+            "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
               }),
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
             "item_list": forms.Select(),
