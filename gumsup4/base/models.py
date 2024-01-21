@@ -121,6 +121,10 @@ class User(BaseModel, AbstractUser):
 
         return user_list
 
+    def has_lists(self):
+        x = ItemList.objects.filter(user=self,is_default=False).count() > 0
+        return x
+
     def __str__(self):
         if self.username:
             return f"{self.username}"

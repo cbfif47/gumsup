@@ -362,6 +362,7 @@ class UserView(FilterableItemsMixin,TemplateView):
 
             if user == request.user:
                 context["include_logout"] = True
+                context["has_lists"] = user.has_lists()
             else:
                 context["is_following"] = request.user.is_following(user)
                 context["button_text"] = get_button_text(request.user,user)
@@ -711,7 +712,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             context['form']= form
             context['show_lists'] = True
             context['from'] = 'items'
-            context['has_lists'] = ItemList.objects.filter(user=request.user).count() > 1
+            context['has_lists'] = request.user.has_lists()
 
             return render(request, 'items/items.html', context)
         else:
@@ -955,7 +956,7 @@ class ItemListCreateView(CreateView):
     template_name = "item_lists/item_list_form.html"
 
     def get_success_url(self):
-        return f'/item-lists/{self.object.pk}/'
+        return f'/items/'
 
     def form_valid(self, form):
         form.instance.user = self.request.user

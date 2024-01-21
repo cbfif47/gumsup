@@ -237,7 +237,7 @@ table {
     margin: auto;
     border-radius: 0em;
     background-color: black;
-    padding: 0.2em 0.5em 1em 0.5em;
+    padding: 0.2em 0.5em 0.5em 0.5em;
 }
 
 .activity-card {
@@ -493,15 +493,15 @@ table {
 }
 
 .list-name {
-  padding: 0.1em 0.2em;
-  margin-left: 1px;
-  text-align: center;
+  padding: 0em;
+  padding-right: 3px;
+  margin-top: 5px;
+  text-align: left;
   cursor: pointer;
-  border:dotted 1px white;
-  line-height: 1.1em;
+  border:dotted 0px white;
   font-family: 'VT323',monospace;
   font-size: 0.9em;
-  color: white;
+  color: #878787;
   background-color: black;
   word-break: break-word;
 }
@@ -523,17 +523,17 @@ table {
 }
 
 .user-name {
-  background-color: #fc7cda;
-  text-align: center;
+  background-color: black;
+  margin-top: 1em;
+  text-align: left;
+  padding: 0px;
+  padding-right: 3px;
+  font-size:1em;
   cursor: pointer;
   border-radius: 5px;
   border:solid 0px black;
   font-family: 'VT323',monospace;
-  color: black;
-  border-left: solid 2px #faacf4;
-  border-top: solid 2px #faacf4;
-  border-bottom: solid 2px #91338a;
-  border-right: solid 2px #91338a;
+  color: #ff85de;
 }
 
 a {
@@ -858,15 +858,14 @@ hr.stats {
 
 .item-card-left {
   float: left;
-  width: 70px;
-  padding-right:10px;
+  width: 4.5em;
   margin-top: 3px;
   word-break: break-word;
 }
 
 .item-card-middle {
   float: left;
-  width: calc(100% - 85px - 70px);
+  width: calc(100% - 85px - 4.5em);
   margin-top: 3px;
   word-break: break-word;
 }
