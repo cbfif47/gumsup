@@ -4,9 +4,6 @@
 <tr>
 <td class="postcard">
     <div class="item-card-left">
-      <table>
-        <tr>
-          <td>
             <div class="name">
               {% if item.user == request.user %}
                 <a href="{% url 'edit-item' item.id %}">{{ item.name}}{% if item.author %} {{ item.author|upper }}<br>{% endif %}</a>
@@ -14,17 +11,9 @@
                 <a href="{% url 'view-item' item.id %}">{{ item.name}}{% if item.author %} ({{ item.author|upper }}){% endif %}</a>
               {%  endif %}
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td valign="top">
             <div class="review">
                 {{ item.note|lower|striptags|url_mention }}
             </div>
-          </td>
-        </tr>
-          <tr>
-            <td valign="bottom">
               <div class="item-card-bottom-left">
         {% if item.user == request.user and item.item_list %}
           {% if item.item_list.is_default == False or has_lists %}
@@ -37,11 +26,16 @@
               <div class="since-finished">
                 {{ item.item_type|itemtypepast}} {{item.last_date|dayssince}}
               </div>
+            {% elif item.status == 1 %}
+              <div class="since-finished">
+                  saved {{item.last_date|dayssince}}
+              </div>
+            {% elif item.status == 4 %}
+              <div class="since-finished">
+                  quit {{item.last_date|dayssince}}
+              </div>
             {% endif %}
           </div>
-            </td>
-          </tr>
-      </table>
     </div>
     <div class="item-card-right">
             <button class="item-type">{{ item.item_type }}</button><br>
@@ -58,10 +52,6 @@
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                 {% elif item.status == 2 %}
                   {{ item.item_type|itemtypeverb}} now
-                {% elif item.status == 1 %}
-                  saved {{item.last_date|dayssince}}
-                {% elif item.status == 4 %}
-                  quit {{item.last_date|dayssince}}
                 {% endif %}
             </div><br>
             <div class="actions ">
