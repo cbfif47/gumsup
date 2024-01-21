@@ -3,89 +3,84 @@
 {% load static %}
 <tr>
 <td class="postcard">
-  <div class="row">
     <div class="item-card-left">
-      <div class="row">
-        <button class="item-type">{{ item.item_type }}</button>
-      </div>
+      <table>
+        <tr>
+          <td>
+            <div class="name">
+              {% if item.user == request.user %}
+                <a href="{% url 'edit-item' item.id %}">{{ item.name}}{% if item.author %} {{ item.author|upper }}<br>{% endif %}</a>
+              {% else %}
+                <a href="{% url 'view-item' item.id %}">{{ item.name}}{% if item.author %} ({{ item.author|upper }}){% endif %}</a>
+              {%  endif %}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <div class="review">
+                {{ item.note|lower|striptags|url_mention }}
+            </div>
+          </td>
+        </tr>
+          <tr>
+            <td valign="bottom">
+              <div class="item-card-bottom-left">
         {% if item.user == request.user and item.item_list %}
           {% if item.item_list.is_default == False or has_lists %}
-            <div class="row">
-              <a href="{% url 'view-item-list' item.item_list.id %}"><button class="list-name">{{ item.item_list }}</button></a>
-            </div>
+                <a href="{% url 'view-item-list' item.item_list.id %}" class="list-name">{{ item.item_list }}</a>
           {% endif %}
+        {% elif item.user != request.user %}
+              <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
         {% endif %}
-    </div>
-    <div class="item-card-middle">
-      <div class="row">
-        <div class="name">
-          {% if item.user == request.user %}
-            <a href="{% url 'edit-item' item.id %}">{{ item.name}}</a>
-          {% else %}
-            <a href="{% url 'view-item' item.id %}">{{ item.name}}</a>
-          {%  endif %}
-        </div>
-      </div>
-      <div class="row">
-        <div class="review">
-          {% if item.author %}<strong>{{ item.author|upper }}</strong><br>{% endif %}
-            {{ item.note|lower|striptags|url_mention }}
-        </div>
-      </div>
-        {% if item.user != request.user %}
-          <div class="row">
-            <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
+            {% if item.status == 3 %}
+              <div class="since-finished">
+                {{ item.item_type|itemtypepast}} {{item.last_date|dayssince}}
+              </div>
+            {% endif %}
           </div>
-        {% endif %}
+            </td>
+          </tr>
+      </table>
     </div>
     <div class="item-card-right">
-      <div class="row">
-        <div class="rating" id="rating{{item.id}}">
-            {% if item.rating == 1%}
-              <img src="{% static 'starsmall.png' %}" height="14px"><br><br>
-            {% elif item.rating == 2 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><br><br>
-            {% elif item.rating == 3 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><br><br>
-            {% elif item.rating == 4 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><br><br>
-            {% elif item.rating == 5 %}
-              <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><br><br>
-            {% elif item.status == 2 %}
-              {{ item.item_type|itemtypeverb}} now
-            {% elif item.status == 1 %}
-              saved {{item.last_date|dayssince}}
-            {% elif item.status == 4 %}
-              quit {{item.last_date|dayssince}}
-            {% endif %}
-        </div>
-      </div>
-      <div class="row">
-        <div class="actions">
-          {% if item.user == request.user %}
-            {% if item.status == 1 %}
-              <br><button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
-            {% elif item.status == 2 %}
-              <br><button type="disabled" class="tertiary-button disabled" />start</button>
-            {% endif %}
-            {% if item.ended_date is None %}
-                <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
-                  <button type="submit" class="tertiary-button"/>stop</button>
-                </form>
-            {% endif %}
-          {% else %}<br>
-            <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
-            <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
-          {% endif %}
-        </div>
-      </div>
-      <div class="row">
-        <div class="rating">
-            {% if item.status == 3 and item.user == request.user %}
-              {{ item.item_type|itemtypepast}} {{item.last_date|dayssince}}
+            <button class="item-type">{{ item.item_type }}</button><br>
+            <div class="rating" id="rating{{item.id}}">
+                {% if item.rating == 1%}
+                  <img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif item.rating == 2 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif item.rating == 3 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif item.rating == 4 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif item.rating == 5 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif item.status == 2 %}
+                  {{ item.item_type|itemtypeverb}} now
+                {% elif item.status == 1 %}
+                  saved {{item.last_date|dayssince}}
+                {% elif item.status == 4 %}
+                  quit {{item.last_date|dayssince}}
+                {% endif %}
+            </div><br>
+            <div class="actions ">
+              {% if item.user == request.user %}
+                {% if item.status == 1 %}
+                  <br><button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
+                {% elif item.status == 2 %}
+                  <br><button type="disabled" class="tertiary-button disabled" />start</button>
+                {% endif %}
+                {% if item.ended_date is None %}
+                    <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
+                      <button type="submit" class="tertiary-button"/>stop</button>
+                    </form>
+                {% endif %}
+              {% else %}<br>
+                <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
+                <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
               {% endif %}
-          </div>
-      </div>
+            </div>
     </div>
   </div>
 </td>
