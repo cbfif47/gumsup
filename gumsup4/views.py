@@ -8,7 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike
+from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike, ItemTag
 from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q, F
@@ -66,14 +66,14 @@ class FilterableItemsMixin:
     def make_filtered_context(self,raw_items,request):
         status = request.GET.get('status', '')
         item_type = request.GET.get('item_type', '')
-        item_list = request.GET.get('item_list', '')
+        tags = request.GET.get('tags', '')
         query = request.GET.get('q', '')
-        items = Item.filter_items(raw_items,status, item_type, item_list)
+        items = Item.filter_items(raw_items,status, item_type, tags)
         has_new_activity = request.user.has_new_activity() 
-        if item_list != '':
-            selected_item_list = get_object_or_404(ItemList,id=item_list)
+        if tags != '':
+            selected_tags = tags #get_object_or_404(ItemList,id=item_list)
         else:
-            selected_item_list = None
+            selected_tags = None
         if status != '':
             selected_status = Item.status.field.choices[int(status) - 1][1]
         else:
@@ -95,10 +95,10 @@ class FilterableItemsMixin:
             item_type_param = '&item_type=' + item_type
         else:
             item_type_param = ''
-        if item_list != '':
-            item_list_param = '&item_list=' + item_list
+        if tags != '':
+            tags_param = '&tags=' + tags
         else:
-            item_list_param = ''
+            tags_param = ''
         if query != '':
             query_param = '&q=' + query
         else:
@@ -113,15 +113,15 @@ class FilterableItemsMixin:
             'items': page_obj,
             'item_type_param': item_type_param,
             'selected_item_type': selected_item_type,
-            'selected_item_list': selected_item_list,
+            'selected_tags': selected_tags,
             'selected_status': selected_status,
             'status_param': status_param,
             'query_param': query_param,
-            'item_list_param': item_list_param,
+            'tags_param': tags_param,
             'item_types': Item.item_type.field.choices,
             'statuses': Item.status.field.choices,
             'has_new_activity': has_new_activity,
-            'item_lists': ItemList.objects.filter(user = request.user)
+            'tags': ItemTag.objects.filter(item__user = request.user).values('tag').order_by('tag').distinct()
         }
         return context
 
@@ -707,12 +707,9 @@ class ItemsView(FilterableItemsMixin,TemplateView):
             context = self.make_filtered_context(items,request)
             new_item = Item(user=request.user,status=1)
             form = ItemFormMain(instance=new_item)
-            form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-            form.fields['item_list'].empty_label= None
             context['form']= form
-            context['show_lists'] = True
+            context['show_tags'] = True
             context['from'] = 'items'
-            context['has_lists'] = request.user.has_lists()
 
             return render(request, 'items/items.html', context)
         else:
@@ -753,10 +750,8 @@ class ItemsFeedView(FilterableItemsMixin,TemplateView):
             context = self.make_filtered_context(items,request)
             new_item = Item(user=request.user,status=1)
             form = ItemFormMain(instance=new_item)
-            form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-            form.fields['item_list'].empty_label= None
             context['form']= form
-            context['show_lists'] = False
+            context['show_tags'] = False
             context['from'] = 'home'
 
             popular = Item.objects.all().values('name').annotate(total=Count('name')

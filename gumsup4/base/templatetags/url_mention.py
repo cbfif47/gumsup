@@ -18,6 +18,11 @@ def url_mention(text):
             text = text.replace(mention
                             ,"""<a href="/users/""" + username + '" class="mention">'
                             + mention + '</a>')
+    tags = re.findall("#[-\w]*",text)
+    for tag in tags:
+        text = text.replace(tag
+                            ,'<a href="?tags=' + tag.replace("#","") +'" class="item-tag">'
+                            + tag + '</a>')
     return mark_safe(text)
 
 

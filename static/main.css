@@ -223,10 +223,12 @@ select {
 
 .header breadcrumb {
     text-align: left;
+    font-size: 16px;
 }
 
 .header user_greeting {
     float: right;
+    font-size: 16px;
 }
 
 table {
@@ -888,4 +890,9 @@ hr.stats {
   text-align: right;
   margin-top: 3px;
   word-break: break-word;
+}
+
+.item-tag {
+  color: cyan;
+  text-decoration: none;
 }

@@ -21,15 +21,6 @@
         {{ form.note }}
       </div>
     </div>
-    {% if has_lists %}
-      <div class="row">
-        <div class="col-100">
-          {{ form.item_list }}
-        </div>
-      </div>
-    {% else %}
-      {{ form.item_list.as_hidden }}
-    {% endif %}
     <div class="row ">
         <input class="primary-button" type="submit" value="save for later" >
     </div>

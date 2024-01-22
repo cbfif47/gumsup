@@ -16,11 +16,7 @@
                 {{ item.note|lower|striptags|url_mention }}
             </div>
               <div class="item-card-bottom-left">
-        {% if item.user == request.user and item.item_list %}
-          {% if item.item_list.is_default == False or has_lists %}
-                <a href="{% url 'view-item-list' item.item_list.id %}" class="list-name">{{ item.item_list }}</a>
-          {% endif %}
-        {% elif item.user != request.user %}
+        {% if item.user != request.user %}
               <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
         {% endif %}
             {% if item.status == 3 %}

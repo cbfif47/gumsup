@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from datetime import datetime
 
-from .models import Post, User, FollowRequest, Item, ItemList
+from .models import Post, User, FollowRequest, Item
 
 class PostForm(forms.ModelForm):
    class Meta:
@@ -70,14 +70,13 @@ class ItemFormMain(forms.ModelForm):
 
   class Meta:
    model = Item
-   fields = {'name','item_type','note','user','item_list','original_item','author'}
+   fields = {'name','item_type','note','user','original_item','author'}
    widgets = {
           "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
             }),
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
-          "item_list": forms.Select(),
-          "note": forms.Textarea(attrs={'placeholder': 'note/review'
-            ,"rows": 3}),
+          "note": forms.Textarea(attrs={'placeholder': 'note/review. use @ to mention someone, # to tag stuff'
+            ,"rows": 4}),
           "item_type": forms.RadioSelect(attrs={"class":"tab-input"})
     }
 
@@ -102,12 +101,11 @@ class ItemFormFinished(forms.ModelForm):
 class ItemEditForm(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','rating','ended_date', 'started_date','item_type','note','status','item_list','hide_from_feed','author'}
+     fields = {'name','rating','ended_date', 'started_date','item_type','note','status','hide_from_feed','author'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
               }),
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
-            "item_list": forms.Select(),
             "note": forms.Textarea(attrs={'placeholder': 'note/review'
               ,"rows": 5}),
             "ended_date": forms.TextInput(),

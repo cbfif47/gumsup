@@ -52,3 +52,7 @@ class ActivityAdmin(admin.ModelAdmin):
 @admin.register(models.ItemLike)
 class ActivityAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.ItemTag)
+class ActivityAdmin(admin.ModelAdmin):
+    """Admin for posts."""

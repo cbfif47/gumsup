@@ -346,26 +346,26 @@ class Item(BaseModel):
     item_list = models.ForeignKey(ItemList, models.SET_DEFAULT,blank=True,null=True,default='')
     hide_from_feed = models.BooleanField(default=False)
 
-    def filter_items(ItemsQuerySet,status='',item_type='', item_list=''):
+    def filter_items(ItemsQuerySet,status='',item_type='', tags=''):
 
         if status != '':
             status = int(status)
             if item_type != '':
                 if item_list != '':
-                    items = ItemsQuerySet.filter(status=status,item_type=item_type.upper(),item_list=item_list)
+                    items = ItemsQuerySet.filter(status=status,item_type=item_type.upper(),tagged__tag=tags)
                 else:
                     items = ItemsQuerySet.filter(status=status,item_type=item_type.upper())
-            elif item_list != '':
-                items = ItemsQuerySet.filter(status=status,item_list=item_list)
+            elif tags != '':
+                items = ItemsQuerySet.filter(status=status,tagged__tag=tags)
             else:
                 items = ItemsQuerySet.filter(status=status)
         elif item_type != '':
-            if item_list != '':
-                items = ItemsQuerySet.filter(item_type=item_type.upper(),item_list=item_list)
+            if tags != '':
+                items = ItemsQuerySet.filter(item_type=item_type.upper(),tagged__tag=tags)
             else:
                 items = ItemsQuerySet.filter(item_type=item_type.upper())
-        elif item_list != '':
-                items = ItemsQuerySet.filter(item_list=item_list)
+        elif tags != '':
+                items = ItemsQuerySet.filter(tagged__tag=tags)
         else:
             items = ItemsQuerySet
 
@@ -396,6 +396,15 @@ class Item(BaseModel):
                 existing_mention = Activity.objects.filter(user=user,mention_item=self)
                 if not existing_save and not existing_mention:
                     Activity.objects.create(user=user,mention_item=self)
+
+        # now do tags
+        tags = re.findall("#[-\w]*",self.note)
+        if tags:
+            for tag in tags:
+                text = tag.replace("#","")
+                existing_tag = ItemTag.objects.filter(item=self,tag=text)
+                if not existing_tag:
+                    ItemTag.objects.create(item=self,tag=text)
 
     def __str__(self):
         return f"{self.name}"
@@ -448,6 +457,20 @@ class Activity(BaseModel):
 
     def __str__(self):
         return f"For {self.user} on {self.created}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class ItemTag(BaseModel):
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE,related_name="tagged")
+    tag = models.CharField(max_length=40,blank=False)
+
+    def __str__(self):
+        return f"{self.item} tagged {self.tag}"
 
     class Meta:
         """Metadata."""
