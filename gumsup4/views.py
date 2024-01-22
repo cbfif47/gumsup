@@ -825,8 +825,6 @@ class ItemEditView(TemplateView):
             item = get_object_or_404(Item, id = item_id)
             if item.user == request.user:
                 form = ItemEditForm(instance=item)
-                form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-                form.fields['item_list'].empty_label= None
                 context= {
                     'form': form,
                     'item': item
@@ -1014,13 +1012,10 @@ class SaveItemView(TemplateView):
                 ,original_item = item
                 )
             form = ItemFormMain(instance = new_item)
-            form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-            form.fields['item_list'].empty_label= None
 
             context = {
                 'form': form,
                 'has_new_activity': request.user.has_new_activity() ,
-                'item_lists': ItemList.objects.filter(user = request.user),
                 'original_item': item,
                 'from': request.GET.get('from', '')
             }
@@ -1049,8 +1044,7 @@ class SaveItemView(TemplateView):
                     f[field].field.widget.attrs['class'] = 'error'
                 context = {
                             'form': f
-                            ,'messages': ["U forgot some fields"],
-            'item_lists': ItemList.objects.filter(user = request.user)
+                            ,'messages': ["U forgot some fields"]
                         }
                 return render(request, "items/save-item.html", context)
         else:
@@ -1176,8 +1170,6 @@ class ItemEditViewTest(TemplateView):
             item = get_object_or_404(Item, id = item_id)
             if item.user == request.user:
                 form = ItemEditForm(instance=item)
-                form.fields['item_list'].queryset = ItemList.objects.filter(user=request.user)
-                form.fields['item_list'].empty_label= None
                 context= {
                     'form': form,
                     'item': item,
