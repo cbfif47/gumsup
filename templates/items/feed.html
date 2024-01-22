@@ -9,7 +9,7 @@
       {% for pi in popular %}
       <div class="row summary-card">
         <div class="popular-left">
-          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} posts
+          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict" class="name">{{ pi.name|upper}}</a>: {{ pi.total}} posts
         </div>
         <div class="popular-right">
           <div class="summary-rating" >
@@ -36,7 +36,7 @@
         {% for pi in highest_rated %}
       <div class="row summary-card">
         <div class="popular-left">
-          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict">{{ pi.name}}</a>: {{ pi.total}} ratings
+          <a href="{% url 'search-items' %}?q={{pi.name}}&mode=strict" class="name">{{ pi.name|upper}}</a>: {{ pi.total}} ratings
         </div>
         <div class="popular-right">
           <div class="summary-rating" style="float: right;">

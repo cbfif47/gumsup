@@ -6,9 +6,10 @@
     <div class="item-card-left">
             <div class="name">
               {% if item.user == request.user %}
-                <a href="{% url 'edit-item' item.id %}">{{ item.name}}{% if item.author %} {{ item.author|upper }}<br>{% endif %}</a>
+                <a href="{% url 'edit-item' item.id %}">{{ item.name|upper}}{% if item.author %} 
+                ({{ item.author|lower }})<br>{% endif %}</a>
               {% else %}
-                <a href="{% url 'view-item' item.id %}">{{ item.name}}{% if item.author %} ({{ item.author|upper }}){% endif %}</a>
+                <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}{% if item.author %} ({{ item.author|lower }}){% endif %}</a>
               {%  endif %}
             </div>
             <div class="review">

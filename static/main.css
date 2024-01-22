@@ -261,13 +261,13 @@ table {
 
 .name {
   font-weight: bold;
-  text-transform: uppercase;
   color: #00ff11;
   font-family: 'VT323',monospace;
   font-size: 1.3em;
   word-break: break-word;
   margin-top: 0px;
   margin-bottom: 0.1em;
+  text-decoration: none;
 }
 
 .name a {
