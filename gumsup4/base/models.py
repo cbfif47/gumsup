@@ -351,7 +351,7 @@ class Item(BaseModel):
         if status != '':
             status = int(status)
             if item_type != '':
-                if item_list != '':
+                if tags != '':
                     items = ItemsQuerySet.filter(status=status,item_type=item_type.upper(),tagged__tag=tags)
                 else:
                     items = ItemsQuerySet.filter(status=status,item_type=item_type.upper())
