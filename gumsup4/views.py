@@ -736,7 +736,7 @@ class ItemsView(FilterableItemsMixin,TemplateView):
                 if request.GET.get('status', '') == 'done':
                     return redirect(to='finish-item',item_id=new_item.id)
                 else:
-                    return redirect(to=request.GET.get('from', ''))
+                    return redirect(to=request.GET.get('from', 'items'))
             else:
                 for field in f.errors:
                     f[field].field.widget.attrs['class'] = 'error'
@@ -1013,8 +1013,7 @@ class SaveItemView(TemplateView):
         if request.user.is_authenticated:
 
             item = get_object_or_404(Item, id = item_id)
-            new_item = Item(item = item
-                , user = request.user
+            new_item = Item(user = request.user
                 ,name = item.name
                 ,item_type = item.item_type
                 ,original_item = item
