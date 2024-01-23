@@ -45,6 +45,14 @@
               <a href="{% url 'user' activity.mention.user %}">
                 {{ activity.mention.user }}</a> mentioned you in a recommendation about 
                 <a href="{% url 'post' activity.mention.id %}">{{ activity.mention.what }}</a>.
+            {% elif activity.like_item %}
+              <a href="{% url 'user' activity.like_item.user %}">
+                {{ activity.like_item.user }}</a> liked your post about 
+                <a href="{% url 'view-item' activity.like_item.item.id %}">{{ activity.like_item.item.name }}</a>.
+            {% elif activity.save_item %}
+              <a href="{% url 'user' activity.save_item.user %}">
+                {{ activity.save_item.user }}</a> saved your post about 
+                <a href="{% url 'view-item' activity.save_item.id %}">{{ activity.save_item.name }}</a>.
             {% endif %}
             <div class="row"><br>
                 <div class="time-since">{{activity.created|timesince}} ago.</div>
