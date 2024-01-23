@@ -18,12 +18,6 @@
     <body>
         <header class="header">
           {% if request.user.is_authenticated %}
-            <breadcrumb>
-              <a href="{%url 'home'%}" class="logo">FEED</a>
-              <a href="{%url 'items' %}" class="logo">MINE</a>
-              <a href="{%url 'search-items' %}" class="logo">SEARCH</a>
-              <a href="{%url 'stats' %}" class="logo">STATS</a>
-              </breadcrumb>
           <user_greeting>
             {% if has_new_activity %}
                     <strong><a href="{% url 'activity' request.user %}">**{{ request.user|upper }}**</a></strong>
@@ -31,6 +25,12 @@
                     <a href="{% url 'activity' request.user %}">{{ request.user|upper }}</a>
             {% endif %}
           </user_greeting>
+            <breadcrumb>
+              <a href="{%url 'home'%}" class="logo">FEED</a>
+              <a href="{%url 'items' %}" class="logo">MINE</a>
+              <a href="{%url 'search-items' %}" class="logo">SEARCH</a>
+              <a href="{%url 'stats' %}" class="logo">STATS</a>
+              </breadcrumb>
           {% endif %}
         </header>
         <main>

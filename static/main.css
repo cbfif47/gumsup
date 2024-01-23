@@ -1,7 +1,7 @@
 body {
   background-color: black;
   font-family: 'Sono', monospace;
-  font-size: 14px;
+  font-size: 16px;
   color: white;
 }
 
@@ -12,7 +12,6 @@ h1, h2, h3 {
 main {
     max-width:65ex;
     margin: auto;
-    font-size: 16px;
 }
 
 
@@ -32,6 +31,7 @@ h1 {
 h2 {
   font-weight: bold;
   text-transform: lowercase;
+  text-shadow: 0.5px 0.5px #00ff11;
   color: white;
   text-align: left;
   font-size: 1.3em;
@@ -239,7 +239,6 @@ table {
     border: 1px dotted white;
     position: relative;
     margin: auto;
-    border-radius: 0em;
     background-color: black;
     padding: 0.2em 0.5em 0.5em 0.5em;
 }
@@ -289,7 +288,7 @@ table {
   background-color: black;
   border: 1px solid #00ff11;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 1.3em;
   font-family: 'VT323',monospace;
   color: #00ff11;
   margin-bottom: 0.5em;
@@ -329,31 +328,27 @@ table {
     color:gray;
 }
 
-.dropdown {
+.dropdown, .dropdown-full {
   display: inline-block;
   position: relative;
   font-family: 'VT323', monospace;
   font-size: 1.2em;
   padding: 5px;
-  background-color: white;
+  background-color: black;
+  border: dotted 1px white;
   float: left;
-  width: 48%;
-  margin-top: 0.3em;
   margin-right:1%;
   word-break: break-all;
+  margin-top: 5px;
 }
 
 .dropdown-full {
-  display: inline-block;
-  position: relative;
-  font-family: 'VT323', monospace;
-  font-size: 1.2em;
-  padding: 5px;
-  background-color: white;
-  float: left;
   width: 100%;
-  margin-top: 0.3em;
-  word-break: break-all;
+}
+
+.dropdown {
+  width: 50%;
+  margin-right: 0;
 }
 
 .dropbtn {
@@ -361,17 +356,18 @@ table {
   background: none;
   font-family: 'VT323', monospace;
   font-size: 1.2em;
-  color: black;
+  color:#00ff11;
 }
 
 .dropdown-options {
   list-style-type: none;
   display: none;
   position: absolute;
+  border: dotted 1px white;
   font-size: 1.2em;
   left: 0%;
   overflow: auto;
-  background-color: white;
+  background-color: black;
   padding: 10px;
   line-height: 4ex;
   width: 100%;
@@ -381,22 +377,11 @@ table {
 .dropdown-options a {
   display: block;
   text-decoration: none;
-  color:black;
+  color:#00ff11;
 }
 
 .show {display:block;}
 
-.primary-button, .search-button {
-  text-align: center;
-  border-radius: 5px;
-  color: black;
-  background-color: #dbdbdb;
-  background: #dbdbdb;
-  cursor: pointer;
-  display: inline;
-  text-decoration: none;
-  font-family: 'VT323', monospace;
-}
 
 .primary-button {
   margin-bottom: 0px;
@@ -416,10 +401,10 @@ table {
   margin-top: 0.3em;
   font-size: 1.5em;
   text-decoration: underline;
-  font-family: 'VT323', monospace;
   cursor: pointer;
   float: right;
-    color: white;
+  color: white;
+  font-family: 'VT323', monospace;
 }
 
 .tertiary-button {
@@ -427,20 +412,12 @@ table {
   border-radius: 5px;
   padding: 0.2em;
   margin-bottom: 0.3em;
-  color: black;
-  background-color: #dbdbdb;
-  background: #dbdbdb;
-  cursor: pointer;
   display: inline;
-  text-decoration: none;
-  font-family: 'VT323', monospace;
 }
 
 .search-button {
   margin-bottom: 0px;
   margin-top: 8px;
-  text-align: center;
-  border-radius: 5px;
   padding:0.1em 0.5em;
   margin-right:0px;
   font-size: 1.3em;
@@ -451,6 +428,15 @@ table {
   border-top: solid 2px white;
   border-bottom: solid 2px gray;
   border-right: solid 2px gray;
+  background-color: #b8b8b8;
+  color: black;
+  font-family: 'VT323', monospace;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline;
+  text-decoration: none;
 }
 
 .primary-button a, .tertiary-button a, .search-button a {
@@ -546,6 +532,7 @@ a {
   text-align: right;
   font-size:0.8em;
   font-style: italic;
+  line-height: 1.7em;
 }
 
 .since-finished {
@@ -561,8 +548,8 @@ a {
   border-radius: 5px;
   font-size:0.8em;
   margin:auto;
-  right: 5px;
-  bottom: 2px;
+  right: 7px;
+  bottom: 3px;
   position:absolute;
 }
 
@@ -890,6 +877,7 @@ hr.stats {
   text-align: right;
   margin-top: 3px;
   word-break: break-word;
+  position: relative;
 }
 
 .item-tag {

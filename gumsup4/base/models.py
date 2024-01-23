@@ -47,14 +47,13 @@ class User(BaseModel, AbstractUser):
         if self.bio:
             self.bio = self.bio.lower() # force lowercase
         self.email = self.email.lower() # force lowercase
-        if self._state.adding is True:
-            super().save(*args, **kwargs)
-            ItemList.objects.create(user=self,name='default list',is_default=True)
-            if User.objects.filter(username='gummy').exists():
-                Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
-                # Follow.objects.create(user=self,following=self) -- no more as of 2024
-        else:
-            super().save(*args, **kwargs)
+        #if self._state.adding is True:
+        #    super().save(*args, **kwargs)
+        #    ItemList.objects.create(user=self,name='default list',is_default=True)
+        #    if User.objects.filter(username='gummy').exists():
+        #        Follow.objects.create(user=self,following=User.objects.get(username='gummy'))
+        #        # Follow.objects.create(user=self,following=self) -- no more as of 2024
+        super().save(*args, **kwargs)
 
     def is_following(self,following):
         return Follow.objects.filter(user=self,following=following).exists()
@@ -116,7 +115,7 @@ class User(BaseModel, AbstractUser):
                                         WHERE u.id not in (SELECT following_id from f)
                                         and u.id <> %s
                                         ORDER BY u.created DESC
-                                        LIMIT 25
+                                        LIMIT 10
                                         """,[self.id,self.id,self.id])
 
         return user_list
@@ -379,7 +378,7 @@ class Item(BaseModel):
         elif self.status == 4 and self.ended_date:
             self.last_date = self.ended_date
         else:
-            self.last_date = timezone.localtime()
+            self.last_date = timezone.localtime(self.created)
         # for lowercase
         self.name = self.name.lower()
         if self.note:

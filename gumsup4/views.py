@@ -372,22 +372,21 @@ class UserView(FilterableItemsMixin,TemplateView):
             return redirect(to='login')
 
 
-class UserFollowView(TemplateView):
+def FollowUser(request,username):
 
-    def post(self, request, username, **kwargs):
+    if request.method == 'POST' and request.user.is_authenticated:
+        user = get_object_or_404(User, username = username)
 
-        if request.user.is_authenticated:
-            user = get_object_or_404(User, username = username)
+        if user != request.user:
+            new_follow = Follow.toggleFollow(user=request.user, following=user)
+            # low log the activity if its a new follow only. Unfollows will delete via cascade
+            if new_follow:
+                Activity.objects.create(user=user,follow=new_follow)
+            text = get_button_text(request.user,user)
 
-            if user != request.user:
-                new_follow = Follow.toggleFollow(user=request.user, following=user)
-                # low log the activity if its a new follow only. Unfollows will delete via cascade
-                if new_follow:
-                    Activity.objects.create(user=user,follow=new_follow)
-
-            return redirect(to='user',username = username)
-        else:
-            return redirect(to='login')
+        return HttpResponse(text) # Sending an success response
+    else:
+        return redirect(to='login')
 
 
 class UserEditView(TemplateView):
@@ -447,16 +446,15 @@ class WelcomeView(TemplateView):
 
             if f.is_valid():
                 updated_user = f.save()
-                return redirect(to='items')
+                return redirect(to='suggested-welcome')
             else:
                 for field in f.errors:
                     f[field].field.widget.attrs['class'] = 'error'
                 context = {
                     'form': f,
-                    'include_logout': True,
                     'user': request.user
                 }
-                return render(request, "users/edit-user.html", context)
+                return render(request, 'users/welcome.html', context)
         else:
             return redirect(to='login')
 
@@ -694,6 +692,20 @@ class SuggestedView(TemplateView):
                 }
 
             return render(request, 'search/suggested.html', context)
+        else:
+            return redirect(to='login')
+
+
+class SuggestedWelcomeView(TemplateView):
+
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            user_list = request.user.suggested_users()
+            context = {
+                            'users': user_list
+                }
+
+            return render(request, 'search/suggested-welcome.html', context)
         else:
             return redirect(to='login')
 

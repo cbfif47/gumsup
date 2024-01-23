@@ -27,6 +27,10 @@
               <div class="since-finished">
                   saved {{item.last_date|dayssince}}
               </div>
+            {% elif item.status == 2 %}
+              <div class="since-finished">
+                  started {{item.last_date|dayssince}}
+              </div>
             {% elif item.status == 4 %}
               <div class="since-finished">
                   quit {{item.last_date|dayssince}}

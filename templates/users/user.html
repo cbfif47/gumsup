@@ -8,7 +8,7 @@
     <div class="row">
     {{ user.username }} has been here since {{ user.created|date:"m/d/y" }}
     {% if user.is_private == False or is_following or request.user == user %}
-      <li><a href="{% url 'followers' user %}">followers</a>: {{ user.follower_count}}</li>
+      <li><a href="{% url 'followers' user %}">followers</a>: <count id="followers">{{ user.follower_count}}</count></li>
       <li><a href="{% url 'following' user %}">following</a>: {{ user.following_count}}</li>
     {%  else %}
       <li>followers: {{ user.follower_count}}</li>
@@ -22,14 +22,7 @@
     </div>
    <div class="row">
       {% if request.user != user %}
-          <form method="POST" action="{% url 'user-follow' user.username %}">
-            {% csrf_token %}
-            {% if button_text == 'unfollow :(' %}
-              <button type="submit" class="primary-button"  onclick="clicked(event)">{{ button_text }}</button>
-            {% else %}
-              <button type="submit" class="primary-button">{{ button_text }}</button>
-            {% endif %}
-          </form>
+            <button type="submit" class="primary-button followbutton" id="followbutton{{user}}" data-username="{{ user }}">{{ button_text }}</button>
       {% endif %}
     </div>
   </div><br>

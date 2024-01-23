@@ -1,3 +1,19 @@
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function validateForm() {
       let x = document.forms["mainform"]["name"].value;
       if (x == "") {
@@ -74,6 +90,27 @@ $('.startbutton').click(function(){
      })
 });
 
+$('.followbutton').click(function(){
+    var userid;
+    username = $(this).attr("data-username");
+    old_count = parseInt($( '#followers' ).text());
+    $.ajax(
+    {
+        type:"POST",
+        headers: {'X-CSRFToken': getCookie('csrftoken')},
+        url: "/users/" + username + "/follow",
+        success: function( data ) 
+        {
+            $( '#followbutton'+ username ).text(data);
+            if(data=='unfollow') {
+              $( '#followers' ).text(old_count+1);
+            } else if(data=='follow') {
+              $( '#followers' ).text(old_count-1);
+            }
+        }
+     })
+});
+
 $(function() {
 
   $("#id_name_item").autocomplete({
@@ -96,11 +133,18 @@ $(function() {
   $('input[name="item_type"]').on('change', function() {
     // this, in the anonymous function, refers to the changed-<input>:
     // select the element(s) you want to show/hide:
-    $('.form-author')
-        .toggle(this.value === 'BOOK');
+    if(this.value=='BOOK') {
+      $('input[name="author"]').attr('placeholder','optional author');
+    } else if(this.value=='TV') {
+      $('input[name="author"]').attr('placeholder','optional season, network etc');
+    } else if(this.value=='LIFE') {
+      $('input[name="author"]').attr('placeholder','optional sub-title');
+    } else {
+      $('input[name="author"]').attr('placeholder','optional version, year etc');
+    }
   // trigger the change event, to show/hide the .business-fields element(s) on
   // page-load:
-  }).change();
+  });
 });
 
 $( function() {

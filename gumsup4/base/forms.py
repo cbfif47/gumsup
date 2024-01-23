@@ -72,9 +72,9 @@ class ItemFormMain(forms.ModelForm):
    model = Item
    fields = {'name','item_type','note','user','original_item','author'}
    widgets = {
-          "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
+          "name": forms.TextInput(attrs={'placeholder': "what's it called",'class': 'ui-autocomplete-input', 'id':"id_name_item"
             }),
-          "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
+          "author": forms.TextInput(attrs={'placeholder': 'optional version, year etc','class': 'ui-autocomplete-input'}),
           "note": forms.Textarea(attrs={'placeholder': 'note/review. use @ to mention someone, # to tag stuff'
             ,"rows": 4}),
           "item_type": forms.RadioSelect(attrs={"class":"tab-input"})
@@ -105,7 +105,7 @@ class ItemEditForm(forms.ModelForm):
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
               }),
-          "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
+          "author": forms.TextInput(attrs={'placeholder': 'optional secondary info','class': 'ui-autocomplete-input'}),
             "note": forms.Textarea(attrs={'placeholder': 'note/review'
               ,"rows": 5}),
             "ended_date": forms.TextInput(),

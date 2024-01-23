@@ -14,6 +14,7 @@
     type="search"
     name="q"
     placeholder="search some text"
+    {% if query %}value = "{{ query }}"{% endif %}
   />
 </form>
 </div>
