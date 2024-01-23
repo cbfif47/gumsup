@@ -114,6 +114,7 @@ class User(BaseModel, AbstractUser):
                                         FROM users u
                                         WHERE u.id not in (SELECT following_id from f)
                                         and u.id <> %s
+                                        and u.username is not null
                                         ORDER BY u.created DESC
                                         LIMIT 10
                                         """,[self.id,self.id,self.id])

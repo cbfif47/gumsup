@@ -581,32 +581,28 @@ class SearchItemsView(FilterableItemsMixin,TemplateView):
 
 class ActivityView(TemplateView):
 
-    def get(self, request, username, **kwargs):
+    def get(self, request, **kwargs):
 
         if request.user.is_authenticated:
 
-            user = get_object_or_404(User, username = username)
+            user = request.user
+            activities = Activity.objects.filter(user = user)
+            for a in activities:
+                a.original_seen = a.seen #dont lose the original setting
+            activities.filter(user = user, seen = False).update(seen=True) #mark that we saw em
 
-            if user == request.user:
-                activities = Activity.objects.filter(user = user)
-                for a in activities:
-                    a.original_seen = a.seen #dont lose the original setting
-                activities.filter(user = user, seen = False).update(seen=True) #mark that we saw em
+            paginator = Paginator(activities, 25)  
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
 
-                paginator = Paginator(activities, 25)  
-                page_number = request.GET.get("page")
-                page_obj = paginator.get_page(page_number)
+            context = {
+                'activities': page_obj,
+                'user': user,
+                'include_logout': True,
+                'follow_request_count': user.count_follow_requests()
+            }
 
-                context = {
-                    'activities': page_obj,
-                    'user': user,
-                    'include_logout': True,
-                    'follow_request_count': user.count_follow_requests()
-                }
-
-                return render(request, 'users/activity.html', context)
-            else:
-                return redirect(to='home')
+            return render(request, 'users/activity.html', context)
 
         else:
             return redirect(to='login')

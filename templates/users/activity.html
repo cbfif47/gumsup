@@ -2,6 +2,7 @@
 {% block title %}{{ user.username }}{% endblock %}
 
   {% block content %}
+    {%if user.username %}
     <h1>{{ user.username }}</h1>
     <div class="row">
       <div class="col-100">
@@ -56,5 +57,11 @@
   {% endif %}
     {% else %}
       no follows or reposts yet. don't worry, the internet is meaningless!
+    {% endif %}
+
+    {% else %}
+      <h1>hey!</h1>
+      You don't have a username yet! <a href="{% url 'edit-user' %}">go fix that!</a>
+      <br><br><br>you can also <a href="{%url 'logout' %}">logout</a> if you want.
     {% endif %}
   {% endblock %}

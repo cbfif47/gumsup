@@ -20,9 +20,9 @@
           {% if request.user.is_authenticated %}
           <user_greeting>
             {% if has_new_activity %}
-                    <strong><a href="{% url 'activity' request.user %}">**{{ request.user|upper }}**</a></strong>
+                    <strong><a href="{% url 'activity' %}">**{{ request.user|upper }}**</a></strong>
             {% else %}
-                    <a href="{% url 'activity' request.user %}">{{ request.user|upper }}</a>
+                    <a href="{% url 'activity' %}">{{ request.user|upper }}</a>
             {% endif %}
           </user_greeting>
             <breadcrumb>
