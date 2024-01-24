@@ -6,6 +6,7 @@ from django.db.models import Count, Avg, Max
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike, ItemTag
@@ -20,6 +21,14 @@ from django.utils import timezone
 
 class HomePageView(TemplateView):
     template_name = "base.html"
+
+class UserCheckMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        elif not request.user.username:
+            return redirect('welcome')
+        return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
 
 class FilterablePostsMixin:
 
@@ -279,97 +288,86 @@ class RePostView(TemplateView):
             return redirect(to='login')
 
 
-class UserFollowersView(TemplateView):
+class UserFollowersView(UserCheckMixin,TemplateView):
 
     def get(self, request, username, **kwargs):
 
-        if request.user.is_authenticated:
-
-            user = get_object_or_404(User, username = username)
-            
-            if username == 'gummy':
-                context = {'user': user
-                            ,'has_new_activity': request.user.has_new_activity() 
-                }
-                return render(request, 'users/gummy.html', context)
-            elif user.is_private and request.user.is_following(user) == False and request.user != user:
-                return redirect(to='home')
-            else:
-                followers = user.follower_list()
-                for follower in followers:
-                    follower.is_following = request.user.is_following(follower)
-
-                #pagination
-                paginator = Paginator(followers, 25)  # Show 25 posts per page.
-                page_number = request.GET.get("page")
-                page_obj = paginator.get_page(page_number)
-
-                context = {
-                    'users': page_obj,
-                    'title': 'followers',
-                    'user': user,
-                    'has_new_activity': request.user.has_new_activity() 
-                }
-                return render(request, 'users/followers.html', context)
-        else:
-            return redirect(to='login')
-
-
-class UserFollowingView(TemplateView):
-
-    def get(self, request, username, **kwargs):
+        user = get_object_or_404(User, username = username)
         
-        if request.user.is_authenticated:
-
-            user = get_object_or_404(User, username = username)
-
-            if username == 'gummy':
-                context = {'user': user
-                            ,'has_new_activity': request.user.has_new_activity() 
-                }
-                return render(request, 'users/gummy.html', context)
-            elif user.is_private and request.user.is_following(user) == False:
-                return redirect(to='home')
-            else:
-                followers = user.following_list()
-                for follower in followers:
-                    follower.is_following = request.user.is_following(follower)
-
-                #pagination
-                paginator = Paginator(followers, 25)  # Show 25 posts per page.
-                page_number = request.GET.get("page")
-                page_obj = paginator.get_page(page_number)
-
-                context = {
-                    'users': page_obj,
-                    'user': user,
-                    'title': 'following',
-                    'has_new_activity': request.user.has_new_activity() 
-                }
-                return render(request, 'users/followers.html', context)
+        if username == 'gummy':
+            context = {'user': user
+                        ,'has_new_activity': request.user.has_new_activity() 
+            }
+            return render(request, 'users/gummy.html', context)
+        elif user.is_private and request.user.is_following(user) == False and request.user != user:
+            return redirect(to='home')
         else:
-            return redirect(to='login')
+            followers = user.follower_list()
+            for follower in followers:
+                follower.is_following = request.user.is_following(follower)
+
+            #pagination
+            paginator = Paginator(followers, 25)  # Show 25 posts per page.
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
+
+            context = {
+                'users': page_obj,
+                'title': 'followers',
+                'user': user,
+                'has_new_activity': request.user.has_new_activity() 
+            }
+            return render(request, 'users/followers.html', context)
 
 
-class UserView(FilterableItemsMixin,TemplateView):
+class UserFollowingView(UserCheckMixin,TemplateView):
 
     def get(self, request, username, **kwargs):
-        if request.user.is_authenticated:
-            user = get_object_or_404(User, username = username)
-            raw_feed = Item.objects.filter(user=user)
-            context = self.make_filtered_context(raw_feed,request)
-            context["user"] = user
 
-            if user == request.user:
-                context["include_logout"] = True
-                context["has_lists"] = user.has_lists()
-            else:
-                context["is_following"] = request.user.is_following(user)
-                context["button_text"] = get_button_text(request.user,user)
+        user = get_object_or_404(User, username = username)
 
-            return render(request, 'users/user.html', context)
+        if username == 'gummy':
+            context = {'user': user
+                        ,'has_new_activity': request.user.has_new_activity() 
+            }
+            return render(request, 'users/gummy.html', context)
+        elif user.is_private and request.user.is_following(user) == False:
+            return redirect(to='home')
         else:
-            return redirect(to='login')
+            followers = user.following_list()
+            for follower in followers:
+                follower.is_following = request.user.is_following(follower)
+
+            #pagination
+            paginator = Paginator(followers, 25)  # Show 25 posts per page.
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
+
+            context = {
+                'users': page_obj,
+                'user': user,
+                'title': 'following',
+                'has_new_activity': request.user.has_new_activity() 
+            }
+            return render(request, 'users/followers.html', context)
+
+
+class UserView(UserCheckMixin,FilterableItemsMixin,TemplateView):
+
+    def get(self, request, username, **kwargs):
+        user = get_object_or_404(User, username = username)
+        raw_feed = Item.objects.filter(user=user)
+        context = self.make_filtered_context(raw_feed,request)
+        context["user"] = user
+
+        if user == request.user:
+            context["include_logout"] = True
+            context["has_lists"] = user.has_lists()
+        else:
+            context["is_following"] = request.user.is_following(user)
+            context["button_text"] = get_button_text(request.user,user)
+
+        return render(request, 'users/user.html', context)
 
 
 def FollowUser(request,username):
@@ -389,74 +387,62 @@ def FollowUser(request,username):
         return redirect(to='login')
 
 
-class UserEditView(TemplateView):
+class UserEditView(LoginRequiredMixin,TemplateView):
 
     def get(self, request, **kwargs):
-        if request.user.is_authenticated:
+        context = {
+            'form': UserEditForm(instance = request.user),
+            'include_logout': True,
+            'user': request.user
+        }
+        return render(request, 'users/edit-user.html', context)
+
+    def post(self, request, **kwargs):
+
+        f = UserEditForm(request.POST, instance=request.user)
+
+        if f.is_valid():
+            updated_user = f.save()
+            return redirect(to='activity')
+        else:
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
+            context = {
+                'form': f,
+                'include_logout': True,
+                'user': request.user
+            }
+            return render(request, "users/edit-user.html", context)
+
+
+class WelcomeView(LoginRequiredMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+        if request.user.username:
+            return redirect('home')
+        else:
             context = {
                 'form': UserEditForm(instance = request.user),
                 'include_logout': True,
                 'user': request.user
             }
-            return render(request, 'users/edit-user.html', context)
-        else:
-            return redirect(to='login')
+            return render(request, 'users/welcome.html', context)
 
     def post(self, request, **kwargs):
 
-        if request.user.is_authenticated:
-            f = UserEditForm(request.POST, instance=request.user)
+        f = UserEditForm(request.POST, instance=request.user)
 
-            if f.is_valid():
-                updated_user = f.save()
-                return redirect(to='user',username = updated_user.username)
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                    'form': f,
-                    'include_logout': True,
-                    'user': request.user
-                }
-                return render(request, "users/edit-user.html", context)
+        if f.is_valid():
+            updated_user = f.save()
+            return redirect(to='suggested-welcome')
         else:
-            return redirect(to='login')
-
-
-class WelcomeView(TemplateView):
-
-    def get(self, request, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.username:
-                return redirect('home')
-            else:
-                context = {
-                    'form': UserEditForm(instance = request.user),
-                    'include_logout': True,
-                    'user': request.user
-                }
-                return render(request, 'users/welcome.html', context)
-        else:
-            return redirect(to='login')
-
-    def post(self, request, **kwargs):
-
-        if request.user.is_authenticated:
-            f = UserEditForm(request.POST, instance=request.user)
-
-            if f.is_valid():
-                updated_user = f.save()
-                return redirect(to='suggested-welcome')
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                    'form': f,
-                    'user': request.user
-                }
-                return render(request, 'users/welcome.html', context)
-        else:
-            return redirect(to='login')
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
+            context = {
+                'form': f,
+                'user': request.user
+            }
+            return render(request, 'users/welcome.html', context)
 
 
 class LoginView(LoginView):
@@ -497,430 +483,343 @@ class RegisterView(View):
 
 
 
-class SearchUsersList(TemplateView):
+class SearchUsersList(UserCheckMixin,TemplateView):
 
     def get(self, request, **kwargs):
         
         context = {}
-        if request.user.is_authenticated:
-            query = request.GET.get("q",'')
-            if len(query) > 2:
-                results = User.objects.filter(Q(username__icontains=query) 
-                | Q(bio__icontains=query)
-                | Q(email=query))
-                context = {
-                    'users': results,
-                    'has_new_activity': request.user.has_new_activity()
-                }
-            elif query != '':
+        query = request.GET.get("q",'')
+        if len(query) > 2:
+            results = User.objects.filter(Q(username__icontains=query) 
+            | Q(bio__icontains=query)
+            | Q(email__icontains=query))
+            context = {
+                'users': results,
+                'has_new_activity': request.user.has_new_activity()
+            }
+        elif query != '':
+            context['messages'] = ["Search more than 2 characters"]
+
+        context['is_search'] = True
+        context['query'] = query
+
+        return render(request, 'search/search-users.html', context)
+
+
+class SearchPostsView(UserCheckMixin,FilterablePostsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+
+        context = {}
+        query = request.GET.get("q",'')
+        if len(query) > 2:
+            raw_feed = Post.objects.filter(Q(what__icontains=query)
+        | Q(why__icontains=query))
+            context = self.make_filtered_context(raw_feed,request)
+        else:
+            context = self.make_filtered_context(Post.objects.filter(what=''),request) #no results
+            if query != '':
                 context['messages'] = ["Search more than 2 characters"]
 
-            context['is_search'] = True
-            context['query'] = query
+        context['is_search'] = True
+        context['query'] = query
 
-            return render(request, 'search/search-users.html', context)
-        else:
-            return redirect(to='login')
+        return render(request, 'search/search-posts.html', context)
 
 
-class SearchPostsView(FilterablePostsMixin,TemplateView):
+class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
 
     def get(self, request, **kwargs):
 
         context = {}
-        if request.user.is_authenticated:
-            query = request.GET.get("q",'')
-            if len(query) > 2:
-                raw_feed = Post.objects.filter(Q(what__icontains=query)
-            | Q(why__icontains=query))
-                context = self.make_filtered_context(raw_feed,request)
+        query = request.GET.get("q",'')
+        mode = request.GET.get("mode",'')
+        if len(query) > 2:
+            if mode == 'strict':
+                raw_feed = Item.objects.filter(Q(name=query) #strict match
+                    & (Q(user=request.user) #owned by user
+                    | Q(user__is_private=False) #public user
+                    | Q(user__followers__user=request.user)),).distinct() #or one we're following
             else:
-                context = self.make_filtered_context(Post.objects.filter(what=''),request) #no results
-                if query != '':
-                    context['messages'] = ["Search more than 2 characters"]
-
-            context['is_search'] = True
-            context['query'] = query
-
-            return render(request, 'search/search-posts.html', context)
+                raw_feed = Item.objects.filter(Q(name__icontains=query) #term matches
+                    & (Q(user=request.user) #owned by user
+                    | Q(user__is_private=False) #public user
+                    | Q(user__followers__user=request.user)),).distinct() #or one we're following
+            context = self.make_filtered_context(raw_feed,request)
         else:
-            return redirect(to='login')
+            context = self.make_filtered_context(Item.objects.filter(name=''),request) #no results
+            if query != '':
+                context['messages'] = ["Search more than 2 characters"]
 
+        context['is_search'] = True
+        context['query'] = query
 
-class SearchItemsView(FilterableItemsMixin,TemplateView):
+        return render(request, 'search/search-items.html', context) 
+
+class ActivityView(UserCheckMixin,TemplateView):
 
     def get(self, request, **kwargs):
 
-        context = {}
-        if request.user.is_authenticated:
-            query = request.GET.get("q",'')
-            mode = request.GET.get("mode",'')
-            if len(query) > 2:
-                if mode == 'strict':
-                    raw_feed = Item.objects.filter(Q(name=query) #strict match
-                        & (Q(user=request.user) #owned by user
-                        | Q(user__is_private=False) #public user
-                        | Q(user__followers__user=request.user)),).distinct() #or one we're following
-                else:
-                    raw_feed = Item.objects.filter(Q(name__icontains=query) #term matches
-                        & (Q(user=request.user) #owned by user
-                        | Q(user__is_private=False) #public user
-                        | Q(user__followers__user=request.user)),).distinct() #or one we're following
-                context = self.make_filtered_context(raw_feed,request)
-            else:
-                context = self.make_filtered_context(Item.objects.filter(name=''),request) #no results
-                if query != '':
-                    context['messages'] = ["Search more than 2 characters"]
+        user = request.user
+        activities = Activity.objects.filter(user = user)
+        for a in activities:
+            a.original_seen = a.seen #dont lose the original setting
+        activities.filter(user = user, seen = False).update(seen=True) #mark that we saw em
 
-            context['is_search'] = True
-            context['query'] = query
+        paginator = Paginator(activities, 25)  
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
 
-            return render(request, 'search/search-items.html', context)
-        else:
-            return redirect(to='login')
+        context = {
+            'activities': page_obj,
+            'user': user,
+            'include_logout': True,
+            'follow_request_count': user.count_follow_requests()
+        }
 
-class ActivityView(TemplateView):
+        return render(request, 'users/activity.html', context)
+
+
+class UserFollowRequestsView(UserCheckMixin,TemplateView):
 
     def get(self, request, **kwargs):
+        user = request.user
+        follow_requests = FollowRequest.objects.filter(following=user,is_approved=None,auto_denied = False)
+        context = {
+                    'user': user,
+                    'follow_requests': follow_requests
+        }
 
-        if request.user.is_authenticated:
+        return render(request, 'users/follow-requests.html', context)
+
+    def post(self, request, **kwargs):
 
             user = request.user
-            activities = Activity.objects.filter(user = user)
-            for a in activities:
-                a.original_seen = a.seen #dont lose the original setting
-            activities.filter(user = user, seen = False).update(seen=True) #mark that we saw em
+            f_id = request.POST['follow_request_id']
+            follow_request = get_object_or_404(FollowRequest, id = f_id)
+            if request.POST['response'] == 'approve':
+                follow_request.is_approved = True 
+                follow_request.save() # in the save function, this will make a follow
+            else:
+                follow_request.is_approved = False 
+                follow_request.save() # in the save function, this will NOT make a follow
 
-            paginator = Paginator(activities, 25)  
-            page_number = request.GET.get("page")
-            page_obj = paginator.get_page(page_number)
+            follow_requests = FollowRequest.objects.filter(following=user,is_approved=None,auto_denied = False)
+            if follow_requests: #if dealing with the final one, go back to activity view
+                context = {
+                            'user': user,
+                            'follow_requests': follow_requests
+                }
+            else:
+                return redirect('activity')
 
-            context = {
-                'activities': page_obj,
-                'user': user,
-                'include_logout': True,
-                'follow_request_count': user.count_follow_requests()
+            return render(request, 'users/follow-requests.html', context)
+
+
+class SuggestedView(UserCheckMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+        user_list = request.user.suggested_users()
+        context = {
+                        'users': user_list,
+                        'has_new_activity': request.user.has_new_activity() 
             }
 
-            return render(request, 'users/activity.html', context)
+        return render(request, 'search/suggested.html', context)
 
-        else:
-            return redirect(to='login')
 
-class UserPrivacyView(TemplateView):
+class SuggestedWelcomeView(UserCheckMixin,TemplateView):
 
-    def post(self, request, username, **kwargs):
+    def get(self, request, **kwargs):
+        user_list = request.user.suggested_users()
+        context = {
+                        'users': user_list
+            }
 
-        user = get_object_or_404(User, username = username)
+        return render(request, 'search/suggested-welcome.html', context)
 
-        if user == request.user:
-            if user.is_private == False: #this means were taking it private
-                user.is_private = True
-                user.save()
+
+class ItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+
+        items = Item.objects.filter(user=request.user)
+        context = self.make_filtered_context(items,request)
+        new_item = Item(user=request.user,status=1)
+        form = ItemFormMain(instance=new_item)
+        context['form']= form
+        context['show_tags'] = True
+        context['from'] = 'items'
+        return render(request, 'items/items.html', context)
+
+    def post(self,request, **kwargs):
+
+        f = ItemFormMain(request.POST)
+        if f.is_valid():                
+            new_item = f.save()
+
+            # log activity if its a save
+            if new_item.original_item:
+                Activity.objects.create(user=new_item.original_item.user,save_item=new_item)
+            if request.GET.get('status', '') == 'done':
+                return redirect(to='finish-item',item_id=new_item.id)
             else:
-                user.is_private = False
-                user.save()
+                return redirect(to=request.GET.get('from', 'items'))
+        else:
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
+            context = {
+                        'form': f
+                        ,'messages': ["U forgot some fields"]
+                    }
+            return render(request, "items/item_form_main.html", context)
 
-                # auto approve all follow requests
-                for fr in FollowRequest.objects.filter(following=user):
-                    fr.is_approved = True
-                    fr.save()    # the save method will create the follows
 
-            return redirect(to='user',username = username)
+class ItemsFeedView(UserCheckMixin,FilterableItemsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+        items = request.user.item_feed()
+        context = self.make_filtered_context(items,request)
+        new_item = Item(user=request.user,status=1)
+        form = ItemFormMain(instance=new_item)
+        context['form']= form
+        context['show_tags'] = False
+        context['from'] = 'home'
+
+        popular = Item.objects.all().values('name').annotate(total=Count('name')
+            ,avg_rating=Avg('rating')
+            ,max_date=Max('last_date')).order_by('-total','-avg_rating','-max_date').exclude(total=1)[:3]
+
+         # highest avg rating, at least 2 ratings i'll make that higher later
+        highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
+            ,avg_rating=Avg('rating')
+            ,max_date=Max('last_date')).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
+
+        context['popular'] = popular
+        context['highest_rated'] = highest_rated
+
+        return render(request, 'items/feed.html', context)
+
+
+class FinishItemView(UserCheckMixin,TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+        item = get_object_or_404(Item, id = item_id)
+        if item.user == request.user:
+            if item.started_date is None:
+                item.started_date = timezone.localdate()
+            item.ended_date = timezone.localdate()
+            form = ItemFormFinished(instance=item)
+            context= {
+                'form': form
+            }
+
+            return render(request, 'items/item_form_finished.html', context)
         else:
             return redirect(to='home')
 
-
-class UserFollowRequestsView(TemplateView):
-
-    def get(self, request, username, **kwargs):
-        if request.user.is_authenticated:
-            user = get_object_or_404(User, username = username)
-            if user == request.user:
-                follow_requests = FollowRequest.objects.filter(following=user,is_approved=None,auto_denied = False)
-                context = {
-                            'user': user,
-                            'follow_requests': follow_requests
-                }
-
-                return render(request, 'users/follow-requests.html', context)
-            else:
-                return redirect(to='login')
-        else:
-            return redirect(to='login')
-
-    def post(self, request, username, **kwargs):
-
-        if request.user.is_authenticated:
-            user = get_object_or_404(User, username = username)
-
-            if user == request.user:
-                f_id = request.POST['follow_request_id']
-                follow_request = get_object_or_404(FollowRequest, id = f_id)
-                if request.POST['response'] == 'approve':
-                    follow_request.is_approved = True 
-                    follow_request.save() # in the save function, this will make a follow
-                else:
-                    follow_request.is_approved = False 
-                    follow_request.save() # in the save function, this will NOT make a follow
-
-                follow_requests = FollowRequest.objects.filter(following=user,is_approved=None,auto_denied = False)
-                context = {
-                            'user': user,
-                            'follow_requests': follow_requests
-                }
-
-                return render(request, 'users/follow-requests.html', context)
-
-
-        else:
-            return redirect(to='login')
-
-
-class SuggestedView(TemplateView):
-
-    def get(self, request, **kwargs):
-        if request.user.is_authenticated:
-            user_list = request.user.suggested_users()
-            context = {
-                            'users': user_list,
-                            'has_new_activity': request.user.has_new_activity() 
-                }
-
-            return render(request, 'search/suggested.html', context)
-        else:
-            return redirect(to='login')
-
-
-class SuggestedWelcomeView(TemplateView):
-
-    def get(self, request, **kwargs):
-        if request.user.is_authenticated:
-            user_list = request.user.suggested_users()
-            context = {
-                            'users': user_list
-                }
-
-            return render(request, 'search/suggested-welcome.html', context)
-        else:
-            return redirect(to='login')
-
-
-class ItemsView(FilterableItemsMixin,TemplateView):
-
-    def get(self, request, **kwargs):
-
-        if request.user.is_authenticated:
-            items = Item.objects.filter(user=request.user)
-            context = self.make_filtered_context(items,request)
-            new_item = Item(user=request.user,status=1)
-            form = ItemFormMain(instance=new_item)
-            context['form']= form
-            context['show_tags'] = True
-            context['from'] = 'items'
-
-            return render(request, 'items/items.html', context)
-        else:
-            return redirect(to='login')
-
-    def post(self,request, **kwargs):
-        if request.user.is_authenticated:
-
-            f = ItemFormMain(request.POST)
-            if f.is_valid():                
-                new_item = f.save()
-
-                # log activity if its a save
-                if new_item.original_item:
-                    Activity.objects.create(user=new_item.original_item.user,save_item=new_item)
-                if request.GET.get('status', '') == 'done':
-                    return redirect(to='finish-item',item_id=new_item.id)
-                else:
-                    return redirect(to=request.GET.get('from', 'items'))
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                            'form': f
-                            ,'messages': ["U forgot some fields"]
-                        }
-                return render(request, "items/item_form_main.html", context)
-        else:
-            return redirect(to='login')
-
-
-class ItemsFeedView(FilterableItemsMixin,TemplateView):
-
-    def get(self, request, **kwargs):
-
-        if request.user.is_authenticated:
-            items = request.user.item_feed()
-            context = self.make_filtered_context(items,request)
-            new_item = Item(user=request.user,status=1)
-            form = ItemFormMain(instance=new_item)
-            context['form']= form
-            context['show_tags'] = False
-            context['from'] = 'home'
-
-            popular = Item.objects.all().values('name').annotate(total=Count('name')
-                ,avg_rating=Avg('rating')
-                ,max_date=Max('last_date')).order_by('-total','-avg_rating','-max_date').exclude(total=1)[:3]
-
-             # highest avg rating, at least 2 ratings i'll make that higher later
-            highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
-                ,avg_rating=Avg('rating')
-                ,max_date=Max('last_date')).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
-
-            context['popular'] = popular
-            context['highest_rated'] = highest_rated
-
-            return render(request, 'items/feed.html', context)
-        else:
-            return redirect(to='login')
-
-
-class FinishItemView(TemplateView):
-
-    def get(self, request, item_id, **kwargs):
-
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            if item.user == request.user:
-                if item.started_date is None:
-                    item.started_date = timezone.localdate()
-                item.ended_date = timezone.localdate()
-                form = ItemFormFinished(instance=item)
-                context= {
-                    'form': form
-                }
-
-                return render(request, 'items/item_form_finished.html', context)
-            else:
-                return redirect(to='home')
-        else:
-            return redirect(to='login')
-
     def post(self,request, item_id, **kwargs):
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            f = ItemFormFinished(request.POST, instance=item)
+        item = get_object_or_404(Item, id = item_id)
+        f = ItemFormFinished(request.POST, instance=item)
 
-            if f.is_valid():                
-                new_item = f.save(commit=False)
-                if request.GET.get('status', '') == 'abandoned':
-                    item.status = 4
-                else:
-                    item.status = 3
-                new_item.save()
-                return redirect(to='items')
+        if f.is_valid():                
+            new_item = f.save(commit=False)
+            if request.GET.get('status', '') == 'abandoned':
+                item.status = 4
             else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                            'form': f
-                            ,'messages': ["U forgot some fields"]
-                        }
-                return render(request, "items/item_form_finished.html", context)
+                item.status = 3
+            new_item.save()
+            return redirect(to='items')
         else:
-            return redirect(to='login')
-
-
-class ItemEditView(TemplateView):
-
-    def get(self, request, item_id, **kwargs):
-
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            if item.user == request.user:
-                form = ItemEditForm(instance=item)
-                context= {
-                    'form': form,
-                    'item': item
-                }
-
-                return render(request, 'items/edit_item2.html', context)
-            else:
-                return redirect(to='home')
-        else:
-            return redirect(to='login')
-
-    def post(self,request, item_id, **kwargs):
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            f = ItemEditForm(request.POST, instance=item)
-
-            if f.is_valid():                
-                new_item = f.save(commit=False)
-                if (item.status == 4 or item.status == 3) and item.ended_date is None:
-                    item.ended_date = datetime.now()
-                if (item.status == 1 or item.status == 2):
-                    item.ended_date = None
-                    item.rating = None
-                if item.ended_date is not None and item.started_date is None:
-                    item.started_date = item.ended_date
-                new_item.save()
-                return redirect(to='items')
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                            'form': f
-                            ,'messages': ["U forgot some fields"]
-                            , 'item': item
-                        }
-                return render(request, "items/edit_item.html", context)
-        else:
-            return redirect(to='login')
-
-
-class ItemDetailView(TemplateView):
-
-    def get(self, request, item_id, **kwargs):
-
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            if ItemLike.objects.filter(user=request.user,item=item):
-                item.like_button = 'unlike'
-            else:
-                item.like_button = 'like'
-
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
             context = {
+                        'form': f
+                        ,'messages': ["U forgot some fields"]
+                    }
+            return render(request, "items/item_form_finished.html", context)
+
+
+class ItemEditView(UserCheckMixin,TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+
+        item = get_object_or_404(Item, id = item_id)
+        if item.user == request.user:
+            form = ItemEditForm(instance=item)
+            context= {
+                'form': form,
                 'item': item
             }
 
-            return render(request, 'items/view_item.html', context)
+            return render(request, 'items/edit_item2.html', context)
         else:
-            return redirect(to='login')
+            return redirect(to='home')
+
+    def post(self,request, item_id, **kwargs):
+        item = get_object_or_404(Item, id = item_id)
+        f = ItemEditForm(request.POST, instance=item)
+
+        if f.is_valid():                
+            new_item = f.save(commit=False)
+            if (item.status == 4 or item.status == 3) and item.ended_date is None:
+                item.ended_date = datetime.now()
+            if (item.status == 1 or item.status == 2):
+                item.ended_date = None
+                item.rating = None
+            if item.ended_date is not None and item.started_date is None:
+                item.started_date = item.ended_date
+            new_item.save()
+            return redirect(to='items')
+        else:
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
+            context = {
+                        'form': f
+                        ,'messages': ["U forgot some fields"]
+                        , 'item': item
+                    }
+            return render(request, "items/edit_item.html", context)
 
 
-class ItemDeleteView(TemplateView):
+class ItemDetailView(UserCheckMixin,TemplateView):
 
     def get(self, request, item_id, **kwargs):
 
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            back_to = request.GET.get('from', 'items')
-            if item.user == request.user:
-                context = {
-                    'item': item
-                    }
-                return render(request, 'items/delete-item.html', context)
-            else:
-                return redirect(to=back_to)
+        item = get_object_or_404(Item, id = item_id)
+        if ItemLike.objects.filter(user=request.user,item=item):
+            item.like_button = 'unlike'
         else:
-            return redirect(to='login')
+            item.like_button = 'like'
+
+        context = {
+            'item': item
+        }
+
+        return render(request, 'items/view_item.html', context)
+
+
+class ItemDeleteView(UserCheckMixin,TemplateView):
+
+    def get(self, request, item_id, **kwargs):
+        item = get_object_or_404(Item, id = item_id)
+        back_to = request.GET.get('from', 'items')
+        if item.user == request.user:
+            context = {
+                'item': item
+                }
+            return render(request, 'items/delete-item.html', context)
+        else:
+            return redirect(to=back_to)
 
     def post(self, request, item_id, **kwargs):
 
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            back_to = request.GET.get('from', 'items')
-            if item.user == request.user:
-                item.delete()
+        item = get_object_or_404(Item, id = item_id)
+        back_to = request.GET.get('from', 'items')
+        if item.user == request.user:
+            item.delete()
 
-            return redirect(to=back_to)
-        else:
-            return redirect(to='login')
+        return redirect(to=back_to)
 
 
 class ItemListView(FilterableItemsMixin,TemplateView):
@@ -1006,56 +905,26 @@ class ItemListEditView(UpdateView):
         return f'/item-lists/{self.object.pk}/'
 
 
-class SaveItemView(TemplateView):
+class SaveItemView(UserCheckMixin,TemplateView):
 
     def get(self, request, item_id, *args, **kwargs):
 
-        if request.user.is_authenticated:
+        item = get_object_or_404(Item, id = item_id)
+        new_item = Item(user = request.user
+            ,name = item.name
+            ,item_type = item.item_type
+            ,original_item = item
+            )
+        form = ItemFormMain(instance = new_item)
 
-            item = get_object_or_404(Item, id = item_id)
-            new_item = Item(user = request.user
-                ,name = item.name
-                ,item_type = item.item_type
-                ,original_item = item
-                )
-            form = ItemFormMain(instance = new_item)
+        context = {
+            'form': form,
+            'has_new_activity': request.user.has_new_activity() ,
+            'original_item': item,
+            'from': request.GET.get('from', '')
+        }
 
-            context = {
-                'form': form,
-                'has_new_activity': request.user.has_new_activity() ,
-                'original_item': item,
-                'from': request.GET.get('from', '')
-            }
-
-            return render(request, 'items/save-item.html', context)
-        else:
-            return redirect(to='login')
-
-    def post(self,request,post_id, *args, **kwargs):
-        # THIS ISNT ACTUALLY USED, THE SAVE POST FORM POINTS TO THE ITEMS VIEW
-
-        if request.user.is_authenticated:
-
-            f = ItemFormMain(request.POST)
-            original_item = get_object_or_404(Item, id = item_id)
-            f.original_item = original_item
-
-            if f.is_valid():                
-                new_item = f.save()
-
-                #log activity
-                Activity.objects.create(user=original_item.user,save_item=new_item)
-                return redirect(to=request.GET.get('from', 'home'))
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                context = {
-                            'form': f
-                            ,'messages': ["U forgot some fields"]
-                        }
-                return render(request, "items/save-item.html", context)
-        else:
-            return redirect(to='login')
+        return render(request, 'items/save-item.html', context)
 
 
 def ItemLikes(request,item_id):
@@ -1063,7 +932,7 @@ def ItemLikes(request,item_id):
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
     if is_ajax:
-        if request.method == 'POST':
+        if request.method == 'POST' and request.user.is_authenticated:
             item = get_object_or_404(Item, id = item_id)
             ItemLike.objects.create(user=request.user,item=item)
             return JsonResponse({'status': 'Like added'})
@@ -1101,22 +970,6 @@ def StartItem(request,item_id):
         return HttpResponse("Request method is not a GET")
 
 
-class ItemStartView(TemplateView):
-
-    def post(self, request, item_id, **kwargs):
-
-        if request.user.is_authenticated:
-            item = get_object_or_404(Item, id = item_id)
-            back_to = request.GET.get('from', 'items')
-            if item.user == request.user:
-                item.status = 2
-                item.started_date = datetime.now()
-                item.save()
-
-            return redirect(to=back_to)
-        else:
-            return redirect(to='login')
-
 def AutocompleteNames(request):
     if request.method == 'GET' and request.user.is_authenticated:
         term = request.GET.get('term', 'xxx')
@@ -1133,37 +986,34 @@ def AutocompleteAuthors(request):
         return JsonResponse(names,safe=False)
 
 
-class StatsView(TemplateView):
+class StatsView(UserCheckMixin,TemplateView):
 
     def get(self, request, *args, **kwargs):
 
-        if request.user.is_authenticated:
+        item_types_count = Item.objects.filter(user=request.user,
+            ended_date__gte="2024-01-01",status=3).values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
+        item_types_rating = Item.objects.filter(user=request.user,
+            ended_date__gte="2024-01-01",status=3).values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
+        items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")).order_by("ended_date")
+        months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).dates("ended_date", "month")
+        item_type_months = Item.objects.filter(user=request.user,
+            ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")
+            ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
+        #starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
+        #    ,end_month=Trunc("ended_date","month")).filter(
+        #        Q(ended_date__isnull=True)
+        #        | ~Q(month=F("end_month"))
+        #    )
 
-            item_types_count = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01",status=3).values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
-            item_types_rating = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01",status=3).values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
-            items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")).order_by("ended_date")
-            months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).dates("ended_date", "month")
-            item_type_months = Item.objects.filter(user=request.user,
-                ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")
-                ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
-            #starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
-            #    ,end_month=Trunc("ended_date","month")).filter(
-            #        Q(ended_date__isnull=True)
-            #        | ~Q(month=F("end_month"))
-            #    )
+        context = {
+            'item_types_count':item_types_count,
+            'item_types_rating': item_types_rating,
+            'items': items,
+            'months': months,
+            'item_type_months': item_type_months
+            #'starts': starts.order_by("started_date"),
+            #'start_months': starts.order_by("month").distinct("month")
+        }
 
-            context = {
-                'item_types_count':item_types_count,
-                'item_types_rating': item_types_rating,
-                'items': items,
-                'months': months,
-                'item_type_months': item_type_months
-                #'starts': starts.order_by("started_date"),
-                #'start_months': starts.order_by("month").distinct("month")
-            }
+        return render(request, 'items/stats.html', context)
 
-            return render(request, 'items/stats.html', context)
-        else:
-            return redirect(to='login')

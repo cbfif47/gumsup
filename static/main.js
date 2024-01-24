@@ -134,13 +134,13 @@ $(function() {
     // this, in the anonymous function, refers to the changed-<input>:
     // select the element(s) you want to show/hide:
     if(this.value=='BOOK') {
-      $('input[name="author"]').attr('placeholder','optional author');
+      $('input[name="author"]').attr('placeholder','(author)');
     } else if(this.value=='TV') {
-      $('input[name="author"]').attr('placeholder','optional season, network etc');
+      $('input[name="author"]').attr('placeholder','(season, network etc)');
     } else if(this.value=='LIFE') {
-      $('input[name="author"]').attr('placeholder','optional sub-title');
+      $('input[name="author"]').attr('placeholder','(sub-title)');
     } else {
-      $('input[name="author"]').attr('placeholder','optional version, year etc');
+      $('input[name="author"]').attr('placeholder','(version, year etc)');
     }
   // trigger the change event, to show/hide the .business-fields element(s) on
   // page-load:

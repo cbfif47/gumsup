@@ -18,8 +18,8 @@
 	          <form method="POST" action="">
 	          	<input type="hidden" name="follow_request_id" value="{{ request.id }}">
 	            {% csrf_token %}
-	              <input type="submit" style="display:inline;" name = 'response' value ='approve' />
-	              <input type="submit" style="display:inline;" name = 'response' value ='deny' />
+	              <input type="submit" class="search-button" style="display:inline;" name = 'response' value ='approve' />
+	              <input type="submit" class="search-button" style="display:inline;" name = 'response' value ='deny' />
 	          </form>
 	      <div class="time-since">
 	        requested {{ request.created|timesince }} ago

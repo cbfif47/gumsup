@@ -6,17 +6,16 @@
     <h1>{{ user.username }}</h1>
     <div class="row">
       <div class="col-100">
-        <li><a href="{% url 'user' request.user %}">view my profile</a>
-        <li><a href="{% url 'edit-user' %}">edit my profile</a>
+        <button class="search-button"><a href="{% url 'user' request.user %}">view my profile</a></button>
+        <button class="search-button"><a href="{% url 'edit-user' %}">edit my profile</a></button>
+        <button class="search-button"><a href="{%url 'logout' %}">logout</a></button>
         {% if user.is_private %}
-          <li><a href="{% url 'follow-requests' request.user %}">
-            {% if follow_request_count == 1 %}1 new follow request
-            {% elif follow_request_count > 1 %}{{ follow_request_count }} new follow requests
+          <br><br>
+            {% if follow_request_count == 1 %}<a href="{% url 'follow-requests' %}"><button class="secondary-button">1 new follow request</button></a>
+            {% elif follow_request_count > 1 %}<a href="{% url 'follow-requests' %}"><button class="secondary-button">{{ follow_request_count }} new follow requests</button></a>
             {% else %}no new follow requests
             {% endif %}
-          </a>
         {% endif %}
-        <li><a href="{%url 'logout' %}">logout</a>
       </div>
     </div><br>
     {% if activities %}
@@ -33,18 +32,10 @@
             {% elif activity.follow_request %}
               <a href="{% url 'user' activity.follow_request.following %}">
                 {{ activity.follow_request.following }}</a> approved your follow request.
-            {% elif activity.repost %}
-              <a href="{% url 'user' activity.repost.user %}">
-                {{ activity.repost.user }}</a> re-recommended you about 
-                <a href="{% url 'post' activity.repost.id %}">{{ activity.repost.what }}</a>.
-            {% elif activity.saved_post %}
-              <a href="{% url 'user' activity.saved_post.user %}">
-                {{ activity.saved_post.user }}</a> saved your recommendation about 
-                <a href="{% url 'post' activity.saved_post.id %}">{{ activity.saved_post.post.what }}</a>.
-            {% elif activity.mention %}
-              <a href="{% url 'user' activity.mention.user %}">
-                {{ activity.mention.user }}</a> mentioned you in a recommendation about 
-                <a href="{% url 'post' activity.mention.id %}">{{ activity.mention.what }}</a>.
+            {% elif activity.mention_item %}
+              <a href="{% url 'user' activity.mention_item.user %}">
+                {{ activity.mention_item.user }}</a> mentioned you in a post about 
+                <a href="{% url 'view-item' activity.mention_item.id %}">{{ activity.mention_item.name }}</a>.
             {% elif activity.like_item %}
               <a href="{% url 'user' activity.like_item.user %}">
                 {{ activity.like_item.user }}</a> liked your post about 
