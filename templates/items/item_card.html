@@ -68,8 +68,16 @@
                     </form>
                 {% endif %}
               {% else %}<br>
-                <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
-                <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
+                {% if item.save_button == 'save' %}
+                  <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
+                {% else %}
+                  <button class="tertiary-button disabled">saved</button>
+                {% endif %}
+                {% if item.like_button == 'like' %}
+                  <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
+                {% else %}
+                  <button class="tertiary-button likebutton pressed" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
+                {% endif %}
               {% endif %}
             </div>
     </div>

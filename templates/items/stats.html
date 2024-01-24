@@ -6,6 +6,7 @@
   {% block content %}
     <h1>my stats</h1>
 <div class="container">
+  {% if item_types_count %}
     <h3>finished this year</h3>
     {% for item_type in item_types_count %}
       <div class="row">
@@ -58,4 +59,7 @@
       {% endfor %}
       </div>
     {% endfor %}
+    {% else %}
+    nothing logged! <a href="{% url 'items' %}">go add some stuff!</a>
+    {% endif %}
   {% endblock %}

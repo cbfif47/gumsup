@@ -22,7 +22,7 @@
     </div>
    <div class="row">
       {% if request.user != user %}
-            <button type="submit" class="primary-button followbutton" id="followbutton{{user}}" data-username="{{ user }}">{{ button_text }}</button>
+            <button type="submit" class="primary-button followbutton" id="followbutton{{user}}" data-username="{{ user }}" style="min-width:6em;">{{ button_text }}</button>
       {% endif %}
     </div>
   </div><br>

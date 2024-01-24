@@ -451,8 +451,8 @@ table {
 .primary-button, .tertiary-button, .search-button {
   border-left: solid 2px white;
   border-top: solid 2px white;
-  border-bottom: solid 2px gray;
-  border-right: solid 2px gray;
+  border-bottom: solid 2px #808080;
+  border-right: solid 2px #808080;
   background-color: #b8b8b8;
   color: black;
   font-family: 'VT323';
@@ -469,12 +469,15 @@ table {
   color: black;
 }
 
+.disabled, .pressed {
+  border-bottom: solid 2px white;
+  border-right: solid 2px white;
+  border-top: solid 2px #808080;
+  border-left: solid 2px #808080;
+  background-color: #a6a6a6;
+}
+
 .disabled {
-  border-bottom: solid 2px #878787;
-  border-right: solid 2px #878787;
-  border-top: solid 2px #363636;
-  border-left: solid 2px #363636;
-  background-color: #5e5e5e;
   cursor: default;
 }
 

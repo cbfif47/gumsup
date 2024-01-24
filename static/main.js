@@ -65,6 +65,11 @@ $('.likebutton').click(function(){
         success: function( data ) 
         {
             $( '#like'+ catid ).text(data);
+            if(data=='liked') {
+              $( '#like'+ catid ).addClass('pressed');
+            } else {
+              $( '#like'+ catid ).removeClass('pressed');
+            }
         }
      })
 });
@@ -104,8 +109,14 @@ $('.followbutton').click(function(){
             $( '#followbutton'+ username ).text(data);
             if(data=='unfollow') {
               $( '#followers' ).text(old_count+1);
+              $( '#followbutton'+ username ).addClass('pressed');
             } else if(data=='follow') {
               $( '#followers' ).text(old_count-1);
+              $( '#followbutton'+ username ).removeClass('pressed');
+            } else if(data=='request') {
+              $( '#followbutton'+ username ).removeClass('pressed');
+            } else if(data=='requested') {
+              $( '#followbutton'+ username ).addClass('pressed');
             }
         }
      })

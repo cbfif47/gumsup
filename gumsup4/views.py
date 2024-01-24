@@ -94,9 +94,16 @@ class FilterableItemsMixin:
 
         for item in items:
             if ItemLike.objects.filter(user=request.user,item=item):
-                item.like_button = 'unlike'
+                item.like_button = 'liked'
             else:
                 item.like_button = 'like'
+
+        for item in items:
+            if Item.objects.filter(user=request.user,original_item=item):
+                item.save_button = 'saved'
+            else:
+                item.save_button = 'save'
+
 
         #filter_params
         status_param = 'status=' + status
@@ -788,7 +795,7 @@ class ItemDetailView(UserCheckMixin,TemplateView):
 
         item = get_object_or_404(Item, id = item_id)
         if ItemLike.objects.filter(user=request.user,item=item):
-            item.like_button = 'unlike'
+            item.like_button = 'liked'
         else:
             item.like_button = 'like'
 
@@ -951,7 +958,7 @@ def LikeItem(request,item_id):
         else:
             m = ItemLike(user=request.user,item=item) # Creating Like Object
             m.save()  # saving it to store in database
-            return HttpResponse("unlike") # Sending an success response
+            return HttpResponse("liked") # Sending an success response
     else:
         return HttpResponse("Request method is not a GET")
 
