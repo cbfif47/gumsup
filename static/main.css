@@ -388,13 +388,13 @@ table {
   list-style-type: none;
   display: none;
   position: absolute;
+  top:1.7em;
   border: dotted 1px white;
   font-size: 1.2em;
   left: 0%;
   overflow: auto;
   background-color: black;
-  padding: 10px;
-  line-height: 4ex;
+  padding: 0.6em;
   width: 100%;
   z-index:1;
 }
@@ -693,10 +693,6 @@ stat-type {
   font-size: 1.3em;
 }
 
-hr.stats {
-  border: dotted 0.7px white;
-}
-
 .ui-menu .ui-menu-icon {
   left: auto;
   right: 0;
@@ -911,4 +907,22 @@ hr.stats {
 .item-tag {
   color: cyan;
   text-decoration: none;
+}
+
+.year {
+  font-family: 'VT323';
+  text-shadow: 1px 1px #00ff11;
+  color: white;
+  font-size: 1.8em;
+  margin-bottom: 0.2em;
+  margin-top: 1.3em;
+  text-align: left;
+}
+
+.stats {
+  border: dotted 1px white;
+  background-color: black;
+  padding: 3%;
+  margin-bottom: 1em;
+  margin-top: 0;
 }

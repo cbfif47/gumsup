@@ -548,7 +548,11 @@ class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
                     | Q(user__is_private=False) #public user
                     | Q(user__followers__user=request.user)),).distinct() #or one we're following
             else:
-                raw_feed = Item.objects.filter(Q(name__icontains=query) #term matches
+                raw_feed = Item.objects.filter(
+                    (Q(name__icontains=query) #term matches
+                        | Q(author__icontains=query)
+                        | Q(note__icontains=query)
+                    )
                     & (Q(user=request.user) #owned by user
                     | Q(user__is_private=False) #public user
                     | Q(user__followers__user=request.user)),).distinct() #or one we're following
@@ -997,15 +1001,24 @@ class StatsView(UserCheckMixin,TemplateView):
 
     def get(self, request, *args, **kwargs):
 
-        item_types_count = Item.objects.filter(user=request.user,
-            ended_date__gte="2024-01-01",status=3).values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
-        item_types_rating = Item.objects.filter(user=request.user,
-            ended_date__gte="2024-01-01",status=3).values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
-        items = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")).order_by("ended_date")
-        months = Item.objects.filter(user=request.user,ended_date__gte="2024-01-01",status=3).dates("ended_date", "month")
-        item_type_months = Item.objects.filter(user=request.user,
-            ended_date__gte="2024-01-01",status=3).annotate(month=Trunc("ended_date","month")
+        year = request.GET.get('year','1900')
+        if year == '1900':
+            year_end = '2099-12-31'
+        else:
+            year_end = year + '-12-31'
+        base_items = Item.objects.filter(user=request.user
+            ,ended_date__gte=year + '-01-01'
+            ,ended_date__lte=year_end
+            ,status=3)
+
+        item_types_count = base_items.values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
+        item_types_rating = base_items.values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
+        items = base_items.annotate(month=Trunc("ended_date","month")).order_by("-ended_date")
+        months = base_items.dates("ended_date", "month","DESC")
+        years = base_items.dates("ended_date", "year","DESC")
+        item_type_months = base_items.annotate(month=Trunc("ended_date","month"),year=Trunc("ended_date","year")
             ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
+        year_options = Item.objects.filter(user=request.user,status=3).dates("ended_date", "year","DESC")
         #starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
         #    ,end_month=Trunc("ended_date","month")).filter(
         #        Q(ended_date__isnull=True)
@@ -1017,7 +1030,10 @@ class StatsView(UserCheckMixin,TemplateView):
             'item_types_rating': item_types_rating,
             'items': items,
             'months': months,
-            'item_type_months': item_type_months
+            'years': years,
+            'item_type_months': item_type_months,
+            'period': int(year),
+            'year_options': year_options
             #'starts': starts.order_by("started_date"),
             #'start_months': starts.order_by("month").distinct("month")
         }

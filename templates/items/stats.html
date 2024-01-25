@@ -5,9 +5,25 @@
 {% endblock %}
   {% block content %}
     <h1>my stats</h1>
-<div class="container">
+{% if period == 1900 %}
+  <strong><a href ="{% url 'stats' %}">ALL-TIME</a></strong>
+{% else %}
+  <a href ="{% url 'stats' %}">ALL-TIME</a>
+{% endif %}
+{% for year in year_options %}
+  {% if period == year.year %}
+    <strong><a href ="{% url 'stats' %}?year={{year.year}}">{{ year.year}}</a></strong>
+  {% else %}
+    <a href ="{% url 'stats' %}?year={{year.year}}">{{ year.year}}</a>
+  {% endif %}
+{% endfor %}<br><br>
+<div class="stats">
   {% if item_types_count %}
-    <h3>finished this year</h3>
+    {% if period == 1900 %}
+      <h3>finished all-time</h3>
+    {% else %}
+      <h3>finished in {{ period }}</h3>
+    {% endif %}
     {% for item_type in item_types_count %}
       <div class="row">
         <div class="col-15">
@@ -19,7 +35,7 @@
       </div>
     {% endfor %}
   </div>
-<div class="container">
+<div class="stats">
     <h3>AVERAGE RATING</h3>
     {% for item_type in item_types_rating %}
       <div class="row">
@@ -32,32 +48,35 @@
       </div>
     {% endfor %}
 </div>
-
-<br><br>
-    {% for month in months %}
-<div class="container">
-      <h3>{{ month|date:"F" }}</h3>
-      {% for item_type in item_type_months %}
-        {% if item_type.month == month %}
-          <div class="row">
-            <div class="col-15">
-              <stat-type>{{ item_type.item_type|lower }}</stat-type>
-            </div>
-            <div class="col-85">
-              {% for item in items %}
-                {% if item.month == month and item.item_type == item_type.item_type %}
-                  <div class="row">- <a href="{% url 'view-item' item.id %}" style="text-decoration: none;">{{ item }}</a>
-                    {% if item.rating %}
-                      {{ item.rating }}
-                      {% endif %}
+  {% for year in years %}
+    <div class="year">{{ year.year }}</div>
+      {% for month in months %}
+        {% if month.year == year.year %}
+        <div class="stats">
+            <h3>{{ month|date:"F" }}</h3>
+            {% for item_type in item_type_months %}
+              {% if item_type.month == month %}
+                <div class="row">
+                  <div class="col-15">
+                    <stat-type>{{ item_type.item_type|lower }}</stat-type>
                   </div>
-                {% endif %}
-              {% endfor %}
+                  <div class="col-85">
+                    {% for item in items %}
+                      {% if item.month == month and item.item_type == item_type.item_type %}
+                        <div class="row">- <a href="{% url 'view-item' item.id %}" style="text-decoration: none;">{{ item }}</a>
+                          {% if item.rating %}
+                            {{ item.rating }}
+                            {% endif %}
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
             </div>
-          </div>
-        {% endif %}
-      {% endfor %}
-      </div>
+          {% endif %}
+        {% endfor %}
     {% endfor %}
     {% else %}
     nothing logged! <a href="{% url 'items' %}">go add some stuff!</a>
