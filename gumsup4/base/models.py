@@ -113,11 +113,11 @@ class User(BaseModel, AbstractUser):
                                         SELECT u.id, u.username, u.bio
                                         FROM users u
                                         LEFT JOIN base_follow bf
-                                            on u.user_id = bf.following_id
+                                            on u.id = bf.following_id
                                         WHERE u.id not in (SELECT following_id from f)
                                         and u.id <> %s
                                         and u.username is not null
-                                        GROUP by u.id, u.username, u.bio
+                                        GROUP by u.id, u.username, u.bio, u.created
                                         ORDER BY count(bf.user_id) DESC, u.created DESC
                                         LIMIT 20
                                         """,[self.id,self.id,self.id])
