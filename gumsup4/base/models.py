@@ -112,11 +112,14 @@ class User(BaseModel, AbstractUser):
                                                    UNION ALL select following_id from base_followrequest where user_id = %s)
                                         SELECT u.id, u.username, u.bio
                                         FROM users u
+                                        LEFT JOIN base_follow bf
+                                            on u.user_id = bf.following_id
                                         WHERE u.id not in (SELECT following_id from f)
                                         and u.id <> %s
                                         and u.username is not null
-                                        ORDER BY u.created DESC
-                                        LIMIT 10
+                                        GROUP by u.id, u.username, u.bio
+                                        ORDER BY count(bf.user_id) DESC, u.created DESC
+                                        LIMIT 20
                                         """,[self.id,self.id,self.id])
 
         return user_list
