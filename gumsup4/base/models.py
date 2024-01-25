@@ -108,17 +108,25 @@ class User(BaseModel, AbstractUser):
             return False
 
     def suggested_users(self):
-        user_list = User.objects.raw("""with f as (select following_id from base_follow where user_id = %s
-                                                   UNION ALL select following_id from base_followrequest where user_id = %s)
-                                        SELECT u.id, u.username, u.bio
-                                        FROM users u
+        user_list = User.objects.raw("""with f as (
+                                            select following_id from base_follow where user_id = %s -- i follow
+                                            UNION ALL select following_id from base_followrequest where user_id = %s -- i requested
+                                        )
+                                        SELECT u.id
+                                             , u.username
+                                             , u.bio
+                                        FROM users u -- all users
                                         LEFT JOIN base_follow bf
-                                            on u.id = bf.following_id
-                                        WHERE u.id not in (SELECT following_id from f)
-                                        and u.id <> %s
+                                            on u.id = bf.following_id -- to get count of followers
+                                        LEFT JOIN f
+                                            on f.following_id = bf.user_id -- followed by someone im following
+                                        WHERE u.id not in (SELECT following_id from f) -- not following now
+                                        and u.id <> %s -- not me
                                         and u.username is not null
-                                        GROUP by u.id, u.username, u.bio, u.created
-                                        ORDER BY count(bf.user_id) DESC, u.created DESC
+                                        GROUP by u.id, u.username, u.bio
+                                        ORDER BY count(f.following_id) DESC -- people my follows follow
+                                               ,count(bf.user_id) DESC -- popular people
+                                               , u.created DESC -- new people
                                         LIMIT 20
                                         """,[self.id,self.id,self.id])
 
