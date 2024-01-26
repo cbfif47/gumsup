@@ -3,7 +3,7 @@
 {% load url_mention %}
 {% block title %}{{ item.name }}{% endblock %}
   {% block content %}
-  <h1>{{ item.name }} from {{ item.user }}</h1>
+  <h1>{{ item.name }}</h1>
   {% if item.user == request.user %}
     <button class="search-button"><a href="{% url 'edit-item' item.id %}">edit</a></button>
     <button class="search-button"><a href="{% url 'delete-item' item.id %}">delete</a></button><br><br>

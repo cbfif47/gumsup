@@ -386,7 +386,7 @@ def FollowUser(request,username):
             new_follow = Follow.toggleFollow(user=request.user, following=user)
             # low log the activity if its a new follow only. Unfollows will delete via cascade
             if new_follow:
-                Activity.objects.create(user=user,follow=new_follow)
+                Activity.objects.create(user=user,follow=new_follow,action='follow')
             text = get_button_text(request.user,user)
 
         return HttpResponse(text) # Sending an success response
@@ -671,7 +671,7 @@ class ItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
 
             # log activity if its a save
             if new_item.original_item:
-                Activity.objects.create(user=new_item.original_item.user,save_item=new_item)
+                Activity.objects.create(user=new_item.original_item.user,item=new_item,action='item_save')
             if request.GET.get('status', '') == 'done':
                 return redirect(to='finish-item',item_id=new_item.id)
             else:
@@ -820,7 +820,7 @@ class ItemDetailView(UserCheckMixin,TemplateView):
             item.like_button = 'liked'
         else:
             item.like_button = 'like'
-            
+
         f = CommentForm(request.POST)
         comments = Comment.objects.filter(item=item)
 

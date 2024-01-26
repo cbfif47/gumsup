@@ -26,24 +26,35 @@
           <div class="activity-card unseen">
         {% endif %}
             <div class="row">
-            {% if activity.follow %}
+            {% if activity.action == 'follow' %}
               <a href="{% url 'user' activity.follow.user %}">
                 {{ activity.follow.user }}</a> followed you.
-            {% elif activity.follow_request %}
+            {% elif activity.action == 'follow_request' %}
+              <a href="{% url 'user' activity.follow_request.user %}">
+                {{ activity.follow_request.user }}</a> requested to follow you.
+            {% elif activity.action == 'follow_request_approved' %}
               <a href="{% url 'user' activity.follow_request.following %}">
                 {{ activity.follow_request.following }}</a> approved your follow request.
-            {% elif activity.mention_item %}
+            {% elif activity.action == 'item_mention' %}
               <a href="{% url 'user' activity.mention_item.user %}">
-                {{ activity.mention_item.user }}</a> mentioned you in a post about 
-                <a href="{% url 'view-item' activity.mention_item.id %}">{{ activity.mention_item.name }}</a>.
-            {% elif activity.like_item %}
-              <a href="{% url 'user' activity.like_item.user %}">
-                {{ activity.like_item.user }}</a> liked your post about 
-                <a href="{% url 'view-item' activity.like_item.item.id %}">{{ activity.like_item.item.name }}</a>.
-            {% elif activity.save_item %}
-              <a href="{% url 'user' activity.save_item.user %}">
-                {{ activity.save_item.user }}</a> saved your post about 
-                <a href="{% url 'view-item' activity.save_item.id %}">{{ activity.save_item.name }}</a>.
+                {{ activity.item.user }}</a> mentioned you in a post about 
+                <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
+            {% elif activity.action == 'item_like' %}
+              <a href="{% url 'user' activity.item_like.user %}">
+                {{ activity.item_like.user }}</a> liked your post about 
+                <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
+            {% elif activity.action == 'item_save' %}
+              <a href="{% url 'user' activity.item.user %}">
+                {{ activity.item.user }}</a> saved your post about 
+                <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
+            {% elif activity.action == 'item_comment' %}
+              <a href="{% url 'user' activity.comment.user %}">
+                {{ activity.comment.user }}</a> commented on your post about 
+                <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
+            {% elif activity.action == 'item_comment_mention' %}
+              <a href="{% url 'user' activity.comment.user %}">
+                {{ activity.comment.user }}</a> mentioned you in a comment about 
+                <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
             {% endif %}
             <div class="row"><br>
                 <div class="time-since">{{activity.created|timesince}} ago.</div>

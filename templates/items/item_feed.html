@@ -42,7 +42,7 @@
     {% if selected_tags %}
       <button onclick="openList()" class="dropbtn">{{ selected_tags|upper }} ⌄</button>
     {% else %}
-      <button onclick="openList()" class="dropbtn">TAG ⌄</button>
+      <button onclick="openList()" class="dropbtn">MY TAGS ⌄</button>
     {% endif %}
     <div class="dropdown-options" id ="listDropdown">
     <li><a href="?{{ status_param }}{{ item_type_param }}{{ query_param }}">ALL</a></li>

@@ -280,14 +280,15 @@ class FollowRequest(BaseModel):
         if self.is_approved == True:
                 # if approving, create the follow
             new_follow = Follow.objects.create(user=self.user,following=self.following)
-            Activity.objects.create(user=self.following,follow=new_follow,seen=True) #log the activity for the one who approved it as seen
-            Activity.objects.create(user=self.user,follow_request=self) #log the activity for the requester
+            Activity.objects.create(user=self.following,follow=new_follow,seen=True,action='follow') #log the activity for the one who approved it as seen
             super().save(*args, **kwargs)
+            Activity.objects.create(user=self.user,follow_request=self,action='follow_request_approved') #log the activity for requester
         elif FollowRequest.objects.filter(user=self.user,following=self.following,is_approved=False).exists():
             self.auto_denied = True
             super().save(*args, **kwargs)
         else:
             super().save(*args, **kwargs)
+            Activity.objects.create(user=self.following,follow_request=self,action='follow_request')
 
     def __str__(self):
         return f"{self.user} requested to follow {self.following}"
@@ -407,7 +408,7 @@ class Item(BaseModel):
                     existing_save = Activity.objects.filter(user=user,save_item=self)
                     existing_mention = Activity.objects.filter(user=user,mention_item=self)
                     if not existing_save and not existing_mention:
-                        Activity.objects.create(user=user,mention_item=self)
+                        Activity.objects.create(user=user,item=self,action='item_mention')
 
         # now do tags
         tags = re.findall("#[-\w]*",self.note)
@@ -435,10 +436,43 @@ class ItemLike(BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        Activity.objects.create(user=self.item.user,like_item=self)
+        Activity.objects.create(user=self.item.user,item=self.item,item_like=self,action='item_like')
 
     def __str__(self):
         return f"By {self.user}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class Comment(BaseModel):
+    user = models.ForeignKey(
+        User, verbose_name="commenter", on_delete=models.CASCADE,related_name="comments")
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE,related_name="comments")
+    body = models.TextField(max_length=250, blank=False)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # log activity
+        Activity.objects.create(user=self.item.user,item=self.item,comment=self,action="item_comment")
+
+        # log mentions, save item activity is in the view
+        mentions = re.findall("@[-\w]*",self.body)
+        if mentions:
+            for mention in mentions:
+                username = mention.replace("@","")
+                user = User.objects.filter(username=username.lower()).first()
+                if user:
+                    existing_activity = Activity.objects.filter(user=user,comment=self)
+                    if not existing_activity:
+                        Activity.objects.create(user=user,item=self.item,comment=self,action="item_comment_mention")
+
+    def __str__(self):
+        return f"{self.user} comment on {self.item}"
 
     class Meta:
         """Metadata."""
@@ -465,10 +499,17 @@ class Activity(BaseModel):
     save_item = models.ForeignKey(
         Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="save_item_activity")
     like_item = models.ForeignKey(
-        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="like_item_activity")
+        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="like_item_activity") #to dtop
+    item_like = models.ForeignKey(
+        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="item_likst_activity")
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="comment_item_activity")
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="item_activity")
+    action = models.CharField(max_length=40,blank=True,null=True,default='')
 
     def __str__(self):
-        return f"For {self.user} on {self.created}"
+        return f"{self.action} For {self.user} on {self.created}"
 
     class Meta:
         """Metadata."""
@@ -483,21 +524,6 @@ class ItemTag(BaseModel):
 
     def __str__(self):
         return f"{self.item} tagged {self.tag}"
-
-    class Meta:
-        """Metadata."""
-
-        ordering = ["-created"]
-
-class Comment(BaseModel):
-    user = models.ForeignKey(
-        User, verbose_name="commenter", on_delete=models.CASCADE,related_name="comments")
-    item = models.ForeignKey(
-        Item, on_delete=models.CASCADE,related_name="comments")
-    body = models.TextField(max_length=250, blank=False)
-
-    def __str__(self):
-        return f"{self.user} comment on {self.item}"
 
     class Meta:
         """Metadata."""
