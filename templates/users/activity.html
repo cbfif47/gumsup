@@ -36,7 +36,7 @@
               <a href="{% url 'user' activity.follow_request.following %}">
                 {{ activity.follow_request.following }}</a> approved your follow request.
             {% elif activity.action == 'item_mention' %}
-              <a href="{% url 'user' activity.mention_item.user %}">
+              <a href="{% url 'user' activity.item.user %}">
                 {{ activity.item.user }}</a> mentioned you in a post about 
                 <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
             {% elif activity.action == 'item_like' %}
