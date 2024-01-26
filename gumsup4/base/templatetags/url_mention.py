@@ -113,3 +113,10 @@ def ratingtobar(rating):
         txt = txt + '-'
 
     return txt
+
+@register.filter(name='commentcount', is_safe=True)
+def commentcount(count):
+    if count == 1:
+        return '1 comment'
+    else:
+        return str(count) + ' comments'

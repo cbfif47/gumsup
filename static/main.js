@@ -29,6 +29,21 @@ function validateForm() {
         }
     }
 
+function validateCommentForm() {
+      let x = document.forms["commentform"]["body"].value;
+      if (x == "") {
+        alert("no text in yr comment");
+        return false;
+      }
+    }
+    
+  function clicked(e)
+    {
+        if(!confirm('Are you sure?')) {
+            e.preventDefault();
+        }
+    }
+
 
 function openType() {
   document.getElementById("typeDropdown").classList.toggle("show");

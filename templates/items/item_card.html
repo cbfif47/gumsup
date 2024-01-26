@@ -5,12 +5,7 @@
 <td class="postcard">
     <div class="item-card-left">
             <div class="name">
-              {% if item.user == request.user %}
-                <a href="{% url 'edit-item' item.id %}">{{ item.name|upper}}{% if item.author %} 
-                ({{ item.author|lower }})<br>{% endif %}</a>
-              {% else %}
                 <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}{% if item.author %} ({{ item.author|lower }}){% endif %}</a>
-              {%  endif %}
             </div>
             <div class="review">
                 {{ item.note|lower|striptags|url_mention }}
@@ -19,23 +14,11 @@
         {% if item.user != request.user %}
               <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
         {% endif %}
-            {% if item.status == 3 %}
               <div class="since-finished">
                 {{item.last_date|dayssince}}
               </div>
-            {% elif item.status == 1 %}
-              <div class="since-finished">
-                  saved {{item.last_date|dayssince}}
-              </div>
-            {% elif item.status == 2 %}
-              <div class="since-finished">
-                  started {{item.last_date|dayssince}}
-              </div>
-            {% elif item.status == 4 %}
-              <div class="since-finished">
-                  quit {{item.last_date|dayssince}}
-              </div>
-            {% endif %}
+
+            <div class="comment-count"><a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a></div>
           </div>
     </div>
     <div class="item-card-right">

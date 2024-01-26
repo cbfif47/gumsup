@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from datetime import datetime
 
-from .models import Post, User, FollowRequest, Item
+from .models import Post, User, FollowRequest, Item, Comment
 
 class PostForm(forms.ModelForm):
    class Meta:
@@ -116,3 +116,12 @@ class ItemEditForm(forms.ModelForm):
             "rating": forms.RadioSelect(attrs={"class":"tab-input"})
       }
 
+
+class CommentForm(forms.ModelForm):
+   class Meta:
+     model = Comment
+     fields = {'body','user','item'}
+     widgets = {
+            "body": forms.Textarea(attrs={'placeholder': 'leave a comment'
+              ,"rows": 4})
+      }

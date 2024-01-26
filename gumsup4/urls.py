@@ -57,4 +57,5 @@ urlpatterns = [
     path("activity/", views.ActivityView.as_view(), name="activity"),
     path("follow-requests/", views.UserFollowRequestsView.as_view(), name="follow-requests"),
     path("welcome/", views.WelcomeView.as_view(), name='welcome'),
+    path("comments/<comment_id>/delete", views.CommentDeleteView.as_view(), name="delete-comment"),
 ]

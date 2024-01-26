@@ -1,19 +1,53 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load url_mention %}
 {% block title %}{{ item.name }}{% endblock %}
   {% block content %}
   <h1>{{ item.name }} from {{ item.user }}</h1>
+  {% if item.user == request.user %}
+    <button class="search-button"><a href="{% url 'edit-item' item.id %}">edit</a></button>
+    <button class="search-button"><a href="{% url 'delete-item' item.id %}">delete</a></button><br><br>
+  {% endif %}
   <table>
     {% include 'items/item_card.html' %}
   </table>
-  {% if item.started_date %}
-  <p>started: {{ item.started_date}}</p>
-  {% endif %}
-  {% if item.ended_date %}
-  <p>ended: {{ item.ended_date}}</p>
-  {% endif %}
-  {% if item.original_item %}
-  <p>saved from: <a href="{% url 'view-item' item.original_item.id %}">{{ item.original_item}}</a></p>
-  {% endif %}
+<br>
+  <form action="{% url 'view-item' item.id %}" method="post" novalidate class="postform" name="commentform" onsubmit="return validateCommentForm()">
+        {% csrf_token %}{{ form.user.as_hidden }}{{ form.item.as_hidden }}
+    <div class="row">
+        {{ form.body }}
+    </div>
+    <div class="row ">
+        <input class="primary-button" type="submit" value="comment" >
+    </div>
+    </form>
+    {% if comments %}
+      <br><table>
+      {% for comment in comments %}
+        <tr>
+          <td class="activity-card">
+            <div class="row">
+              <div class="comment">{{ comment.body|lower|striptags|url_mention }}</div>
+            </div>
+            <div class="row">
+              <a href="{% url 'user' comment.user %}"><button class="user-name">{{ comment.user }}</button></a>
+                <div class="since-finished">
+                  {{ comment.created|timesince }} ago
+                </div>
+            </div>
+            {% if request.user == comment.user or request.user == item.user %}
+              <div class="actions ">
+                <form method="POST" action="{% url 'delete-comment' comment.id %}">
+                  {% csrf_token %}
+                  <button class="tertiary-button" type="submit">delete</button>
+                </form>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+      
+      {% endfor %}
+      </table>
+    {% endif %}
     {% endblock %}
 

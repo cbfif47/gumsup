@@ -392,10 +392,11 @@ class Item(BaseModel):
             for mention in mentions:
                 username = mention.replace("@","")
                 user = User.objects.filter(username=username.lower()).first()
-                existing_save = Activity.objects.filter(user=user,save_item=self)
-                existing_mention = Activity.objects.filter(user=user,mention_item=self)
-                if not existing_save and not existing_mention:
-                    Activity.objects.create(user=user,mention_item=self)
+                if user:
+                    existing_save = Activity.objects.filter(user=user,save_item=self)
+                    existing_mention = Activity.objects.filter(user=user,mention_item=self)
+                    if not existing_save and not existing_mention:
+                        Activity.objects.create(user=user,mention_item=self)
 
         # now do tags
         tags = re.findall("#[-\w]*",self.note)
@@ -476,3 +477,19 @@ class ItemTag(BaseModel):
         """Metadata."""
 
         ordering = ["-created"]
+
+class Comment(BaseModel):
+    user = models.ForeignKey(
+        User, verbose_name="commenter", on_delete=models.CASCADE,related_name="comments")
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE,related_name="comments")
+    body = models.TextField(max_length=250, blank=False)
+
+    def __str__(self):
+        return f"{self.user} comment on {self.item}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+

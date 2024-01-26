@@ -533,7 +533,6 @@ table {
   margin-top: 1em;
   text-align: left;
   padding: 0px;
-  padding-right: 3px;
   font-size:1.1em;
   cursor: pointer;
   border-radius: 5px;
@@ -926,3 +925,22 @@ stat-type {
   margin-bottom: 1em;
   margin-top: 0;
 }
+
+.comment {
+  color: white;
+  font-size: 0.85em;
+  word-break: break-word;
+  margin-bottom: 0;
+}
+
+.original-item, .comment-count {
+  color: #878787;
+  font-size:0.8em;
+  display: inline;
+}
+
+.comment-count a {
+  color: #878787;
+  display: inline;
+}
+

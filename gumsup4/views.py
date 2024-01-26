@@ -9,8 +9,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike, ItemTag
-from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm
+from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike, ItemTag, Comment
+from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm, CommentForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q, F
 from django.db.models.functions import Trunc
@@ -802,12 +802,47 @@ class ItemDetailView(UserCheckMixin,TemplateView):
             item.like_button = 'liked'
         else:
             item.like_button = 'like'
+        new_comment = Comment(item=item,user=request.user)
+        f = CommentForm(instance=new_comment)
+        comments = Comment.objects.filter(item=item)
 
         context = {
-            'item': item
+            'item': item,
+            'form': f,
+            'comments': comments
         }
 
         return render(request, 'items/view_item.html', context)
+
+    def post(self,request, item_id, **kwargs):
+        item = get_object_or_404(Item, id = item_id)
+        if ItemLike.objects.filter(user=request.user,item=item):
+            item.like_button = 'liked'
+        else:
+            item.like_button = 'like'
+            
+        f = CommentForm(request.POST)
+        comments = Comment.objects.filter(item=item)
+
+        if f.is_valid():                
+            new_item = f.save()
+            new_comment = Comment(item=item,user=request.user)
+            f = CommentForm(instance=new_comment)
+            context = {
+                        'form': f
+                        , 'item': item
+                        , 'comments': comments
+                    }
+        else:
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
+            context = {
+                        'form': f
+                        ,'messages': ["U forgot some fields"]
+                        , 'item': item
+                        , 'comments': comments
+                    }
+        return render(request, "items/view_item.html", context)
 
 
 class ItemDeleteView(UserCheckMixin,TemplateView):
@@ -1040,3 +1075,14 @@ class StatsView(UserCheckMixin,TemplateView):
 
         return render(request, 'items/stats.html', context)
 
+
+class CommentDeleteView(UserCheckMixin,TemplateView):
+
+    def post(self, request, comment_id, **kwargs):
+
+        comment = get_object_or_404(Comment, id = comment_id)
+        item = comment.item
+        if item.user == request.user or comment.user == request.user:
+            comment.delete()
+
+        return redirect(to='view-item',item_id=item.id)
