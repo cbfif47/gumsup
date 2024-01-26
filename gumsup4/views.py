@@ -675,7 +675,11 @@ class ItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
             if request.GET.get('status', '') == 'done':
                 return redirect(to='finish-item',item_id=new_item.id)
             else:
-                return redirect(to=request.GET.get('from', 'items'))
+                if request.GET.get('from', 'items') == '':
+                    dest = 'items'
+                else:
+                    dest = request.GET.get('from', 'items')
+                return redirect(to=dest)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
