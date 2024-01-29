@@ -35,14 +35,15 @@
                   {{ comment.created|timesince }} ago
                 </div>
             </div>
-            {% if request.user == comment.user or request.user == item.user %}
               <div class="actions ">
+                <button class="tertiary-button replybutton" type="submit" onClick="reply()" data-username="{{comment.user}}">reply</button>
+            {% if request.user == comment.user or request.user == item.user %}
                 <form method="POST" action="{% url 'delete-comment' comment.id %}">
                   {% csrf_token %}
                   <button class="tertiary-button" type="submit">delete</button>
                 </form>
-              </div>
             {% endif %}
+              </div>
           </td>
         </tr>
       

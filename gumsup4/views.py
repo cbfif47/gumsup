@@ -497,9 +497,13 @@ class SearchUsersList(UserCheckMixin,TemplateView):
         context = {}
         query = request.GET.get("q",'')
         if len(query) > 2:
-            results = User.objects.filter(Q(username__icontains=query) 
+            results = User.objects.filter((Q(username__icontains=query) 
             | Q(bio__icontains=query)
             | Q(email__icontains=query))
+            & Q(username__isnull=False))
+
+            for u in results:
+                u.button_text = get_button_text(request.user,u)
             context = {
                 'users': results,
                 'has_new_activity': request.user.has_new_activity()
@@ -631,6 +635,8 @@ class SuggestedView(UserCheckMixin,TemplateView):
 
     def get(self, request, **kwargs):
         user_list = request.user.suggested_users()
+        for u in user_list:
+            u.button_text = get_button_text(request.user,u)
         context = {
                         'users': user_list,
                         'has_new_activity': request.user.has_new_activity() 

@@ -120,3 +120,10 @@ def commentcount(count):
         return '1 comment'
     else:
         return str(count) + ' comments'
+
+@register.filter(name='likecount', is_safe=True)
+def likecount(count):
+    if count == 1:
+        return '1 like'
+    else:
+        return str(count) + ' likes'

@@ -1,19 +1,21 @@
 <tr>
-<td class="postcard">
-  <div class="row">
-    <a href="{% url 'user' user %}">
-    <div class="name">{{ user }}</div>
-    </a>
-  </div>
-  <div class="row">
-    <div class="review">
-      {{ user.bio|lower|default:'no bio :(' }}
-    </div>
-  </div>
-  <div class="row">
-      <div class="time-since">
-        joined {{ user.created|timesince }} ago
+      <td class="postcard">
+        <div class="col-70">
+        <div class="row">
+          <a href="{% url 'user' user %}">
+          <div class="name">{{ user }}</div>
+          </a>
+        </div>
+        <div class="row">
+          <div class="review">
+            {{ user.bio|lower|default:'no bio :(' }}
+          </div>
+        </div>
       </div>
-  </div>
-</td>
-</tr>
+      {% if user != request.user %}
+      <div class="col-30">
+                <button class="search-button followbutton" id="followbutton{{user}}" data-username="{{ user }}" style="float: right;width: 5em;">{{user.button_text}}</button>
+          </div>
+          {% endif %}
+      </td>
+      </tr>

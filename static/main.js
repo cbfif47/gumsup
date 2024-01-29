@@ -70,6 +70,7 @@ function openList() {
 $('.likebutton').click(function(){
     var catid;
     catid = $(this).attr("data-catid");
+    likecount = parseInt($( '#likecount'+ catid ).text());
     $.ajax(
     {
         type:"GET",
@@ -82,8 +83,10 @@ $('.likebutton').click(function(){
             $( '#like'+ catid ).text(data);
             if(data=='liked') {
               $( '#like'+ catid ).addClass('pressed');
+              $( '#likecount'+ catid ).text(likecount + 1);
             } else {
               $( '#like'+ catid ).removeClass('pressed');
+              $( '#likecount'+ catid ).text(likecount - 1);
             }
         }
      })
@@ -177,3 +180,11 @@ $( function() {
     $( "#id_ended_date" ).datepicker();
     $( "#id_started_date" ).datepicker();
   } );
+
+$('.replybutton').click(function(){
+    comment_input = $( '#id_body' )
+    username = $(this).attr("data-username");
+    comment_input.val("@" + username + ' ');
+    comment_input.focus();
+    comment_input[0].setSelectionRange(1000, 1000);
+});
