@@ -884,6 +884,7 @@ stat-type {
   float: left;
   position:absolute;
   bottom:5px;
+
 }
 
 
@@ -933,14 +934,16 @@ stat-type {
   margin-bottom: 0;
 }
 
-.original-item, .comment-count {
+.original-item, .comment-count, .saved-via {
   color: #878787;
   font-size:0.8em;
-  display: inline;
 }
 
-.comment-count a {
+.comment-count a, .saved-via a {
   color: #878787;
   display: inline;
 }
 
+.saved-via {
+  margin-bottom: 0.4em;
+}

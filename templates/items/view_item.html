@@ -11,6 +11,20 @@
   <table>
     {% include 'items/item_card.html' %}
   </table>
+<br><div class="comment-count">
+<a href="{% url 'search-items' %}?q={{item.name}}&mode=strict">{{ other_ratings.count }} other rating{% if other_ratings.count != 1 %}s{% endif %}</a>:
+  {% if other_ratings.avg_rating < 1.5%}
+                  <img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif other_ratings.avg_rating < 2.5 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif other_ratings.avg_rating < 3.5 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% elif other_ratings.avg_rating < 4.5 %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                {% else %}
+                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                  {% endif %}
+                </div>
 <br>
   <form action="{% url 'view-item' item.id %}" method="post" novalidate class="postform" name="commentform" onsubmit="return validateCommentForm()">
         {% csrf_token %}{{ form.user.as_hidden }}{{ form.item.as_hidden }}

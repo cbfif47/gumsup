@@ -7,6 +7,9 @@
             <div class="name">
                 <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}{% if item.author %} ({{ item.author|lower }}){% endif %}</a>
             </div>
+            {% if item.original_item %}
+                <div class="saved-via" >via <a href="{% url 'user' item.original_item.user %}">{{ item.original_item.user }}</a></div>
+              {% endif %}
             <div class="review">
                 {{ item.note|lower|striptags|url_mention|urlize }}
             </div>
@@ -19,8 +22,8 @@
               </div>
 
             <br><div class="comment-count"><a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a>
-              <span id="likecount{{item.id}}">{{ item.liked.count }}</span> like</div>
-          </div>
+              <span id="likecount{{item.id}}">{{ item.liked.count }}</span> like
+          </div></div>
     </div>
     <div class="item-card-right">
             <button class="item-type">{{ item.item_type }}</button><br>

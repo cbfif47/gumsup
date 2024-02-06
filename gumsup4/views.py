@@ -311,7 +311,8 @@ class UserFollowersView(UserCheckMixin,TemplateView):
         else:
             followers = user.follower_list()
             for follower in followers:
-                follower.is_following = request.user.is_following(follower)
+                #follower.is_following = request.user.is_following(follower)
+                follower.button_text = get_button_text(request.user,follower)
 
             #pagination
             paginator = Paginator(followers, 25)  # Show 25 posts per page.
@@ -338,12 +339,13 @@ class UserFollowingView(UserCheckMixin,TemplateView):
                         ,'has_new_activity': request.user.has_new_activity() 
             }
             return render(request, 'users/gummy.html', context)
-        elif user.is_private and request.user.is_following(user) == False:
+        elif user.is_private and request.user.is_following(user) == False and request.user != user:
             return redirect(to='home')
         else:
             followers = user.following_list()
             for follower in followers:
-                follower.is_following = request.user.is_following(follower)
+                #follower.is_following = request.user.is_following(follower)
+                follower.button_text = get_button_text(request.user,follower)
 
             #pagination
             paginator = Paginator(followers, 25)  # Show 25 posts per page.
@@ -815,11 +817,14 @@ class ItemDetailView(UserCheckMixin,TemplateView):
         new_comment = Comment(item=item,user=request.user)
         f = CommentForm(instance=new_comment)
         comments = Comment.objects.filter(item=item)
+        other_ratings = Item.objects.filter(name=item.name
+            ,rating__isnull=False).exclude(id=item.id).aggregate(count=Count("id"),avg_rating=Avg("rating"))
 
         context = {
             'item': item,
             'form': f,
-            'comments': comments
+            'comments': comments,
+            'other_ratings': other_ratings
         }
 
         return render(request, 'items/view_item.html', context)
@@ -968,6 +973,7 @@ class SaveItemView(UserCheckMixin,TemplateView):
         item = get_object_or_404(Item, id = item_id)
         new_item = Item(user = request.user
             ,name = item.name
+            ,author = item.author
             ,item_type = item.item_type
             ,original_item = item
             )

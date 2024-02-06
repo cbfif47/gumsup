@@ -117,9 +117,9 @@ def ratingtobar(rating):
 @register.filter(name='commentcount', is_safe=True)
 def commentcount(count):
     if count == 1:
-        return '1 comment'
+        return '1 reply'
     else:
-        return str(count) + ' comments'
+        return str(count) + ' replies'
 
 @register.filter(name='likecount', is_safe=True)
 def likecount(count):

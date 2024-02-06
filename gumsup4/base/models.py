@@ -396,6 +396,8 @@ class Item(BaseModel):
         self.name = self.name.lower()
         if self.note:
             self.note = self.note.lower()
+        if self.author:
+            self.author = self.author.lower()
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view
