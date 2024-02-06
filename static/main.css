@@ -405,6 +405,17 @@ table {
   color:#00ff11;
 }
 
+.search-box {
+    margin: auto;
+  margin-top: 0.5em;
+    max-width:65ex;
+  display: none;
+}
+.search-header {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .show {display:block;}
 
 
@@ -947,3 +958,5 @@ stat-type {
 .saved-via {
   margin-bottom: 0.4em;
 }
+
+

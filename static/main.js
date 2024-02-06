@@ -44,6 +44,9 @@ function validateCommentForm() {
         }
     }
 
+function openSearch() {
+  document.getElementById("searchBox").classList.toggle("show");
+}
 
 function openType() {
   document.getElementById("typeDropdown").classList.toggle("show");

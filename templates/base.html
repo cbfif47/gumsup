@@ -25,9 +25,19 @@
             <breadcrumb>
               <a href="{%url 'home'%}" class="logo">FEED</a>
               <a href="{%url 'items' %}" class="logo">MINE</a>
-              <a href="{%url 'search-items' %}" class="logo">SEARCH</a>
               <a href="{%url 'stats' %}" class="logo">STATS</a>
+              <a onclick="openSearch()" class="search-header">SEARCH</a>
               </breadcrumb>
+              <div class="search-box" id="searchBox">
+              <form action="{% url 'search-items' %}" method="get">
+                  <input
+                    type="search"
+                    name="q"
+                    placeholder="search"
+                    {% if query %}value = "{{ query }}"{% endif %}
+                  />
+                </form>
+            </div>
           {% endif %}
         </header>
         <main>
