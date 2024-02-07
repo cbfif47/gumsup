@@ -182,7 +182,6 @@ class UserView(UserCheckMixin,FilterableItemsMixin,TemplateView):
 
         if user == request.user:
             context["include_logout"] = True
-            context["has_lists"] = user.has_lists()
         else:
             context["is_following"] = request.user.is_following(user)
             context["button_text"] = get_button_text(request.user,user)
