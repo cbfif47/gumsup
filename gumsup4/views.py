@@ -352,6 +352,7 @@ class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
                     & (Q(user=request.user) #owned by user
                     | Q(user__is_private=False) #public user
                     | Q(user__followers__user=request.user)),).distinct() #or one we're following
+            stats = raw_feed.aggregate(count=Count("id"),ratings=Count("rating"),avg_rating=Avg("rating"))
             context = self.make_filtered_context(raw_feed,request)
         else:
             context = self.make_filtered_context(Item.objects.filter(name=''),request) #no results
@@ -360,6 +361,7 @@ class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
 
         context['is_search'] = True
         context['query'] = query
+        context['stats'] = stats
 
         return render(request, 'search/search-items.html', context) 
 
