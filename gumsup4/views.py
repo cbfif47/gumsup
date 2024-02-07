@@ -9,8 +9,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .base.models import Post, User, Follow, SavedPost, Activity, FollowRequest, Item, ItemList, ItemLike, ItemTag, Comment
-from .base.forms import PostForm, RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm, CommentForm
+from .base.models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
+from .base.forms import RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm, CommentForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q, F
 from django.db.models.functions import Trunc
@@ -30,44 +30,6 @@ class UserCheckMixin(object):
             return redirect('welcome')
         return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
 
-class FilterablePostsMixin:
-
-    def make_filtered_context(self,raw_feed,request):
-        superlike = request.GET.get('superlike', 'n')
-        category = request.GET.get('category', '')
-        query = request.GET.get('q', '')
-        feed = Post.filter_posts(raw_feed,superlike, category)
-        has_new_activity = request.user.has_new_activity() 
-
-        #filter_params
-        superlike_param = 'superlike=' + superlike
-        if category != '':
-            category_param = '&category=' + category
-        else:
-            category_param = ''
-        if query != '':
-            query_param = '&q=' + query
-        else:
-            query_param = ''
-
-        for p in feed:
-            p.is_saved = p.is_saved(request.user)
-
-        #pagination
-        paginator = Paginator(feed, 25)  # Show 25 posts per page.
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-    
-        context = {
-            'posts': page_obj,
-            'category_param': category_param,
-            'selected_category': category,
-            'superlike_param': superlike_param,
-            'query_param': query_param,
-            'categories': Post.category.field.choices,
-            'has_new_activity': has_new_activity
-        }
-        return context
 
 
 class FilterableItemsMixin:
@@ -142,157 +104,6 @@ class FilterableItemsMixin:
         return context
 
 
-class PostsPageView(FilterablePostsMixin,TemplateView):
-
-    def get(self, request, **kwargs):
-
-        if request.user.is_authenticated:
-            user = request.user
-            context = self.make_filtered_context(user.feed(),request)
-
-            # for form
-            new_post = Post(user=user)
-            form = PostForm(instance = new_post)
-            context['form'] = form
-            context['is_feed'] = True
-
-            return render(request, 'posts/posts.html', context)
-        else:
-            return redirect(to='login')
-
-    def post(self,request, **kwargs):
-
-        if request.user.is_authenticated:
-            f = PostForm(request.POST)
-
-            if f.is_valid():
-                f.save()
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                user = request.user
-                context = self.make_filtered_context(user.feed(),request)
-                context['form'] = f
-                context['messages'] = ["U forgot some fields"]
-                return render(request, "posts/posts.html", context)
-
-            return redirect(to='home') 
-
-
-class PostView(TemplateView):
-
-    def post(self, request, post_id, *args, **kwargs):
-
-        if request.user.is_authenticated:
-            context = {}
-
-            post = get_object_or_404(Post, id = post_id)
-
-            if request.user == post.user:
-                post.delete()
-
-            return redirect(to='home')
-        else:
-            return redirect(to='login')
-
-    # todo single post view
-    def get(self, request, post_id,**kwargs):
-        if request.user.is_authenticated:
-            post = get_object_or_404(Post, id = post_id)
-            post.is_saved = post.is_saved(request.user)
-            context = {
-                'post': post,
-                'has_new_activity': request.user.has_new_activity() 
-            }
-
-            return render(request, 'posts/post.html', context)
-        else:
-            return redirect(to='login')
-
-
-class SavedPostView(TemplateView):
-
-    def post(self, request, post_id, *args, **kwargs):
-        if request.user.is_authenticated:
-            context = {}
-
-            post = get_object_or_404(Post, id = post_id)
-
-            if request.user != post.user:
-                if SavedPost.objects.filter(user=request.user,post=post).exists():
-                    # if it exists, this is an unsave
-                    SavedPost.objects.filter(user=request.user,post=post).delete()
-                else:
-                    sp = SavedPost(user=request.user,post=post)
-                    sp.save()
-                    Activity.objects.create(user=post.user,saved_post=sp)
-
-            return redirect(to='home')
-        else:
-            return redirect(to='login')
-
-
-class SavedPostsView(FilterablePostsMixin,TemplateView):
-
-    def get(self, request, **kwargs):
-
-        if request.user.is_authenticated:
-            raw_feed = request.user.saved_posts()
-            context = self.make_filtered_context(raw_feed,request)
-            context['is_saves'] = True
-
-            return render(request, 'posts/saved_posts.html', context)
-        else:
-            return redirect(to='login')
-
-
-
-class RePostView(TemplateView):
-
-    def get(self, request, post_id, *args, **kwargs):
-
-        if request.user.is_authenticated:
-            context = {}
-
-            post = get_object_or_404(Post, id = post_id)
-            new_post = Post(what = post.what
-                , user = request.user
-                ,url = post.url
-                ,category = post.category
-                ,original_post = post)
-            form = PostForm(instance = new_post)
-
-            context = {
-                'form': form
-                ,'original_post': post,
-                'has_new_activity': request.user.has_new_activity() 
-            }
-
-            return render(request, 'posts/repost.html', context)
-        else:
-            return redirect(to='login')
-
-    def post(self,request,post_id, *args, **kwargs):
-
-        if request.user.is_authenticated:
-            f = PostForm(request.POST)
-
-            if f.is_valid():
-                f.save()
-            else:
-                for field in f.errors:
-                    f[field].field.widget.attrs['class'] = 'error'
-                post = get_object_or_404(Post, id = post_id)
-                context = {
-                            'form': f
-                            ,'original_post': post
-                            ,'messages': ["U forgot some fields"]
-                        }
-                return render(request, "posts/repost.html", context)
-
-            return redirect(to='home') 
-        else:
-            return redirect(to='login')
 
 
 class UserFollowersView(UserCheckMixin,TemplateView):
@@ -518,26 +329,6 @@ class SearchUsersList(UserCheckMixin,TemplateView):
 
         return render(request, 'search/search-users.html', context)
 
-
-class SearchPostsView(UserCheckMixin,FilterablePostsMixin,TemplateView):
-
-    def get(self, request, **kwargs):
-
-        context = {}
-        query = request.GET.get("q",'')
-        if len(query) > 2:
-            raw_feed = Post.objects.filter(Q(what__icontains=query)
-        | Q(why__icontains=query))
-            context = self.make_filtered_context(raw_feed,request)
-        else:
-            context = self.make_filtered_context(Post.objects.filter(what=''),request) #no results
-            if query != '':
-                context['messages'] = ["Search more than 2 characters"]
-
-        context['is_search'] = True
-        context['query'] = query
-
-        return render(request, 'search/search-posts.html', context)
 
 
 class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
@@ -817,8 +608,7 @@ class ItemDetailView(UserCheckMixin,TemplateView):
         new_comment = Comment(item=item,user=request.user)
         f = CommentForm(instance=new_comment)
         comments = Comment.objects.filter(item=item)
-        other_ratings = Item.objects.filter(name=item.name
-            ,rating__isnull=False).exclude(id=item.id).aggregate(count=Count("id"),avg_rating=Avg("rating"))
+        other_ratings = Item.objects.filter(name=item.name).exclude(id=item.id).aggregate(count=Count("id"),ratings=Count("rating"),avg_rating=Avg("rating"))
 
         context = {
             'item': item,
@@ -881,89 +671,6 @@ class ItemDeleteView(UserCheckMixin,TemplateView):
             item.delete()
 
         return redirect(to=back_to)
-
-
-class ItemListView(FilterableItemsMixin,TemplateView):
-    
-    def post(self, request, item_list_id, **kwargs):
-        if request.user.is_authenticated:
-            item_list = get_object_or_404(ItemList, id = item_list_id)
-            back_to = request.GET.get('from', 'items')
-            if item.user == request.user:
-                item.status = 2
-                item.started_date = datetime.now()
-                item.save()
-
-            return redirect(to=back_to)
-        else:
-            return redirect(to='login')
-
-    def get(self, request, item_list_id, **kwargs):
-        if request.user.is_authenticated:
-            item_list = get_object_or_404(ItemList, id = item_list_id)
-            items = Item.objects.filter(item_list=item_list)
-            if item_list.user == request.user:
-                context = self.make_filtered_context(items,request)
-                context['item_list'] = item_list
-
-            return render(request, 'item_lists/view_item_list.html', context)
-        else:
-            return redirect(to='login')
-
-
-class ItemListCreateView(CreateView):
-    model = ItemList
-    fields = ["name"]
-    template_name = "item_lists/item_list_form.html"
-
-    def get_success_url(self):
-        return f'/items/'
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-
-class ItemListDeleteView(DeleteView):
-    # specify the model you want to use
-    model = ItemList
-    success_url ="/items"
-     
-    template_name = "item_lists/confirm_delete.html"
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.object.user == request.user:
-            #reassign to default list if needed
-            default_list = ItemList.objects.get(user=request.user,is_default=True)
-            items = Item.objects.filter(item_list=self.object)
-            for item in items:
-                item.item_list = default_list
-                item.save()
-            success_url = self.get_success_url()
-            self.object.delete()
-            return redirect(success_url)
-        else:
-            return http.HttpResponseForbidden("Cannot delete other's lists") #todo this doesnt work
-
-
-class ItemListListView(ListView):
-    # specify the model you want to use
-    model = ItemList
-    paginate_by = 100
-    context_object_name = 'item_lists'
-    template_name = "item_lists/item_lists.html"
-    def get_queryset(self):
-        return ItemList.objects.filter(user=self.request.user)
-
-
-class ItemListEditView(UpdateView):
-    model = ItemList
-    fields = ["name"]
-    template_name = "item_lists/item_list_form.html"
-
-    def get_success_url(self):
-        return f'/item-lists/{self.object.pk}/'
 
 
 class SaveItemView(UserCheckMixin,TemplateView):

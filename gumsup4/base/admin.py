@@ -19,14 +19,6 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
-
-@admin.register(models.Post)
-class PostAdmin(admin.ModelAdmin):
-    """Admin for posts."""
-
-@admin.register(models.SavedPost)
-class SavedPostAdmin(admin.ModelAdmin):
-    """Admin for posts."""
     
 
 @admin.register(models.Follow)
@@ -42,10 +34,6 @@ class ActivityAdmin(admin.ModelAdmin):
     """Admin for posts."""
 
 @admin.register(models.Item)
-class ActivityAdmin(admin.ModelAdmin):
-    """Admin for posts."""
-
-@admin.register(models.ItemList)
 class ActivityAdmin(admin.ModelAdmin):
     """Admin for posts."""
 

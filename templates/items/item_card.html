@@ -18,7 +18,7 @@
               <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
         {% endif %}
               <div class="since-finished">
-                {{ item.status|statustoaction}} {{item.last_date|dayssince}}
+                {{ item.status|statustoaction}} {{item.last_date|timesince}} ago
               </div>
 
             <br><div class="comment-count"><a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a>

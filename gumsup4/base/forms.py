@@ -2,22 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from datetime import datetime
 
-from .models import Post, User, FollowRequest, Item, Comment
+from .models import User, FollowRequest, Item, Comment
 
-class PostForm(forms.ModelForm):
-   class Meta:
-     model = Post
-     fields = {'what','why','category','url','superlike','original_post','user'}
-     widgets = {
-            "what": forms.TextInput(attrs={'placeholder': 'what are you into'
-              }),
-            "why": forms.Textarea(attrs={'placeholder': 'why do you like it'
-              ,"rows": 3}),
-            "url": forms.TextInput(attrs={"placeholder": "url (optional)"
-              }),
-            "category": forms.RadioSelect(attrs={"class":"tab-input"}),
-            "superlike": forms.CheckboxInput(attrs={"class":"tab-input"})
-      }
 
 class UserEditForm(forms.ModelForm):
 
@@ -75,7 +61,7 @@ class ItemFormMain(forms.ModelForm):
           "name": forms.TextInput(attrs={'placeholder': "title",'class': 'ui-autocomplete-input', 'id':"id_name_item"
             }),
           "author": forms.TextInput(attrs={'placeholder': '(version, year etc)','class': 'ui-autocomplete-input'}),
-          "note": forms.Textarea(attrs={'placeholder': 'note/review. use @ to mention someone, # to tag stuff'
+          "note": forms.Textarea(attrs={'placeholder': "note for later or review if you're already done. use @ to mention someone, # to tag stuff"
             ,"rows": 4}),
           "item_type": forms.RadioSelect(attrs={"class":"tab-input"})
     }

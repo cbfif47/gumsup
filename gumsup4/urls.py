@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from gumsup4.base.api import viewsets
 from rest_framework import routers
 from gumsup4 import views
 from django.contrib.auth.views import LogoutView
@@ -24,7 +23,6 @@ from django.contrib.auth.views import LogoutView
 # from .router import router
 
 router = routers.DefaultRouter()
-router.register(r'posts', viewsets.PostViewset, 'post')
 
 urlpatterns = [
     path("items/", views.ItemsView.as_view(), name="items"),

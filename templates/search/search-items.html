@@ -5,7 +5,7 @@
   <h1>search</h1>
   <div class="row">
         <button class="search-button disabled">stuff</button>
-        <button class="search-button"><a href="{%url 'search-users' %}">people</a></button>
+        <button class="search-button"><a href="{%url 'search-users' %}{% if query %}?q={{ query }}{% endif %}">people</a></button>
         <button class="search-button"><a href="{%url 'suggested' %}">people you might know</a></button>
   </div><br>
   <div class="row">

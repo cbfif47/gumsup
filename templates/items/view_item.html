@@ -12,7 +12,12 @@
     {% include 'items/item_card.html' %}
   </table>
 <br><div class="comment-count">
-<a href="{% url 'search-items' %}?q={{item.name}}&mode=strict">{{ other_ratings.count }} other rating{% if other_ratings.count != 1 %}s{% endif %}</a>:
+<a href="{% url 'search-items' %}?q={{item.name}}&mode=strict">
+{% if other_ratings.ratings == 0 %}
+posted by {{ other_ratings.count }} other{% if other_ratings.count != 1 %}s{% endif %}, no ratings</a>
+{% else %}
+posted by {{ other_ratings.count }} other{% if other_ratings.count != 1 %}s{% endif %}, {{other_ratings.ratings}} rating{% if other_ratings.ratings != 1 %}s{% endif %}</a>:
+{% endif %}
   {% if other_ratings.avg_rating < 1.5%}
                   <img src="{% static 'starsmall.png' %}" height="14px">
                 {% elif other_ratings.avg_rating < 2.5 %}
@@ -21,7 +26,7 @@
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                 {% elif other_ratings.avg_rating < 4.5 %}
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-                {% else %}
+                {% elif other_ratings.avg_rating >= 4.5 %}
                   <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                   {% endif %}
                 </div>

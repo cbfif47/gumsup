@@ -67,14 +67,8 @@ class User(BaseModel, AbstractUser):
     def has_declined_request(self,following):
         return FollowRequest.objects.filter(user=self,following=following,is_approved=False).exists()
 
-    def feed(self, superlike = '', category = ''):
-        #following = Follow.objects.filter(user=self).values_list('following', flat=True)
-        #feed = Post.objects.filter(user__in=following)
-        feed = Post.objects.filter(user__followers__user=self)
-        return feed
-
     def item_feed(self):
-        feed = Item.objects.filter(user__followers__user=self).exclude(status=1).exclude(hide_from_feed=True)
+        feed = Item.objects.filter(user__followers__user=self).exclude(hide_from_feed=True)
         return feed
 
     def follower_list(self):
@@ -92,9 +86,6 @@ class User(BaseModel, AbstractUser):
     def following_count(self):
         fc = Follow.objects.filter(user=self).exclude(following=self).count()
         return fc
-
-    def saved_posts(self):
-        return Post.objects.filter(saved_post__user=self)
 
     def count_follow_requests(self):
         return FollowRequest.objects.filter(following=self,is_approved=None,auto_denied=False).count()
@@ -132,10 +123,6 @@ class User(BaseModel, AbstractUser):
 
         return user_list
 
-    def has_lists(self):
-        x = ItemList.objects.filter(user=self,is_default=False).count() > 0
-        return x
-
     def __str__(self):
         if self.username:
             return f"{self.username}"
@@ -146,92 +133,6 @@ class User(BaseModel, AbstractUser):
         """Metadata."""
 
         db_table = "users"
-
-
-class Post(BaseModel):
-    CATEGORY_CHOICES = [
-        ('CULTURE','culture'),
-        ('LIFE','life'),
-        ('PLACES','places'),
-        ('STUFF','stuff')]
-
-    user = models.ForeignKey(
-        User, verbose_name="Posted By", on_delete=models.CASCADE,related_name="posted_by")
-
-    what = models.CharField(max_length=50)
-    why = models.TextField(max_length=250)
-    original_post = models.ForeignKey(
-        'Post', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')
-    superlike = models.BooleanField(default=False)
-    category = models.CharField(max_length=50
-        , choices = CATEGORY_CHOICES
-        , default='LIFE'
-        , verbose_name="Category", blank=False)
-    url = models.URLField(blank=True,default='')
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        gummy = User.objects.get(username='gummy')
-        # now lets log activity
-
-        # first repost. dont do it if its gummy
-        if self.original_post_id:
-                original_poster = self.original_post.user
-                if original_poster != gummy:
-                    Activity.objects.create(user=original_poster,repost=self)
-        else:
-            original_poster = gummy
-
-        #now mentions, dont notify same person as above, and no gummy, and no self-mention
-        mentions = re.findall("@[-\w]*",self.why)
-        for mention in mentions:
-            username = mention.replace("@","")
-            user = User.objects.filter(username=username.lower()).first()
-            if user:
-                if user != original_poster and user != self.user: 
-                    Activity.objects.create(user=user,mention=self)
-
-    def is_saved(self,user):
-        return SavedPost.objects.filter(user=user,post=self).exists()
-
-    def filter_posts(postsQuerySet,superlike='',category=''):
-
-        if superlike == 'y':
-            if category != '':
-                    feed = postsQuerySet.filter(superlike=True,category=category.upper())
-            else:
-                    feed = postsQuerySet.filter(superlike=True)
-        elif category != '':
-            feed = postsQuerySet.filter(category=category.upper())
-        else:
-            feed = postsQuerySet
-
-        return feed
-
-    def __str__(self):
-        return f"{self.user}'s post about {self.what}"
-
-    class Meta:
-        """Metadata."""
-
-        ordering = ["-created"]
-
-
-
-class SavedPost(BaseModel):
-    user = models.ForeignKey(
-        User, verbose_name="Saved By", on_delete=models.CASCADE,related_name="saved_by")
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE,related_name="saved_post")
-    tried = models.DateTimeField(null=True)
-
-    def __str__(self):
-        return f"{self.post.user}'s post saved by {self.user} on {self.created}"
-
-    class Meta:
-        """Metadata."""
-
-        ordering = ["-created"]
 
 
 class Follow(BaseModel):
@@ -299,21 +200,6 @@ class FollowRequest(BaseModel):
         ordering = ["-created"]
 
 
-class ItemList(BaseModel):
-    user = models.ForeignKey(
-        User, verbose_name="List created By", on_delete=models.CASCADE,related_name="list_by")
-    name = models.CharField(max_length=50, blank=False)
-    is_default = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.name}"
-
-    class Meta:
-        """Metadata."""
-
-        ordering = ["-is_default","-created"]
-
-
 class Item(BaseModel):
 
     RATING_CHOICES = [
@@ -354,44 +240,29 @@ class Item(BaseModel):
     started_date = models.DateField(blank=True,null=True)
     ended_date = models.DateField(blank=True,null=True)
     status = models.IntegerField(choices=STATUS_CHOICES,default=1)
-    last_date = models.DateField(default=timezone.now)
-    item_list = models.ForeignKey(ItemList, models.SET_DEFAULT,blank=True,null=True,default='')
+    last_status = models.IntegerField(choices=STATUS_CHOICES,default=1)
+    last_date = models.DateTimeField(default=timezone.now)
     hide_from_feed = models.BooleanField(default=False)
 
     def filter_items(ItemsQuerySet,status='',item_type='', tags=''):
+        items = ItemsQuerySet
 
         if status != '':
             status = int(status)
-            if item_type != '':
-                if tags != '':
-                    items = ItemsQuerySet.filter(status=status,item_type=item_type.upper(),tagged__tag=tags)
-                else:
-                    items = ItemsQuerySet.filter(status=status,item_type=item_type.upper())
-            elif tags != '':
-                items = ItemsQuerySet.filter(status=status,tagged__tag=tags)
-            else:
-                items = ItemsQuerySet.filter(status=status)
-        elif item_type != '':
-            if tags != '':
-                items = ItemsQuerySet.filter(item_type=item_type.upper(),tagged__tag=tags)
-            else:
-                items = ItemsQuerySet.filter(item_type=item_type.upper())
-        elif tags != '':
-                items = ItemsQuerySet.filter(tagged__tag=tags)
-        else:
-            items = ItemsQuerySet
+            items = items.filter(status=status)
+        if item_type != '':
+            items = items.filter(item_type=item_type.upper())
+        if tags != '':
+            items = items.filter(tagged__tag=tags)
 
         return items
 
     def save(self, *args, **kwargs):
-        if self.status == 2 and self.started_date:
-            self.last_date = self.started_date
-        elif self.status == 3 and self.ended_date:
-            self.last_date = self.ended_date
-        elif self.status == 4 and self.ended_date:
-            self.last_date = self.ended_date
-        else:
-            self.last_date = timezone.localtime(self.created)
+        if self.status != self.last_status:
+            self.last_date = timezone.now()
+            self.last_status = self.status
+        elif not self.last_status:
+            self.last_status = self.status
         # for lowercase
         self.name = self.name.lower()
         if self.note:
@@ -488,21 +359,9 @@ class Activity(BaseModel):
         User, on_delete=models.CASCADE,related_name="activity_for")
     follow = models.ForeignKey(
         Follow, on_delete=models.CASCADE, null=True,blank=True,default=None)
-    repost = models.ForeignKey(
-        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="repost_activity")
-    saved_post = models.ForeignKey(
-        SavedPost, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="saved_post_activity")
     seen = models.BooleanField(default=False)
     follow_request = models.ForeignKey(
         FollowRequest, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="follow_request_activity")
-    mention = models.ForeignKey(
-        Post, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="mention_activity")
-    mention_item = models.ForeignKey(
-        Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="mention_item_activity")
-    save_item = models.ForeignKey(
-        Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="save_item_activity")
-    like_item = models.ForeignKey(
-        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="like_item_activity") #to dtop
     item_like = models.ForeignKey(
         ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="item_likst_activity")
     comment = models.ForeignKey(
