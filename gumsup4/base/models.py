@@ -214,6 +214,7 @@ class Item(BaseModel):
         ('MOVIE','movie'),
         ('BOOK','book'),
         ('TV','tv'),
+        ('FOOD','food'),
         ('LIFE','life')
         ]
 
