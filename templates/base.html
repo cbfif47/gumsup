@@ -32,6 +32,7 @@
               <form action="{% url 'search-items' %}" method="get">
                   <input
                     type="search"
+                    id="search-box"
                     name="q"
                     placeholder="search"
                     {% if query %}value = "{{ query }}"{% endif %}
