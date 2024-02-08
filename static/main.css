@@ -96,6 +96,7 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   text-transform: lowercase;
   color:#00ff11;
   margin-bottom: 0.5em;
+  caret-color: #00ff11;
 }
 
 select {
