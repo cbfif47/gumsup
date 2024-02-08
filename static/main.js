@@ -169,6 +169,8 @@ $(function() {
       $('input[name="author"]').attr('placeholder','(author)');
     } else if(this.value=='TV') {
       $('input[name="author"]').attr('placeholder','(season, network etc)');
+    } else if(this.value=='FOOD') {
+      $('input[name="author"]').attr('placeholder','(restaurant, source etc)');
     } else if(this.value=='LIFE') {
       $('input[name="author"]').attr('placeholder','(sub-title)');
     } else {
