@@ -46,9 +46,8 @@ function validateCommentForm() {
 
 function openSearch() {
   var search_box;
-  search_box = document.getElementById("searchBox");
-  search_box.classList.toggle("show");
-  search_box.focus();
+  document.getElementById("searchBox").classList.toggle("show");
+  document.getElementById("search-box").focus();
 }
 
 function openType() {
