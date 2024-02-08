@@ -45,7 +45,10 @@ function validateCommentForm() {
     }
 
 function openSearch() {
-  document.getElementById("searchBox").classList.toggle("show");
+  var search_box;
+  search_box = document.getElementById("searchBox");
+  search_box.classList.toggle("show");
+  search_box.focus();
 }
 
 function openType() {
@@ -117,7 +120,7 @@ $('.startbutton').click(function(){
 });
 
 $('.followbutton').click(function(){
-    var userid;
+    var username;
     username = $(this).attr("data-username");
     old_count = parseInt($( '#followers' ).text());
     $.ajax(
