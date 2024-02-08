@@ -540,9 +540,9 @@ class FinishItemView(UserCheckMixin,TemplateView):
         if f.is_valid():                
             new_item = f.save(commit=False)
             if request.GET.get('status', '') == 'abandoned':
-                item.status = 4
+                new_item.status = 4
             else:
-                item.status = 3
+                new_item.status = 3
             new_item.save()
             return redirect(to='items')
         else:
