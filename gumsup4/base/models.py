@@ -68,7 +68,10 @@ class User(BaseModel, AbstractUser):
         return FollowRequest.objects.filter(user=self,following=following,is_approved=False).exists()
 
     def item_feed(self):
-        feed = Item.objects.filter(user__followers__user=self).exclude(hide_from_feed=True)
+        feed = Item.objects.filter(
+            (Q(user__followers__user=self) & ~Q(hide_from_feed=True))
+            | Q(user=self)
+            ).distinct()
         return feed
 
     def follower_list(self):

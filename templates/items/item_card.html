@@ -5,7 +5,8 @@
 <td class="postcard">
     <div class="item-card-left">
             <div class="name">
-                <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}{% if item.author %} ({{ item.author|lower }}){% endif %}</a>
+                <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}</a>
+                {% if item.author %}<a href="{% url 'search-items' %}?q={{item.author}}&mode=author">({{ item.author|lower }})</a>{% endif %}
             </div>
             {% if item.original_item %}
                 <div class="saved-via" >via <a href="{% url 'user' item.original_item.user %}">{{ item.original_item.user }}</a></div>

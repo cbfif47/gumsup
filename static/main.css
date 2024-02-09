@@ -99,6 +99,10 @@ input[type=text], select, textarea, input[type=search], input[type=password], in
   caret-color: #00ff11;
 }
 
+input:focus, textarea:focus {
+  outline: none;
+}
+
 select {
   appearance: none;
   cursor: pointer;

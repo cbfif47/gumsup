@@ -343,6 +343,11 @@ class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
                     & (Q(user=request.user) #owned by user
                     | Q(user__is_private=False) #public user
                     | Q(user__followers__user=request.user)),).distinct() #or one we're following
+            elif mode == 'author':
+                raw_feed = Item.objects.filter(Q(author=query) #strict match
+                    & (Q(user=request.user) #owned by user
+                    | Q(user__is_private=False) #public user
+                    | Q(user__followers__user=request.user)),).distinct() #or one we're following
             else:
                 raw_feed = Item.objects.filter(
                     (Q(name__icontains=query) #term matches
