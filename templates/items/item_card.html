@@ -52,8 +52,7 @@
         <td>
           <table>
             <tr>
-              <td>
-                <div class="item-card-bottom-left">
+              <td class="item-card-bottom-left">
                   {% if item.user != request.user %}
                     <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
                   {% endif %}
@@ -65,7 +64,6 @@
                     <a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a>
                     <span id="likecount{{item.id}}">{{ item.liked.count }}</span> like
                   </div>
-                </div>
               </td>
               <td class="actions">
                 {% if item.user == request.user %}

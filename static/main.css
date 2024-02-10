@@ -247,6 +247,8 @@ select {
 }
 */
 
+
+
 .header {
     font-weight: bold;
 }
@@ -589,7 +591,6 @@ a {
   color: white;
   text-align: right;
   font-size:0.8em;
-  float: right;
   width: 7em;
   vertical-align: bottom;
 }
@@ -896,8 +897,7 @@ stat-type {
 }
 
 .item-card-bottom-left {
-  float: left;
-  bottom:5px;
+  vertical-align: bottom;
 }
 
 

@@ -31,7 +31,9 @@ def dayssince(value):
     "Returns number of days between today and value."
     today = timezone.localdate()
     diff  = today - value
-    if diff.days > 1:
+    if diff.days > 7:
+        return value.strftime("%B %d, %Y")
+    elif diff.days > 1:
         return '%s days ago' % diff.days
     elif diff.days == 1:
         return 'yesterday'
