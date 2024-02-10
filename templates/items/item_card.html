@@ -1,75 +1,101 @@
 {% load url_mention %}
 {% load tz %}
 {% load static %}
-<tr>
-<td class="postcard">
-    <div class="item-card-left">
-            <div class="name">
-                <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}</a>
-                {% if item.author %}<a href="{% url 'search-items' %}?q={{item.author}}&mode=author">({{ item.author|lower }})</a>{% endif %}
-            </div>
-            {% if item.original_item %}
-                <div class="saved-via" >via <a href="{% url 'user' item.original_item.user %}">{{ item.original_item.user }}</a></div>
-              {% endif %}
-            <div class="review">
-                {{ item.note|lower|striptags|url_mention|urlize }}
-            </div>
-              <div class="item-card-bottom-left">
-        {% if item.user != request.user %}
-              <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
-        {% endif %}
-              <div class="since-finished">
-                {{ item.status|statustoaction}} {{item.last_date|timesince}} ago
-              </div>
 
-            <br><div class="comment-count"><a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a>
-              <span id="likecount{{item.id}}">{{ item.liked.count }}</span> like
-          </div></div>
-    </div>
-    <div class="item-card-right">
-            <button class="item-type">{{ item.item_type }}</button><br>
-            <div class="rating" id="rating{{item.id}}">
-                {% if item.rating == 1%}
-                  <img src="{% static 'starsmall.png' %}" height="14px">
-                {% elif item.rating == 2 %}
-                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-                {% elif item.rating == 3 %}
-                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-                {% elif item.rating == 4 %}
-                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-                {% elif item.rating == 5 %}
-                  <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
-                {% elif item.status == 2 %}
-                  {{ item.item_type|itemtypeverb}} now
+<tr>
+  <td class="postcard">
+    <table>
+      <tr>
+        <td>
+          <table>
+            <tr class="item-card-top">
+              <td>
+                <div class="name">
+                    <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}</a>
+                    {% if item.author %}<a href="{% url 'search-items' %}?q={{item.author}}&mode=author">({{ item.author|lower }})</a>{% endif %}
+                </div>
+                {% if item.original_item %}
+                  <div class="saved-via" >via <a href="{% url 'user' item.original_item.user %}">{{ item.original_item.user }}</a>
+                  </div>
                 {% endif %}
-            </div><br>
-            <div class="actions ">
-              {% if item.user == request.user %}
-                {% if item.status == 1 %}
-                  <br><button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
-                {% elif item.status == 2 %}
-                  <br><button type="disabled" class="tertiary-button disabled" />start</button>
+              </td>
+              <td class="item-card-right">
+                <button class="item-type">{{ item.item_type }}</button><br>
+                <div class="rating" id="rating{{item.id}}">
+                  {% if item.rating == 1%}
+                    <img src="{% static 'starsmall.png' %}" height="14px">
+                  {% elif item.rating == 2 %}
+                    <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                  {% elif item.rating == 3 %}
+                    <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                  {% elif item.rating == 4 %}
+                    <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                  {% elif item.rating == 5 %}
+                    <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                  {% elif item.status == 2 %}
+                    {{ item.item_type|itemtypeverb}} now
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="review">
+            {{ item.note|lower|striptags|url_mention|urlize }}
+        </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table>
+            <tr>
+              <td>
+                <div class="item-card-bottom-left">
+                  {% if item.user != request.user %}
+                    <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
+                  {% endif %}
+                  <div class="since-finished">
+                    {{ item.status|statustoaction}} {{item.last_date|timesince}} ago
+                  </div>
+                  <br>
+                  <div class="comment-count">
+                    <a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a>
+                    <span id="likecount{{item.id}}">{{ item.liked.count }}</span> like
+                  </div>
+                </div>
+              </td>
+              <td class="actions">
+                {% if item.user == request.user %}
+                  {% if item.status == 1 %}
+                    <br><button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
+                  {% elif item.status == 2 %}
+                    <br><button type="disabled" class="tertiary-button disabled" />start</button>
+                  {% endif %}
+                  {% if item.ended_date is None %}
+                      <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
+                        <button type="submit" class="tertiary-button"/>stop</button>
+                      </form>
+                  {% endif %}
+                {% else %}<br>
+                  {% if item.save_button == 'save' %}
+                    <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
+                  {% else %}
+                    <button class="tertiary-button disabled">saved</button>
+                  {% endif %}
+                  {% if item.like_button == 'like' %}
+                    <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
+                  {% else %}
+                    <button class="tertiary-button likebutton pressed" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
+                  {% endif %}
                 {% endif %}
-                {% if item.ended_date is None %}
-                    <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
-                      <button type="submit" class="tertiary-button"/>stop</button>
-                    </form>
-                {% endif %}
-              {% else %}<br>
-                {% if item.save_button == 'save' %}
-                  <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
-                {% else %}
-                  <button class="tertiary-button disabled">saved</button>
-                {% endif %}
-                {% if item.like_button == 'like' %}
-                  <button class="tertiary-button likebutton" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
-                {% else %}
-                  <button class="tertiary-button likebutton pressed" id="like{{item.id}}" data-catid="{{ item.id }}">{{ item.like_button }}</button>
-                {% endif %}
-              {% endif %}
-            </div>
-    </div>
-  </div>
-</td>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </td>
 </tr>
-          

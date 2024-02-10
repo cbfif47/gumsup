@@ -282,8 +282,8 @@ class Item(BaseModel):
                 username = mention.replace("@","")
                 user = User.objects.filter(username=username.lower()).first()
                 if user:
-                    existing_save = Activity.objects.filter(user=user,save_item=self)
-                    existing_mention = Activity.objects.filter(user=user,mention_item=self)
+                    existing_save = Activity.objects.filter(user=user,item=self,action="item_save")
+                    existing_mention = Activity.objects.filter(user=user,item=self,action="item_mention")
                     if not existing_save and not existing_mention:
                         Activity.objects.create(user=user,item=self,action='item_mention')
 

@@ -587,13 +587,11 @@ a {
 
 .actions {
   color: white;
-  text-align: center;
-  border-radius: 5px;
+  text-align: right;
   font-size:0.8em;
-  margin:auto;
-  right: 7px;
-  bottom: 3px;
-  position:absolute;
+  float: right;
+  width: 7em;
+  vertical-align: bottom;
 }
 
 .center {
@@ -614,7 +612,6 @@ li {
   color: white;
   font-size: 0.85em;
   word-break: break-word;
-  margin-bottom: 3em;
 }
 
 .likebutton {
@@ -882,10 +879,12 @@ stat-type {
 }
 
 .item-card-right {
-  float: left;
+  float: right;
   width: 6em;
-  margin-top: 3px;
-  min-height: 5.3em;
+}
+
+.item-card-top {
+  vertical-align: top;
 }
 
 
@@ -898,9 +897,7 @@ stat-type {
 
 .item-card-bottom-left {
   float: left;
-  position:absolute;
   bottom:5px;
-
 }
 
 
