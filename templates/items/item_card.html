@@ -9,7 +9,7 @@
         <td>
           <table>
             <tr class="item-card-top">
-              <td>
+              <td style="vertical-align: middle;">
                 <div class="name">
                     <a href="{% url 'view-item' item.id %}">{{ item.name|upper}}</a>
                     {% if item.author %}<a href="{% url 'search-items' %}?q={{item.author}}&mode=author">({{ item.author|lower }})</a>{% endif %}

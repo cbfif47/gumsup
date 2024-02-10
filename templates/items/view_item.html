@@ -45,27 +45,38 @@ posted by {{ other_ratings.count }} other{% if other_ratings.count != 1 %}s{% en
       {% for comment in comments %}
         <tr>
           <td class="activity-card">
-            <div class="row">
-              <div class="comment">{{ comment.body|lower|striptags|url_mention }}</div>
-            </div>
-            <div class="row">
-              <a href="{% url 'user' comment.user %}"><button class="user-name">{{ comment.user }}</button></a>
-                <div class="since-finished">
-                  {{ comment.created|timesince }} ago
-                </div>
-            </div>
-              <div class="actions ">
-                <button class="tertiary-button replybutton" type="submit" onClick="reply()" data-username="{{comment.user}}">reply</button>
-            {% if request.user == comment.user or request.user == item.user %}
-                <form method="POST" action="{% url 'delete-comment' comment.id %}">
-                  {% csrf_token %}
-                  <button class="tertiary-button" type="submit">delete</button>
-                </form>
-            {% endif %}
-              </div>
-          </td>
-        </tr>
-      
+            <table>
+              <tr>
+                <td>
+                  <div class="comment">{{ comment.body|lower|striptags|url_mention }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <table>
+                    <tr>
+                      <td class="item-card-bottom-left">
+                        <a href="{% url 'user' comment.user %}"><button class="user-name">{{ comment.user }}</button></a>
+                        <div class="since-finished">
+                          {{ comment.created|timesince }} ago
+                        </div>
+                      </td>
+                      <td class="actions">
+                        <button class="tertiary-button replybutton" type="submit" onClick="reply()" data-username="{{comment.user}}">reply</button>
+                        {% if request.user == comment.user or request.user == item.user %}
+                            <form method="POST" action="{% url 'delete-comment' comment.id %}">
+                              {% csrf_token %}
+                              <button class="tertiary-button" type="submit">delete</button>
+                            </form>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+        </td>
+      </tr>
       {% endfor %}
       </table>
     {% endif %}

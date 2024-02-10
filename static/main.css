@@ -566,7 +566,7 @@ a {
 .rating {
   color: #878787;
   text-align: right;
-  margin-top:0.5em;
+  margin-top:0.4em;
   font-size:1em;
   font-size:0.8em;
   font-style: italic;
@@ -591,7 +591,7 @@ a {
   color: white;
   text-align: right;
   font-size:0.8em;
-  width: 7em;
+  width: 8em;
   vertical-align: bottom;
 }
 
@@ -613,6 +613,7 @@ li {
   color: white;
   font-size: 0.85em;
   word-break: break-word;
+  padding-bottom: 0;
 }
 
 .likebutton {
@@ -880,8 +881,9 @@ stat-type {
 }
 
 .item-card-right {
-  float: right;
-  width: 6em;
+  text-align: right;
+  width: 7em;
+  vertical-align: middle;
 }
 
 .item-card-top {
