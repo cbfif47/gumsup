@@ -3,7 +3,7 @@
 
 from rest_framework.serializers import ModelSerializer
 
-from gumsup4.base.models import User, Post
+from gumsup4.base.models import User, Item
 
 
 class UserSerializer(ModelSerializer):
@@ -11,10 +11,12 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name"]
+        fields = ["username", "bio","is_private"]
 
 
-class PostSerializer(ModelSerializer):
+class ItemSerializer(ModelSerializer):
+    user = UserSerializer()
     class Meta:
-        model = Post
-        fields = ('id', 'why', 'date_created')
+        model = Item
+        depth = 1
+        fields = ('id', 'name', 'author', 'note', 'rating','user')

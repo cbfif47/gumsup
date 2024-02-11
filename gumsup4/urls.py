@@ -18,11 +18,13 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from rest_framework import routers
 from gumsup4 import views
+from gumsup4.base.api import serializers, viewsets
 from django.contrib.auth.views import LogoutView
 
 # from .router import router
 
 router = routers.DefaultRouter()
+router.register(r'items', viewsets.ItemViewSet)
 
 urlpatterns = [
     path("items/", views.ItemsView.as_view(), name="items"),
@@ -57,4 +59,6 @@ urlpatterns = [
     path("follow-requests/", views.UserFollowRequestsView.as_view(), name="follow-requests"),
     path("welcome/", views.WelcomeView.as_view(), name='welcome'),
     path("comments/<comment_id>/delete", views.CommentDeleteView.as_view(), name="delete-comment"),
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
