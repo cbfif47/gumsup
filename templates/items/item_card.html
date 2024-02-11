@@ -32,6 +32,8 @@
                     <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                   {% elif item.rating == 5 %}
                     <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
+                  {% elif item.status == 1 %}
+                    later
                   {% elif item.status == 2 %}
                     {{ item.item_type|itemtypeverb}} now
                   {% elif item.status == 4 %}

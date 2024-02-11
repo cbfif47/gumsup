@@ -182,6 +182,7 @@ class UserView(UserCheckMixin,FilterableItemsMixin,TemplateView):
 
         if user == request.user:
             context["include_logout"] = True
+            context['show_tags'] = True
         else:
             context["is_following"] = request.user.is_following(user)
             context["button_text"] = get_button_text(request.user,user)
@@ -363,6 +364,7 @@ class SearchItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
             context = self.make_filtered_context(Item.objects.filter(name=''),request) #no results
             if query != '':
                 context['messages'] = ["Search more than 2 characters"]
+            stats = None
 
         context['is_search'] = True
         context['query'] = query
@@ -624,7 +626,7 @@ class ItemEditView(UserCheckMixin,TemplateView):
             if item.ended_date is not None and item.started_date is None:
                 item.started_date = item.ended_date
             new_item.save()
-            return redirect(to='items')
+            return redirect(to='home')
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'

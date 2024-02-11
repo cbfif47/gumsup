@@ -105,12 +105,12 @@ h3 {
 }
 
 
-
 .bio {
     font-style: italic;;
     border: solid 2px white;
     border-radius: 5px;
-    padding: 10px;
+    padding: 0.8em;
+    margin-bottom: 0.5em;
 }
 
 input[type=text], select, textarea, input[type=search], input[type=password], input[type=date] {

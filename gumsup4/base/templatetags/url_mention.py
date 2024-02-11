@@ -186,9 +186,9 @@ def mytimesince(d, now=None, reversed=False, time_strings=None, depth=2):
 
     # Ignore microseconds.
     since = delta.days * 24 * 60 * 60 + delta.seconds
-    if since <= 0:
+    if since <= 60:
         # d is in the future compared to now, stop processing.
-        return avoid_wrapping(time_strings["minute"] % {"num": 0})
+        return avoid_wrapping(time_strings["minute"] % {"num": 0}) + ' ago'
 
     # Get years and months.
     total_months = (now.year - d.year) * 12 + (now.month - d.month)

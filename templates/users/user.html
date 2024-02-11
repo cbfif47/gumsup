@@ -4,24 +4,19 @@
 
   {% block content %}
   <h1>{{ user.username }}</h1>
-  <div class="userinfo">
-    <div class="row">
+  <div class="bio">
+    "{{ user.bio|lower|default:'no bio :(' }}"
+  </div>
+  <div class="row comment-count">
     {% if user.is_private == False or is_following or request.user == user %}
-      <li><a href="{% url 'followers' user %}">followers</a>: <count id="followers">{{ user.follower_count}}</count></li>
-      <li><a href="{% url 'following' user %}">following</a>: {{ user.following_count}}</li>
+    <a href="{% url 'followers' user %}">followers</a>: <count id="followers">{{ user.follower_count}}</count>, <a href="{% url 'following' user %}">following</a>: {{ user.following_count}}
     {%  else %}
-      <li>followers: {{ user.follower_count}}</li>
-      <li>following: {{ user.following_count}}</li>
+      followers: {{ user.follower_count}}, following: {{ user.following_count}}
     {% endif %}
-   </div>
-    <div class="row">
-      <div class="bio">
-        "{{ user.bio|lower|default:'no bio :(' }}"
-      </div>
-    </div>
+  </div>
     {% if user == request.user %}
-        <button class="search-button"><a href="{% url 'stats' %}">view my stats</a></button>
-        <button class="search-button"><a href="{% url 'edit-user' %}">edit my profile</a></button>
+        <button class="search-button"><a href="{% url 'stats' %}">view stats</a></button>
+        <button class="search-button"><a href="{% url 'edit-user' %}">edit profile</a></button>
         <button class="search-button"><a href="{%url 'logout' %}">logout</a></button><br>
     {% endif %}
    <div class="row">

@@ -1,21 +1,21 @@
 <tr>
       <td class="postcard">
-        <div class="col-70">
-        <div class="row">
-          <a href="{% url 'user' user %}">
-          <div class="name">{{ user }}</div>
-          </a>
-        </div>
-        <div class="row">
-          <div class="review">
-            {{ user.bio|lower|default:'no bio :(' }}
-          </div>
-        </div>
-      </div>
-      {% if user != request.user %}
-      <div class="col-30">
+        <table>
+          <tr>
+            <td>
+              <a href="{% url 'user' user %}">
+                <div class="name">{{ user }}</div>
+              </a>
+              <div class="review">
+                {{ user.bio|lower|default:'no bio :(' }}
+              </div>
+            </td>
+            <td>
+              {% if user != request.user %}
                 <button class="search-button followbutton" id="followbutton{{user}}" data-username="{{ user }}" style="float: right;width: 5em;">{{user.button_text}}</button>
-          </div>
-          {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        </table>
       </td>
       </tr>
