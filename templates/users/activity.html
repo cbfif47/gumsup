@@ -6,11 +6,7 @@
     <h1>{{ user.username }}</h1>
     <div class="row">
       <div class="col-100">
-        <button class="search-button"><a href="{% url 'user' request.user %}">view my profile</a></button>
-        <button class="search-button"><a href="{% url 'edit-user' %}">edit my profile</a></button>
-        <button class="search-button"><a href="{%url 'logout' %}">logout</a></button>
         {% if user.is_private %}
-          <br><br>
             {% if follow_request_count == 1 %}<a href="{% url 'follow-requests' %}"><button class="secondary-button">1 new follow request</button></a>
             {% elif follow_request_count > 1 %}<a href="{% url 'follow-requests' %}"><button class="secondary-button">{{ follow_request_count }} new follow requests</button></a>
             {% else %}no new follow requests

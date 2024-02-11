@@ -88,6 +88,8 @@ def itemtypeverb(item_type):
         return 'watching'
     elif item_type == "LIFE":
         return 'living'
+    elif item_type == "FOOD":
+        return 'eating'
 
 @register.filter(name='itemtypepast', is_safe=True)
 def itemtypepast(item_type):
@@ -99,6 +101,8 @@ def itemtypepast(item_type):
         return 'watched'
     elif item_type == "LIFE":
         return 'lived'
+    elif item_type == "FOOD":
+        return 'ate'
 
 @register.filter(name="ratingtoimage",is_safe=True)
 def ratingtoimage(rating):

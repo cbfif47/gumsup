@@ -26,6 +26,7 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path("items/", views.ItemsView.as_view(), name="items"),
+    path("item-add/", views.ItemAddView.as_view(), name="item-add"),
     path("stats/", views.StatsView.as_view(), name="stats"),
     path("", views.ItemsFeedView.as_view(), name="home"),
     path("autocomplete-names/", views.AutocompleteNames, name="autocomplete-names"),

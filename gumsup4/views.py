@@ -494,6 +494,40 @@ class ItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
                     }
             return render(request, "items/item_form_main.html", context)
 
+class ItemAddView(UserCheckMixin,FilterableItemsMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+
+        new_item = Item(user=request.user,status=1)
+        form = ItemFormMain(instance=new_item)
+        context = {
+            'form': form,
+            'has_new_activity': request.user.has_new_activity()
+        }
+        return render(request, 'items/item-form-solo.html', context)
+
+    def post(self,request, **kwargs):
+
+        f = ItemFormMain(request.POST)
+        if f.is_valid():                
+            new_item = f.save()
+
+            # log activity if its a save
+            if new_item.original_item:
+                Activity.objects.create(user=new_item.original_item.user,item=new_item,action='item_save')
+            if request.GET.get('status', '') == 'done':
+                return redirect(to='finish-item',item_id=new_item.id)
+            else:
+                return redirect(to='home')
+        else:
+            for field in f.errors:
+                f[field].field.widget.attrs['class'] = 'error'
+            context = {
+                        'form': f
+                        ,'messages': ["U forgot some fields"]
+                    }
+            return render(request, "items/item-form-solo.html", context)
+
 
 class ItemsFeedView(UserCheckMixin,FilterableItemsMixin,TemplateView):
 
@@ -549,7 +583,7 @@ class FinishItemView(UserCheckMixin,TemplateView):
             else:
                 new_item.status = 3
             new_item.save()
-            return redirect(to='items')
+            return redirect(to='home')
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'

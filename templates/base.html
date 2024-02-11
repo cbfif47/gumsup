@@ -15,6 +15,7 @@
     <body>
         <header class="header">
           {% if request.user.is_authenticated %}
+          <div class="navbar">
           <user_greeting>
             {% if has_new_activity %}
                     <strong><a href="{% url 'activity' %}">**{{ request.user|upper }}**</a></strong>
@@ -23,11 +24,12 @@
             {% endif %}
           </user_greeting>
             <breadcrumb>
-              <a href="{%url 'home'%}" class="logo">FEED</a>
+              <a href="{%url 'home'%}" class="logo">HOME</a>
               <a href="{%url 'items' %}" class="logo">MINE</a>
               <a href="{%url 'stats' %}" class="logo">STATS</a>
               <a onclick="openSearch()" class="search-header">SEARCH</a>
               </breadcrumb>
+      </div>
               <div class="search-box" id="searchBox">
               <form action="{% url 'search-items' %}" method="get">
                   <input
@@ -54,6 +56,17 @@
              {%block content %}
              {%endblock content%}
             </div>
+            <div class="navbar-bottom">
+              <a href="{%url 'home'%}" class="logo"><img src="{% static 'home.png' %}"></a>
+              <a onclick="openSearch()" class="search-header"><img src="{% static 'search.png' %}"></a>
+              <a href="{%url 'item-add'%}" class="logo"><img src="{% static 'plus.png' %}"></a>
+              {% if has_new_activity %}
+                <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart.png' %}"></a>
+              {% else %}
+                <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart-empty.png' %}"></a>
+              {% endif %}
+              <a href="{%url 'user' request.user %}" class="logo"><img src="{% static 'me.png' %}"></a>
+              </div>
         </main>
         <footer class="footer">
             <br><br>

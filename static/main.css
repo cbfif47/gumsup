@@ -51,6 +51,7 @@ h1 {
   color: white;
   text-align: center;
   font-size: 2.5em;
+  margin-top: 0.4em;
 }
 
 h2 {
@@ -74,6 +75,36 @@ h3 {
   margin-top: 0em;
   letter-spacing: 0.2em;
 }
+
+.navbar {
+  margin-bottom: 1em;
+}
+
+.navbar-bottom {
+  background-color: black;
+  overflow: hidden;
+  position: fixed;
+  display: none;
+  font-family: 'VT323';
+  font-size: 1.7em;
+  bottom: 0;
+  left:0;
+  width: 100%;
+  border-top: dotted 2px white;
+}
+
+/* Style the links inside the navigation bar */
+.navbar-bottom a {
+  float: left;
+  margin: auto;
+  display: block;
+  color: #00ff11;
+  text-align: center;
+  width:calc((100%) /5);
+  padding:0.7em 0.7em;
+  text-decoration: none;
+}
+
 
 
 .bio {
@@ -243,6 +274,12 @@ select {
     height: 2em;
     width: 50%;
     left:-25%;
+  }
+  .navbar-bottom {
+    display: block;
+  }
+  .navbar {
+    display: none;
   }
 }
 */
@@ -454,7 +491,6 @@ table {
   text-align: center;
   border-radius: 5px;
   padding: 0.2em;
-  margin-bottom: 0.3em;
   display: inline;
 }
 
@@ -548,7 +584,6 @@ table {
 
 .user-name {
   background-color: black;
-  margin-top: 1em;
   text-align: left;
   padding: 0px;
   font-size:1.1em;
@@ -613,7 +648,7 @@ li {
   color: white;
   font-size: 0.85em;
   word-break: break-word;
-  padding-bottom: 0;
+  padding-top: 0.3em;
 }
 
 .likebutton {
@@ -900,6 +935,7 @@ stat-type {
 
 .item-card-bottom-left {
   vertical-align: bottom;
+  padding-top: 0.3em;
 }
 
 

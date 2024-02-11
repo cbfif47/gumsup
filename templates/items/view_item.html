@@ -41,7 +41,8 @@ posted by {{ other_ratings.count }} other{% if other_ratings.count != 1 %}s{% en
     </div>
     </form>
     {% if comments %}
-      <br><table>
+      <br>
+      <table>
       {% for comment in comments %}
         <tr>
           <td class="activity-card">
@@ -64,7 +65,7 @@ posted by {{ other_ratings.count }} other{% if other_ratings.count != 1 %}s{% en
                       <td class="actions">
                         <button class="tertiary-button replybutton" type="submit" onClick="reply()" data-username="{{comment.user}}">reply</button>
                         {% if request.user == comment.user or request.user == item.user %}
-                            <form method="POST" action="{% url 'delete-comment' comment.id %}">
+                            <form method="POST" action="{% url 'delete-comment' comment.id %}" style="display: inline;">
                               {% csrf_token %}
                               <button class="tertiary-button" type="submit">delete</button>
                             </form>

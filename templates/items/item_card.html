@@ -34,6 +34,8 @@
                     <img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px"><img src="{% static 'starsmall.png' %}" height="14px">
                   {% elif item.status == 2 %}
                     {{ item.item_type|itemtypeverb}} now
+                  {% elif item.status == 4 %}
+                    quit
                   {% endif %}
                 </div>
               </td>
@@ -42,10 +44,8 @@
         </td>
       </tr>
       <tr>
-        <td>
-          <div class="review">
+        <td class="review">
             {{ item.note|lower|striptags|url_mention|urlize }}
-        </div>
         </td>
       </tr>
       <tr>
@@ -57,27 +57,27 @@
                     <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
                   {% endif %}
                   <div class="since-finished">
-                    {{ item.status|statustoaction}} {{item.last_date|timesince}} ago
+                    {{item.last_date|timesince}} ago
                   </div>
                   <br>
                   <div class="comment-count">
                     <a href="{% url 'view-item' item.id %}">{{item.comments.count|commentcount}}</a>
-                    <span id="likecount{{item.id}}">{{ item.liked.count }}</span> like
+                    <span id="likecount{{item.id}}">{{ item.liked.count|likecount }}</span>
                   </div>
               </td>
               <td class="actions">
                 {% if item.user == request.user %}
                   {% if item.status == 1 %}
-                    <br><button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
+                    <button class="tertiary-button startbutton" id="start{{item.id}}" data-catid="{{ item.id }}">start</button>
                   {% elif item.status == 2 %}
-                    <br><button type="disabled" class="tertiary-button disabled" />start</button>
+                    <button type="disabled" class="tertiary-button disabled" />start</button>
                   {% endif %}
                   {% if item.ended_date is None %}
                       <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
                         <button type="submit" class="tertiary-button"/>stop</button>
                       </form>
                   {% endif %}
-                {% else %}<br>
+                {% else %}
                   {% if item.save_button == 'save' %}
                     <button class="tertiary-button"><a href="{% url 'save-item' item.id %}?from={{ from }}">save</a></button>
                   {% else %}

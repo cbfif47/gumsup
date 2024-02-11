@@ -74,6 +74,7 @@ function openList() {
 
 $('.likebutton').click(function(){
     var catid;
+    var newcount
     catid = $(this).attr("data-catid");
     likecount = parseInt($( '#likecount'+ catid ).text());
     $.ajax(
@@ -88,10 +89,20 @@ $('.likebutton').click(function(){
             $( '#like'+ catid ).text(data);
             if(data=='liked') {
               $( '#like'+ catid ).addClass('pressed');
-              $( '#likecount'+ catid ).text(likecount + 1);
+              newcount = likecount + 1;
+              if(newcount == 1) {
+                $( '#likecount'+ catid ).text("1 like");
+              } else {
+                $( '#likecount'+ catid ).text(newcount + " likes");
+              }
             } else {
               $( '#like'+ catid ).removeClass('pressed');
-              $( '#likecount'+ catid ).text(likecount - 1);
+              newcount = likecount -1;
+              if(newcount == 1) {
+                $( '#likecount'+ catid ).text("1 like");
+              } else {
+                $( '#likecount'+ catid ).text(newcount + " likes");
+              }
             }
         }
      })

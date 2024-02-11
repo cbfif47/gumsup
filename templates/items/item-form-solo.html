@@ -1,5 +1,7 @@
+{% extends 'base.html' %}
 {% load static %}
   {% block content %}
+  <h1>add something</h1>
   <form action="{% url 'item-add' %}" method="post" novalidate class="postform" name="mainform" onsubmit="return validateForm()">
         {% csrf_token %}{{ form.user.as_hidden }}{{ form.original_item.as_hidden }}
       <div class="row tabs">
