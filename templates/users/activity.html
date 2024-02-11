@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load url_mention %}
 {% block title %}{{ user.username }}{% endblock %}
 
   {% block content %}
@@ -53,7 +54,7 @@
                 <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
             {% endif %}
             <div class="row"><br>
-                <div class="time-since">{{activity.created|timesince}} ago.</div>
+                <div class="time-since">{{activity.created|mytimesince}}</div>
             </div>
           </div>
         </div>

@@ -83,7 +83,7 @@ class FilterableItemsMixin:
             query_param = ''
 
         #pagination
-        paginator = Paginator(items, 25)  # Show 25 posts per page.
+        paginator = Paginator(items, 20) 
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
     

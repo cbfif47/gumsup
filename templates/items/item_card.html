@@ -57,7 +57,7 @@
                     <a href="{% url 'user' item.user %}"><button class="user-name">{{ item.user }}</button></a>
                   {% endif %}
                   <div class="since-finished">
-                    {{item.last_date|timesince}} ago
+                    {{item.last_date|mytimesince}}
                   </div>
                   <br>
                   <div class="comment-count">
