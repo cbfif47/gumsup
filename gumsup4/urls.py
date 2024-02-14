@@ -37,6 +37,7 @@ urlpatterns = [
     path("items/<item_id>/edit", views.ItemEditView.as_view(), name="edit-item"),
     path("items/<item_id>/delete", views.ItemDeleteView.as_view(), name="delete-item"),
     path("items/<item_id>/start", views.StartItem, name="start-item"),
+    path("api/test-create/", views.CreateItem, name="create-item"),
     path("items/<item_id>/finish", views.FinishItemView.as_view(), name="finish-item"),
     path("items/<item_id>/save", views.SaveItemView.as_view(), name="save-item"),
     path("items/<item_id>/like", views.LikeItem, name='like-item'),

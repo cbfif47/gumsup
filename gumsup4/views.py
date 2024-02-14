@@ -780,6 +780,14 @@ def StartItem(request,item_id):
     else:
         return HttpResponse("Request method is not a GET")
 
+def CreateItem(request):
+    if request.method == 'POST':
+        user = User.objects.first()
+        item = Item.create(user=user,name=request.post.get('name', 'name'),item_type="BOOK",status=1)
+        return JsonResponse(item.values_list('name',flat=True))
+    else:
+        return HttpResponse("Request method is not a GET")
+
 
 def AutocompleteNames(request):
     if request.method == 'GET' and request.user.is_authenticated:
