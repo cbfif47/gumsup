@@ -4,7 +4,7 @@ import re
 from django.contrib.auth.models import AbstractUser
 from django.core import validators
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils import timezone
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -79,7 +79,7 @@ class User(BaseModel, AbstractUser):
         feed = Item.objects.filter(
             (Q(user__followers__user=self) & ~Q(hide_from_feed=True))
             | Q(user=self)
-            ).distinct()
+            ).annotate(likes_count=Count("liked"),comments_count=Count("comments")).distinct()
         return feed
 
     def follower_list(self):

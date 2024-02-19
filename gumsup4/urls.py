@@ -25,7 +25,8 @@ from django.contrib.auth.views import LogoutView
 # from .router import router
 
 router = routers.DefaultRouter()
-router.register(r'items', viewsets.ItemViewSet)
+#router.register(r'items', viewsets.ItemViewSet)
+router.register(r'users', viewsets.UserViewSet)
 
 urlpatterns = [
     path("items/", views.ItemsView.as_view(), name="items"),
@@ -62,5 +63,6 @@ urlpatterns = [
     path("welcome/", views.WelcomeView.as_view(), name='welcome'),
     path("comments/<comment_id>/delete", views.CommentDeleteView.as_view(), name="delete-comment"),
     path('api/', include(router.urls)),
+    path('api/feed/', views.ApiFeedView.as_view()),
     path("convert-token/", views.ConvertToken, name='convert-token'),
 ]

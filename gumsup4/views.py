@@ -26,6 +26,12 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .base.api.serializers import UserSerializer, ItemSerializer
 
 @csrf_exempt
 def ConvertToken(request):
@@ -45,6 +51,21 @@ def ConvertToken(request):
         #return JsonResponse(item.values_list('name',flat=True))
     else:
         return HttpResponse("Request method is not a get")
+
+
+class ApiFeedView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        items = request.user.item_feed()
+        serializer = ItemSerializer(items,many=True)
+        content = {
+            'has_new_activity': request.user.has_new_activity(),
+            'username': request.user.username,
+            'feed': serializer.data,  # None
+        }
+        return Response(content)
 
 
 class HomePageView(TemplateView):
