@@ -64,6 +64,5 @@ urlpatterns = [
     path("comments/<comment_id>/delete", views.CommentDeleteView.as_view(), name="delete-comment"),
     path('api/', include(router.urls)),
     path('api/feed/', views.ApiFeedView.as_view()),
-    path('api/user-status/', views.ApiUserStatusView.as_view()),
     path("convert-token/", views.ConvertToken, name='convert-token'),
 ]

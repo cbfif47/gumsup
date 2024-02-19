@@ -25,8 +25,7 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ["id","name","author","note","item_type","rating"
-        ,"status","started_date","ended_date"#,"last_date"
-        ,"hide_from_feed"
+        ,"status","started_date","ended_date","last_date","hide_from_feed"
         ,"is_liked","is_saved","likes_count","comments_count","user"]
 
     id = serializers.CharField(read_only=True)
@@ -38,7 +37,7 @@ class ItemSerializer(ModelSerializer):
     status = serializers.ChoiceField(choices=Item.STATUS_CHOICES,default=1)
     started_date = serializers.DateField(required=False)
     ended_date = serializers.DateField(required=False)
-    #last_date = serializers.DateTimeField(read_only=True)
+    last_date = serializers.DateTimeField(read_only=True)
     hide_from_feed = serializers.BooleanField(default=False)
 
     def to_representation(self, instance):
