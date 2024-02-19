@@ -63,7 +63,7 @@ class ApiFeedView(APIView):
         content = {
             'has_new_activity': request.user.has_new_activity(),
             'username': request.user.username,
-            #'feed': serializer.data,  # None
+            'feed': serializer.data,  # None
         }
         return Response(content)
 
