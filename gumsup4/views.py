@@ -65,6 +65,17 @@ class ApiFeedView(APIView):
             'username': request.user.username,
             'feed': serializer.data,  # None
         }
+        return Response(serializer.data)
+
+class ApiUserStatusView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+            'has_new_activity': request.user.has_new_activity(),
+            'username': request.user.username,
+        }
         return Response(content)
 
 
