@@ -19,4 +19,4 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         depth = 1
-        fields = ('id', 'name', 'author', 'note', 'rating','user')
+        fields = ('id', 'name', 'author', 'note', 'rating','user','started_date','ended_date','item_type','hide_from_feed')

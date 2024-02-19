@@ -17,4 +17,4 @@ class UserViewSet(ReadOnlyModelViewSet):
 
 class ItemViewSet(ModelViewSet):
     serializer_class = ItemSerializer
-    queryset = Item.objects.all()
+    queryset = Item.objects.all()[:20]

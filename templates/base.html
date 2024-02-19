@@ -57,15 +57,15 @@
              {%endblock content%}<br><br><br>
             </div>
             <div class="navbar-bottom">
-              <a href="{%url 'home'%}" class="logo"><img src="{% static 'home.png' %}" height="24px"></a>
-              <a onclick="openSearch()" class="search-header"><img src="{% static 'search.png' %}" height="24px"></a>
-              <a href="{%url 'item-add'%}" class="logo"><img src="{% static 'plus.png' %}" height="24px"></a>
+              <a href="{%url 'home'%}" class="logo"><img src="{% static 'home2.png' %}" height="24px"></a>
+              <a onclick="openSearch()" class="search-header"><img src="{% static 'search2.png' %}" height="24px"></a>
+              <a href="{%url 'item-add'%}" class="logo"><img src="{% static 'plus2.png' %}" height="24px"></a>
               {% if has_new_activity %}
-                <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart.png' %}" height="24px"></a>
+                <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart2.png' %}" height="24px"></a>
               {% else %}
-                <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart-empty.png' %}" height="24px"></a>
+                <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart-empty2.png' %}" height="24px"></a>
               {% endif %}
-              <a href="{%url 'user' request.user %}" class="logo"><img src="{% static 'me.png' %}" height="24px"></a>
+              <a href="{%url 'user' request.user %}" class="logo"><img src="{% static 'me2.png' %}" height="24px"></a>
               </div>
         </main>
         <footer class="footer">

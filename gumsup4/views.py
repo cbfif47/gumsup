@@ -18,6 +18,34 @@ from .base.utilities import get_button_text
 from datetime import datetime
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from django.utils import timezone
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from google.oauth2 import id_token # for verifying tokens
+from google.auth.transport import requests
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+import json
+from rest_framework.authtoken.models import Token
+
+@csrf_exempt
+def ConvertToken(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        token = data["idToken"]
+        idinfo = id_token.verify_oauth2_token(token, requests.Request()
+            , settings.IOS_GOOGLE_CLIENT_ID) #store this somewhere, mobile client id
+        useremail = idinfo['email']
+        user, created = User.objects.get_or_create(email=useremail)
+        rex_token, created = Token.objects.get_or_create(user=user)
+        print(rex_token)
+        return JsonResponse({"token": rex_token.key
+            ,"username": user.username
+            , "user_id": user.id})
+        #item = Item.create(user=user,name=request.post.get('name', 'name'),item_type="BOOK",status=1)
+        #return JsonResponse(item.values_list('name',flat=True))
+    else:
+        return HttpResponse("Request method is not a get")
+
 
 class HomePageView(TemplateView):
     template_name = "base.html"
@@ -782,11 +810,12 @@ def StartItem(request,item_id):
 
 def CreateItem(request):
     if request.method == 'POST':
-        user = User.objects.first()
-        item = Item.create(user=user,name=request.post.get('name', 'name'),item_type="BOOK",status=1)
-        return JsonResponse(item.values_list('name',flat=True))
+        #user = User.objects.first()
+        return HttpResponse("got it")
+        #item = Item.create(user=user,name=request.post.get('name', 'name'),item_type="BOOK",status=1)
+        #return JsonResponse(item.values_list('name',flat=True))
     else:
-        return HttpResponse("Request method is not a GET")
+        return HttpResponse("Request method is not a POST")
 
 
 def AutocompleteNames(request):

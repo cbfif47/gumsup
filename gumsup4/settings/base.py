@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     "django_filters",
     "django_redis",
     "gumsup4.base",
-    "django.contrib.postgres"  # new
+    "django.contrib.postgres",  # new
+    'rest_framework.authtoken',
 ]
 
 # Authentication settings
@@ -162,3 +163,4 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 LOGIN_REDIRECT_URL = '/welcome/'
+IOS_GOOGLE_CLIENT_ID = os.getenv("IOS_GOOGLE_CLIENT_ID")
