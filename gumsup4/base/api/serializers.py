@@ -15,7 +15,7 @@ class UserSerializer(ModelSerializer):
         fields = ["username", "bio","is_private","id"]
 
 
-class ItemSerializer(ModelSerializer):
+class ItemFeedSerializer(ModelSerializer):
     user = UserSerializer()
     is_liked = serializers.BooleanField(default=False)
     is_saved = serializers.BooleanField(default=False)
@@ -41,3 +41,11 @@ class ItemSerializer(ModelSerializer):
     hide_from_feed = serializers.BooleanField(default=False)
 
 
+class ItemSerializer(ModelSerializer):
+
+    class Meta:
+        model = Item
+        fields = ["id","name","author","note","item_type","rating"
+        ,"status","started_date","ended_date","last_date","hide_from_feed"
+        ,"original_item",
+        "user"]

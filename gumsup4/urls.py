@@ -19,7 +19,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from rest_framework import routers
 from gumsup4 import views
-from gumsup4.base.api import serializers, viewsets
+from gumsup4.base.api import serializers, viewsets, api_views
 from django.contrib.auth.views import LogoutView
 
 # from .router import router
@@ -63,6 +63,7 @@ urlpatterns = [
     path("welcome/", views.WelcomeView.as_view(), name='welcome'),
     path("comments/<comment_id>/delete", views.CommentDeleteView.as_view(), name="delete-comment"),
     path('api/', include(router.urls)),
-    path('api/feed/', views.ApiFeedView.as_view()),
-    path("convert-token/", views.ConvertToken, name='convert-token'),
+    path('api/feed/', api_views.FeedView.as_view()),
+    path('api/items/<item_id>', api_views.FeedView.as_view()),
+    path("api/convert-token/", api_views.ConvertToken, name='convert-token'),
 ]

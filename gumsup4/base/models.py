@@ -79,7 +79,7 @@ class User(BaseModel, AbstractUser):
         feed = Item.objects.filter(
             (Q(user__followers__user=self) & ~Q(hide_from_feed=True))
             | Q(user=self)
-            ).annotate(likes_count=Count("liked"),comments_count=Count("comments")).distinct()
+            ).annotate(likes_count=Count("liked"),comments_count=Count("comments")).distinct().order_by("-last_date")
         return feed
 
     def follower_list(self):
