@@ -42,7 +42,6 @@ class ItemFeedSerializer(ModelSerializer):
 
 
 class ItemSerializer(ModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Item
