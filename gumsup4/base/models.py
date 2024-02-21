@@ -275,12 +275,23 @@ class Item(BaseModel):
             self.last_status = self.status
         elif not self.last_status:
             self.last_status = self.status
-        # for lowercase
+        # force lowercase
         self.name = self.name.lower()
         if self.note:
             self.note = self.note.lower()
         if self.author:
             self.author = self.author.lower()
+        if self.status == 1:
+            self.started_date = None
+        if self.status == 2:
+            self.ended_date = None
+            self.rating = None
+        if self.status == 2 and self.started_date == None:
+            self.started_date = datetime.now()
+        if (self.status == 4 or self.status == 3) and self.ended_date is None:
+            self.ended_date = datetime.now()
+        if self.ended_date is not None and self.started_date is None:
+            self.started_date = self.ended_date
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view

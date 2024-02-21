@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, Item
+from gumsup4.base.models import User, Item, Activity
 
 
 class UserSerializer(ModelSerializer):
@@ -49,3 +49,13 @@ class ItemSerializer(ModelSerializer):
         ,"status","started_date","ended_date","last_date","hide_from_feed"
         ,"original_item",
         "user"]
+
+
+class ActivitySerializer(ModelSerializer):
+    message = serializers.CharField(default="")
+    user_id = serializers.CharField(default="")
+
+    class Meta:
+        model = Activity
+        fields = ["seen", "item_id","user_id","message"]
+

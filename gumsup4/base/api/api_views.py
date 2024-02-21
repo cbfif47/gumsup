@@ -9,81 +9,132 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer
+from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
-
+from django.shortcuts import get_object_or_404
 
 
 @csrf_exempt
 def ConvertToken(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        token = data["idToken"]
-        idinfo = id_token.verify_oauth2_token(token, requests.Request()
+	if request.method == 'POST':
+		data = json.loads(request.body)
+		token = data["idToken"]
+		idinfo = id_token.verify_oauth2_token(token, requests.Request()
             , settings.IOS_GOOGLE_CLIENT_ID) #store this somewhere, mobile client id
-        useremail = idinfo['email']
-        user, created = User.objects.get_or_create(email=useremail)
-        rex_token, created = Token.objects.get_or_create(user=user)
-        print(rex_token)
-        return JsonResponse({"token": rex_token.key
+		useremail = idinfo['email']
+		user, created = User.objects.get_or_create(email=useremail)
+		rex_token, created = Token.objects.get_or_create(user=user)
+		print(rex_token)
+		return JsonResponse({"token": rex_token.key
             ,"username": user.username
             , "user_id": user.id})
         #item = Item.create(user=user,name=request.post.get('name', 'name'),item_type="BOOK",status=1)
         #return JsonResponse(item.values_list('name',flat=True))
-    else:
-        return HttpResponse("Request method is not a get")
+	else:
+		return HttpResponse("Request method is not a get")
 
 
 class FeedView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
-        items = request.user.item_feed()
-        serializer = ItemFeedSerializer(items,many=True)
-        content = {
-            'has_new_activity': request.user.has_new_activity(),
-            'username': request.user.username,
-            'feed': serializer.data,  # None
+	def get(self, request, format=None):
+		items = request.user.item_feed()
+		for i in items:
+			i.is_liked = ItemLike.objects.filter(user=request.user,item=i).exists()
+			i.is_saved = Item.objects.filter(user=request.user,original_item=i).exists()
+
+		feed = ItemFeedSerializer(items,many=True)
+		user = UserSerializer(request.user)
+		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
+		content = {
+            'activity_count': activity_count,
+            'user': user.data,
+            'feed': feed.data,  # None
         }
-        return Response(content)
+		return Response(content)
 
-    def post(self, request, format=None):
-        serializer = ItemSerializer(data=request.data)
-        serializer.initial_data["user"] = request.user.id
-        if serializer.is_valid():
-        	serializer.save()
-        	return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	def post(self, request, format=None):
+		try:
+			item = Item.objects.get(id=request.data["id"])
+			if item.user == request.user:
+				serializer = ItemSerializer(item,data=request.data)
+			else:
+				return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+		except:
+			serializer = ItemSerializer(data=request.data)
+		serializer.initial_data["user"] = request.user.id
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, format=None):
+		try:
+			item = Item.objects.get(id=request.data["id"])
+			if item.user == request.user:
+				item.delete()
+				return Response(request.data, status=status.HTTP_201_DELETED)
+			else:
+				return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+		except:
+			return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+class LikeItemView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, format=None):
+		item = get_object_or_404(Item, id = request.data["item_id"])
+		action = request.data["action"]
+		existing_like = ItemLike.objects.filter(user=request.user,item=item)
+
+        # check the action. due to async aspect we could get out of sync
+		if existing_like and action == "unlike":
+			existing_like.delete()
+			return HttpResponse("unliked") # Sending an success response
+		elif not existing_like and action == "like":
+			m = ItemLike(user=request.user,item=item) # Creating Like Object
+			m.save()  # saving it to store in database
+			return HttpResponse("liked") # Sending an success response
+		else:
+			return HttpResponse("no action") # Sending an success response
 
 
-class ItemView(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
-    def get_object(self, item_id):
-        try:
-            return Item.objects.get(id=item_id)
-        except Item.DoesNotExist:
-            raise Http404
+class ActivityView(APIView):
 
-    def get(self, request, item_id, format=None):
-        item = self.get_object(item_id)
-        serializer = ItemSerializer(item)
-        return Response(serializer.data)
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
 
-    def put(self, request, item_id, format=None):
-        item = self.get_object(item_id)
-        serializer = ItemSerializer(snippet, data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=re)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, item_id, format=None):
-        item = self.get_object(item_id)
-        item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+	def get(self, request, format=None):
+		activities = Activity.objects.filter(user=request.user)
+		for activity in activities:
+			if activity.action == "follow":
+				activity.message = activity.follow.user.username + " followed you."
+				activity.user_id = activity.follow.user.id
+			elif activity.action == 'follow_request':
+				activity.message = activity.follow_request.user.username + " requested to follow you."
+				activity.user_id = activity.follow_request.user.id
+			elif activity.action == 'follow_request_approved':
+				activity.message = activity.follow_request.following.username + " approved your follow request."
+				activity.user_id = activity.follow_request.following.user.id
+			elif activity.action == 'item_mention':
+				activity.message = activity.item.user.username + " mentioned you in a post about " + activity.item.name + "."
+				activity.user_id = ""
+			elif activity.action == 'item_like':
+				activity.message = activity.item_like.user.username + " liked your post about " + activity.item.name + "."
+				activity.user_id = ""
+			elif activity.action == 'item_save':
+				activity.message = activity.item.user.username + " saved your post about " + activity.item.name + "."
+				activity.user_id = ""
+			elif activity.action == 'item_comment':
+				activity.message = activity.comment.user.username + " commented on your post about " + activity.item.name + "."
+				activity.user_id = ""
+			elif activity.action == 'item_comment_mention':
+				activity.message = activity.comment.user.username + " mentioned you in a comment about " + activity.item.name + "."
+				activity.user_id = ""
+		serializer = ActivitySerializer(activities,many=True)
+		return Response(serializer.data)
