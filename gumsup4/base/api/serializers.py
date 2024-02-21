@@ -42,6 +42,7 @@ class ItemFeedSerializer(ModelSerializer):
 
 
 class ItemSerializer(ModelSerializer):
+    user = UserSerializer()
 
     class Meta:
         model = Item
@@ -53,9 +54,10 @@ class ItemSerializer(ModelSerializer):
 
 class ActivitySerializer(ModelSerializer):
     message = serializers.CharField(default="")
-    user_id = serializers.CharField(default="")
+    user = serializers.CharField(default="")
+    item = ItemFeedSerializer()
 
     class Meta:
         model = Activity
-        fields = ["seen", "item_id","user_id","message"]
+        fields = ["id","seen", "item","user","message"]
 

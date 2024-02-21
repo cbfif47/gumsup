@@ -114,27 +114,28 @@ class ActivityView(APIView):
 		for activity in activities:
 			if activity.action == "follow":
 				activity.message = activity.follow.user.username + " followed you."
-				activity.user_id = activity.follow.user.id
+				activity.user = activity.follow.user
 			elif activity.action == 'follow_request':
 				activity.message = activity.follow_request.user.username + " requested to follow you."
-				activity.user_id = activity.follow_request.user.id
+				activity.user = activity.follow_request.user
 			elif activity.action == 'follow_request_approved':
 				activity.message = activity.follow_request.following.username + " approved your follow request."
-				activity.user_id = activity.follow_request.following.user.id
+				activity.user = activity.follow_request.following.user
 			elif activity.action == 'item_mention':
 				activity.message = activity.item.user.username + " mentioned you in a post about " + activity.item.name + "."
-				activity.user_id = ""
 			elif activity.action == 'item_like':
 				activity.message = activity.item_like.user.username + " liked your post about " + activity.item.name + "."
-				activity.user_id = ""
 			elif activity.action == 'item_save':
 				activity.message = activity.item.user.username + " saved your post about " + activity.item.name + "."
-				activity.user_id = ""
 			elif activity.action == 'item_comment':
 				activity.message = activity.comment.user.username + " commented on your post about " + activity.item.name + "."
-				activity.user_id = ""
 			elif activity.action == 'item_comment_mention':
 				activity.message = activity.comment.user.username + " mentioned you in a comment about " + activity.item.name + "."
-				activity.user_id = ""
+		for a in activities:
+			if a.item:
+				a.item.is_liked = ItemLike.objects.filter(user=request.user,item=a.item).exists()
+				a.item.is_saved = Item.objects.filter(user=request.user,original_item=a.item).exists()
+				a.item.likes_count = ItemLike.objects.filter(item=a.item).count()
+				a.item.comments_count = Comment.objects.filter(item=a.item).count()
 		serializer = ActivitySerializer(activities,many=True)
 		return Response(serializer.data)
