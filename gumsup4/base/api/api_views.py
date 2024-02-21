@@ -120,7 +120,7 @@ class ActivityView(APIView):
 				activity.user = activity.follow_request.user
 			elif activity.action == 'follow_request_approved':
 				activity.message = activity.follow_request.following.username + " approved your follow request."
-				activity.user = activity.follow_request.following.user
+				activity.user = activity.follow_request.following
 			elif activity.action == 'item_mention':
 				activity.message = activity.item.user.username + " mentioned you in a post about " + activity.item.name + "."
 			elif activity.action == 'item_like':

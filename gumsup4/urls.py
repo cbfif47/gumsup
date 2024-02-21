@@ -26,7 +26,6 @@ from django.contrib.auth.views import LogoutView
 
 router = routers.DefaultRouter()
 #router.register(r'items', viewsets.ItemViewSet)
-router.register(r'users', viewsets.UserViewSet)
 
 urlpatterns = [
     path("items/", views.ItemsView.as_view(), name="items"),
