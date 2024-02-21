@@ -54,8 +54,8 @@ class ItemSerializer(ModelSerializer):
 
 class ActivitySerializer(ModelSerializer):
     message = serializers.CharField(default="")
-    user = serializers.CharField(default="")
     item = ItemFeedSerializer()
+    user = UserSerializer()
 
     class Meta:
         model = Activity
