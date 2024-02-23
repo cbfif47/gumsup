@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, NewCommentSerializer
+from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ItemLikeSerializer, NewCommentSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
@@ -143,17 +143,26 @@ class ActivityView(APIView):
 		return Response(serializer.data)
 
 
-class CommentView(APIView):
+class ItemView(APIView):
 
 	authentication_classes = [TokenAuthentication]
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, item_id,format=None):
+		# get comments and likes detail
 		comments = Comment.objects.filter(item=item_id)
 		serializer = CommentSerializer(comments,many=True)
-		return Response(serializer.data)
+		likes = ItemLike.objects.filter(item=item_id)
+		likes_serializer = ItemLikeSerializer(likes,many=True)
+
+		content = {
+            'comments': serializer.data,
+            'likes': likes_serializer.data
+        }
+		return Response(content)
 
 	def post(self, request, item_id,format=None):
+		# make a comment
 		item = get_object_or_404(Item, id = item_id)
 		serializer = NewCommentSerializer(data=request.data)
 		serializer.initial_data["user"] = request.user.id
@@ -162,3 +171,17 @@ class CommentView(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, item_id, format=None):
+		# delete comments
+		try:
+			item = get_object_or_404(Item, id = item_id)
+			comment = Comment.objects.get(id=request.data["comment_id"])
+			if comment.user == request.user or comment.user == item.user:
+				comment.delete()
+				return Response(request.data, status=status.HTTP_201_DELETED)
+			else:
+				return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+		except:
+			return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+

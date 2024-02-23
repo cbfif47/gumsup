@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, Item, Activity, Comment
+from gumsup4.base.models import User, Item, Activity, Comment, ItemLike
 
 
 class UserSerializer(ModelSerializer):
@@ -66,10 +66,18 @@ class CommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["user","body"]
+        fields = ["user","body","id"]
 
 class NewCommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["body","item","user"]
+        fields = ["body","item","user","id"]
+
+
+class ItemLikeSerializer(ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = ItemLike
+        fields = ["id","user"]
