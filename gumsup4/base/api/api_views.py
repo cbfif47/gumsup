@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer
+from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, NewCommentSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
@@ -138,4 +138,27 @@ class ActivityView(APIView):
 				a.item.likes_count = ItemLike.objects.filter(item=a.item).count()
 				a.item.comments_count = Comment.objects.filter(item=a.item).count()
 		serializer = ActivitySerializer(activities,many=True)
+		# now mark them all as seen
+		activities.update(seen=True)
 		return Response(serializer.data)
+
+
+class CommentView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, item_id,format=None):
+		comments = Comment.objects.filter(item=item_id)
+		serializer = CommentSerializer(comments,many=True)
+		return Response(serializer.data)
+
+	def post(self, request, item_id,format=None):
+		item = get_object_or_404(Item, id = item_id)
+		serializer = NewCommentSerializer(data=request.data)
+		serializer.initial_data["user"] = request.user.id
+		serializer.initial_data["item"] = item_id
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
