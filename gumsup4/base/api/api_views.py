@@ -139,7 +139,9 @@ class ActivityView(APIView):
 				a.item.comments_count = Comment.objects.filter(item=a.item).count()
 		serializer = ActivitySerializer(activities,many=True)
 		# now mark them all as seen
-		activities.update(seen=True)
+		for a in activities.filter(seen=False):
+			a.seen = True
+			a.save()
 		return Response(serializer.data)
 
 
