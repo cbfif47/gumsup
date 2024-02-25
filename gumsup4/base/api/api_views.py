@@ -14,6 +14,7 @@ from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from gumsup4.base.utilities import get_button_text
 
 
 @csrf_exempt
@@ -42,12 +43,9 @@ class FeedView(APIView):
 
 	def get(self, request, format=None):
 		items = request.user.item_feed()
-		for i in items:
-			i.is_liked = ItemLike.objects.filter(user=request.user,item=i).exists()
-			i.is_saved = Item.objects.filter(user=request.user,original_item=i).exists()
 
-		feed = ItemFeedSerializer(items,many=True)
-		user = UserSerializer(request.user)
+		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
+		user = UserSerializer(request.user,context={'user': request.user})
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
 		content = {
             'activity_count': activity_count,
@@ -137,7 +135,7 @@ class ActivityView(APIView):
 				a.item.is_saved = Item.objects.filter(user=request.user,original_item=a.item).exists()
 				a.item.likes_count = ItemLike.objects.filter(item=a.item).count()
 				a.item.comments_count = Comment.objects.filter(item=a.item).count()
-		serializer = ActivitySerializer(activities,many=True)
+		serializer = ActivitySerializer(activities,many=True,context={'user': request.user})
 		# now mark them all as seen
 		for a in activities.filter(seen=False):
 			a.seen = True
@@ -153,9 +151,9 @@ class ItemView(APIView):
 	def get(self, request, item_id,format=None):
 		# get comments and likes detail
 		comments = Comment.objects.filter(item=item_id)
-		serializer = CommentSerializer(comments,many=True)
+		serializer = CommentSerializer(comments,many=True,context={'user': request.user})
 		likes = ItemLike.objects.filter(item=item_id)
-		likes_serializer = ItemLikeSerializer(likes,many=True)
+		likes_serializer = ItemLikeSerializer(likes,many=True,context={'user': request.user})
 
 		content = {
             'comments': serializer.data,
@@ -186,4 +184,29 @@ class ItemView(APIView):
 				return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 		except:
 			return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request,user_id,format=None):
+		user = get_object_or_404(User, id = user_id)
+		items = user.viewable_items(request.user)
+		serializer = ItemFeedSerializer(items,many=True,context={'user': request.user})
+		return Response(serializer.data)
+
+	def post(self, request,user_id,format=None):
+		user = get_object_or_404(User, id = user_id)
+		if user != request.user:
+			new_follow = Follow.toggleFollow(user=request.user, following=user)
+			if new_follow:
+				Activity.objects.create(user=user,follow=new_follow,action='follow')
+			text = get_button_text(request.user,user)
+			return HttpResponse(text) # Sending an success response
+		else:
+			return HttpResponse("whoops")
+
+
 

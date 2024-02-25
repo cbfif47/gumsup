@@ -5,10 +5,16 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
 from gumsup4.base.models import User, Item, Activity, Comment, ItemLike
+from gumsup4.base.utilities import get_button_text, cbtimesince
 
 
 class UserSerializer(ModelSerializer):
     """Serializer for custom users."""
+
+    def to_representation(self,instance):
+        ret = super().to_representation(instance)
+        ret['follow_button_text'] = get_button_text(self.context.get("user"),instance)
+        return ret
 
     class Meta:
         model = User
@@ -17,21 +23,22 @@ class UserSerializer(ModelSerializer):
 
 class ItemFeedSerializer(ModelSerializer):
     user = UserSerializer()
-    is_liked = serializers.BooleanField(default=False)
-    is_saved = serializers.BooleanField(default=False)
 
     def to_representation(self, instance):
         """Convert `username` to lowercase."""
         ret = super().to_representation(instance)
         ret['likes_count'] = ItemLike.objects.filter(item=instance).count()
         ret['comments_count'] = Comment.objects.filter(item=instance).count()
+        ret['is_liked'] = ItemLike.objects.filter(item=instance,user=self.context.get("user")).exists()
+        ret['is_saved'] = Item.objects.filter(user=self.context.get("user"),original_item=instance).exists()
+        ret['timesince'] = cbtimesince(instance.last_date)
         return ret
 
     class Meta:
         model = Item
         fields = ["id","name","author","note","item_type","rating"
         ,"status","started_date","ended_date","last_date","hide_from_feed"
-        ,"is_liked","is_saved","user"]
+        ,"user"]
 
     id = serializers.CharField(read_only=True)
     name = serializers.CharField(required=True,max_length=75)
@@ -62,6 +69,11 @@ class ActivitySerializer(ModelSerializer):
     message = serializers.CharField(default="")
     item = ItemFeedSerializer()
     user = UserSerializer()
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['timesince'] = cbtimesince(instance.created)
+        return(ret)
 
     class Meta:
         model = Activity

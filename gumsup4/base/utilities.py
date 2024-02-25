@@ -1,4 +1,6 @@
 from .models import User
+import datetime
+from django.utils import timezone
 
 def get_button_text(user,following):
         if user.is_following(following):
@@ -10,3 +12,27 @@ def get_button_text(user,following):
         else:
             button_text = 'follow'
         return button_text
+
+def cbtimesince(d):
+
+    # Compared datetimes must be in the same time zone.
+    now = timezone.now()
+    delta = now - d
+    result = ""
+    if delta.days > 14:
+        result = d.strftime("%b %d %Y")
+    elif delta.days > 1:
+        result = str(delta.days) + " days ago"
+    elif delta.seconds > 60 * 60:
+        result = str(round(delta.seconds / 60 / 60)) + " hours ago"
+    elif round(delta.seconds / 60) == 1:
+        "1 minute ago"
+    else:
+        result = str(round(delta.seconds / 60)) + " minutes ago"
+
+    print(delta)
+
+    if delta.days > 14:
+        return d.strftime("%b %d %Y")
+    else:
+        return result
