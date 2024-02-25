@@ -77,7 +77,7 @@ class ActivitySerializer(ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ["id","seen", "item","user","message"]
+        fields = ["id","seen", "item","user","message","created"]
 
 
 class CommentSerializer(ModelSerializer):

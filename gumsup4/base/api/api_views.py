@@ -42,7 +42,12 @@ class FeedView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, format=None):
-		items = request.user.item_feed()
+		max_last_date = request.data["max_last_date"]
+		if max_last_date != "":
+			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:5]
+		else:
+			items = request.user.item_feed()[:5]
+		
 
 		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
 		user = UserSerializer(request.user,context={'user': request.user})
@@ -108,7 +113,11 @@ class ActivityView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, format=None):
-		activities = Activity.objects.filter(user=request.user)
+		max_last_date = request.data["max_last_date"]
+		if max_last_date != "":
+			activities = Activity.objects.filter(user=request.user,created__lt=max_last_date)[:5]
+		else:
+			activities = Activity.objects.filter(user=request.user)[:5]
 		for activity in activities:
 			if activity.action == "follow":
 				activity.message = activity.follow.user.username + " followed you."
@@ -137,9 +146,10 @@ class ActivityView(APIView):
 				a.item.comments_count = Comment.objects.filter(item=a.item).count()
 		serializer = ActivitySerializer(activities,many=True,context={'user': request.user})
 		# now mark them all as seen
-		for a in activities.filter(seen=False):
-			a.seen = True
-			a.save()
+		for a in activities:
+			if a.seen == False:
+				a.seen = True
+				a.save()
 		return Response(serializer.data)
 
 
@@ -193,7 +203,11 @@ class UserView(APIView):
 
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
-		items = user.viewable_items(request.user)
+		max_last_date = request.data["max_last_date"]
+		if request.data["max_last_date"] != "":
+			items = user.viewable_items(request.user).filter(last_date__lt= max_last_date)[:5]
+		else:
+			items = user.viewable_items(request.user)[:5]
 		serializer = ItemFeedSerializer(items,many=True,context={'user': request.user})
 		return Response(serializer.data)
 
