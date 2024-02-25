@@ -42,7 +42,7 @@ class FeedView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, format=None):
-		max_last_date = request.data["max_last_date"]
+		max_last_date = request.GET.get("max_last_date","")
 		if max_last_date != "":
 			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:5]
 		else:
@@ -113,7 +113,7 @@ class ActivityView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, format=None):
-		max_last_date = request.data["max_last_date"]
+		max_last_date = request.GET.get("max_last_date","")
 		if max_last_date != "":
 			activities = Activity.objects.filter(user=request.user,created__lt=max_last_date)[:5]
 		else:
@@ -203,7 +203,7 @@ class UserView(APIView):
 
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
-		max_last_date = request.data["max_last_date"]
+		max_last_date = request.GET.get("max_last_date","")
 		if request.data["max_last_date"] != "":
 			items = user.viewable_items(request.user).filter(last_date__lt= max_last_date)[:5]
 		else:
