@@ -30,8 +30,6 @@ def cbtimesince(d):
     else:
         result = str(round(delta.seconds / 60)) + " minutes ago"
 
-    print(delta)
-
     if delta.days > 14:
         return d.strftime("%b %d %Y")
     else:

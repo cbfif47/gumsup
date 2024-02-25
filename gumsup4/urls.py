@@ -65,7 +65,7 @@ urlpatterns = [
     path('api/feed/', api_views.FeedView.as_view()),
     path('api/item/<item_id>', api_views.ItemView.as_view()),
     path('api/like-item/', api_views.LikeItemView.as_view()),
-    path('api/user/<user_id>', api_views.UserView.as_view()),
+    path('api/user/<user_id>/', api_views.UserView.as_view()),
     path('api/activity/', api_views.ActivityView.as_view()),
     path("api/convert-token/", api_views.ConvertToken, name='convert-token'),
 ]

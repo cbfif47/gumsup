@@ -83,7 +83,9 @@ class User(BaseModel, AbstractUser):
         return feed
 
     def viewable_items(self,other_user):
-        if self.is_private:
+        if self == other_user:
+            feed = Item.objects.filter(user=self).order_by("-last_date")
+        elif self.is_private:
             feed = Item.objects.filter(
             Q(user=self) & ~Q(hide_from_feed=True) & Q(user__followers__user=other_user)
             ).distinct().order_by("-last_date")

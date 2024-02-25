@@ -44,7 +44,7 @@ class FeedView(APIView):
 	def get(self, request, format=None):
 		max_last_date = request.GET.get("max_last_date","")
 		if max_last_date != "":
-			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:5]
+			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:30]
 		else:
 			items = request.user.item_feed()[:5]
 		
@@ -205,9 +205,9 @@ class UserView(APIView):
 		user = get_object_or_404(User, id = user_id)
 		max_last_date = request.GET.get("max_last_date","")
 		if request.data["max_last_date"] != "":
-			items = user.viewable_items(request.user).filter(last_date__lt= max_last_date)[:5]
+			items = user.viewable_items(request.user).filter(last_date__lt= max_last_date)[:10]
 		else:
-			items = user.viewable_items(request.user)[:5]
+			items = user.viewable_items(request.user)[:10]
 		serializer = ItemFeedSerializer(items,many=True,context={'user': request.user})
 		return Response(serializer.data)
 
