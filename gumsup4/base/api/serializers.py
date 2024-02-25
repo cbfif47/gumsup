@@ -83,6 +83,11 @@ class ActivitySerializer(ModelSerializer):
 class CommentSerializer(ModelSerializer):
     user = UserSerializer()
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['timesince'] = cbtimesince(instance.created)
+        return(ret)
+
     class Meta:
         model = Comment
         fields = ["user","body","id"]
@@ -96,6 +101,11 @@ class NewCommentSerializer(ModelSerializer):
 
 class ItemLikeSerializer(ModelSerializer):
     user = UserSerializer()
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['timesince'] = cbtimesince(instance.created)
+        return(ret)
 
     class Meta:
         model = ItemLike
