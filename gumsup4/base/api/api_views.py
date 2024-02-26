@@ -204,7 +204,7 @@ class UserView(APIView):
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
 		max_last_date = request.GET.get("max_last_date","")
-		if request.data["max_last_date"] != "":
+		if max_last_date != "":
 			items = user.viewable_items(request.user).filter(last_date__lt= max_last_date)[:10]
 		else:
 			items = user.viewable_items(request.user)[:10]
