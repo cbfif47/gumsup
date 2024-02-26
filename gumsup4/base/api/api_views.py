@@ -46,7 +46,7 @@ class FeedView(APIView):
 		if max_last_date != "":
 			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:30]
 		else:
-			items = request.user.item_feed()[:5]
+			items = request.user.item_feed()[:30]
 		
 
 		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
