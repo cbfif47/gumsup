@@ -9,12 +9,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
+from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
+from django.db.models import Q, F, Count, Avg, Max, Value
 
 
 @csrf_exempt
@@ -86,6 +87,7 @@ class FeedView(APIView):
 				return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 		except:
 			return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
 
 class MoreItemsView(APIView):
 	authentication_classes = [TokenAuthentication]
@@ -242,4 +244,71 @@ class UserView(APIView):
 			return HttpResponse("whoops")
 
 
+class ActivityCountView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
 
+	def get(self, request, format=None):
+		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
+		return HttpResponse(activity_count)
+
+
+class SearchView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, **kwargs):
+		query = request.GET.get("q",'')
+		mode = request.GET.get("mode",'')
+		query_object = request.GET.get("object",'')
+		if len(query) > 2:
+			if query_object == "item":
+				if mode == 'strict':
+					items = Item.objects.filter(Q(name=query) #strict match
+		                & (Q(user=request.user) #owned by user
+		                | Q(user__is_private=False) #public user
+		                | Q(user__followers__user=request.user)),).distinct() #or one we're following
+				elif mode == 'author':
+					items = Item.objects.filter(Q(author=query) #strict match
+						& (Q(user=request.user) #owned by user
+						| Q(user__is_private=False) #public user
+						| Q(user__followers__user=request.user)),).distinct() #or one we're following
+				else:
+					items = Item.objects.filter(
+		                (Q(name__icontains=query) #term matches
+		                    | Q(author__icontains=query)
+		                    | Q(note__icontains=query)
+		                )
+		                & (Q(user=request.user) #owned by user
+		                | Q(user__is_private=False) #public user
+		                | Q(user__followers__user=request.user))).distinct() #or one we're following
+				serializer = ItemFeedSerializer(items,many=True,context={'user': request.user})
+			elif query_object == "user":
+				users = User.objects.filter((Q(username__icontains=query) 
+					| Q(bio__icontains=query)
+					| Q(email__icontains=query))
+					& Q(username__isnull=False))
+				serializer = UserSerializer(users,many=True,context={'user': request.user})
+			else:
+				return HttpResponse("whoops")
+			#stats = raw_feed.aggregate(count=Count("id"),ratings=Count("rating"),avg_rating=Avg("rating"))
+			return Response(serializer.data)
+		else:
+			return HttpResponse("whoops")
+
+
+class ExploreView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, **kwargs):
+		popular = Item.objects.all().values('name').annotate(total=Count('name')
+			,avg_rating=Avg('rating')
+            ,max_date=Max('last_date'),segment=Value("popular")).order_by('-total','-avg_rating','-max_date').exclude(total=1)[:3]
+
+
+		highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
+			,avg_rating=Avg('rating')
+            ,max_date=Max('last_date'),segment=Value("highest_rated")).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
+		serializer = ExploreSerializer(popular.union(highest_rated),many=True)
+		return Response(serializer.data)

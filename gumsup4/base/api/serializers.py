@@ -117,3 +117,9 @@ class TagSerializer(ModelSerializer):
     class Meta:
         model = ItemTag
         fields = ["tag"]
+
+class ExploreSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    total = serializers.IntegerField()
+    avg_rating = serializers.IntegerField()
+    segment = serializers.CharField()
