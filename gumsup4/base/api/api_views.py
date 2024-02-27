@@ -312,3 +312,18 @@ class ExploreView(APIView):
             ,max_date=Max('last_date'),segment=Value("highest_rated")).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
 		serializer = ExploreSerializer(popular.union(highest_rated),many=True)
 		return Response(serializer.data)
+
+
+class EditUserView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, **kwargs):
+		user = get_object_or_404(User, id = request.data["id"])
+
+		if user == request.user:
+			serializer = UserSerializer(user,data=request.data,context={'user': request.user})
+			if serializer.is_valid():
+				serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.data)
