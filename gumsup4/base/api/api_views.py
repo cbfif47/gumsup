@@ -49,10 +49,10 @@ class FeedView(APIView):
 		else:
 			items = request.user.item_feed()[:30]
 		
-
+		my_tags = ItemTag.objects.filter(item__user=request.user).order_by().values('tag').distinct()
 		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
 		user = UserSerializer(request.user,context={'user': request.user})
-		tags = TagSerializer(ItemTag.objects.filter(item__user=request.user).distinct(),many=True)
+		tags = TagSerializer(my_tags,many=True)
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
 		content = {
             'activity_count': activity_count,
