@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ItemLikeSerializer, NewCommentSerializer
+from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
@@ -51,11 +51,13 @@ class FeedView(APIView):
 
 		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
 		user = UserSerializer(request.user,context={'user': request.user})
+		tags = TagSerializer(ItemTag.objects.filter(item__user=request.user).distinct(),many=True)
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
 		content = {
             'activity_count': activity_count,
             'user': user.data,
             'feed': feed.data,  # None
+            'tags': tags.data
         }
 		return Response(content)
 
@@ -84,6 +86,23 @@ class FeedView(APIView):
 				return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 		except:
 			return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+class MoreItemsView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, format=None):
+		max_last_date = request.GET.get("max_last_date","")
+		if max_last_date != "":
+			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:5]
+		else:
+			items = request.user.item_feed()[:30] #this shouldnt happen
+		
+
+		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
+
+		return Response(feed.data)
+
 
 class LikeItemView(APIView):
 
@@ -115,9 +134,9 @@ class ActivityView(APIView):
 	def get(self, request, format=None):
 		max_last_date = request.GET.get("max_last_date","")
 		if max_last_date != "":
-			activities = Activity.objects.filter(user=request.user,created__lt=max_last_date)[:5]
+			activities = Activity.objects.filter(user=request.user,created__lt=max_last_date)[:50]
 		else:
-			activities = Activity.objects.filter(user=request.user)[:5]
+			activities = Activity.objects.filter(user=request.user)[:50]
 		for activity in activities:
 			if activity.action == "follow":
 				activity.message = activity.follow.user.username + " followed you."

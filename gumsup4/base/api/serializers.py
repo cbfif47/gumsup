@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, Item, Activity, Comment, ItemLike
+from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag
 from gumsup4.base.utilities import get_button_text, cbtimesince
 
 
@@ -21,6 +21,7 @@ class UserSerializer(ModelSerializer):
         fields = ["username", "bio","is_private","id"]
 
 
+
 class ItemFeedSerializer(ModelSerializer):
     user = UserSerializer()
 
@@ -32,6 +33,7 @@ class ItemFeedSerializer(ModelSerializer):
         ret['is_liked'] = ItemLike.objects.filter(item=instance,user=self.context.get("user")).exists()
         ret['is_saved'] = Item.objects.filter(user=self.context.get("user"),original_item=instance).exists()
         ret['timesince'] = cbtimesince(instance.last_date)
+        ret['tags'] = ItemTag.objects.filter(item=instance).values('tag')
         return ret
 
     class Meta:
@@ -51,8 +53,6 @@ class ItemFeedSerializer(ModelSerializer):
     ended_date = serializers.DateField(required=False)
     last_date = serializers.DateTimeField(read_only=True)
     hide_from_feed = serializers.BooleanField(default=False)
-
-
 
 
 class ItemSerializer(ModelSerializer):
@@ -110,3 +110,10 @@ class ItemLikeSerializer(ModelSerializer):
     class Meta:
         model = ItemLike
         fields = ["id","user"]
+
+
+class TagSerializer(ModelSerializer):
+
+    class Meta:
+        model = ItemTag
+        fields = ["tag"]

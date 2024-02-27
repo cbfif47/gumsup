@@ -23,6 +23,8 @@ def cbtimesince(d):
         result = d.strftime("%b %d %Y")
     elif delta.days > 1:
         result = str(delta.days) + " days ago"
+    elif delta.days == 1:
+        result = "1 day ago"
     elif delta.seconds > 60 * 60:
         result = str(round(delta.seconds / 60 / 60)) + " hours ago"
     elif round(delta.seconds / 60) == 1:
