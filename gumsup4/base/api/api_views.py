@@ -96,14 +96,14 @@ class MoreItemsView(APIView):
 	def get(self, request, format=None):
 		max_last_date = request.GET.get("max_last_date","")
 		item_type = request.GET.get("item_type","")
-		status = request.GET.get("status","")
+		status = request.GET.get("status","0")
 		if max_last_date != "":
 			items = request.user.item_feed().filter(last_date__lt=max_last_date)
 		else:
 			items = request.user.item_feed() #this shouldnt happen
 		if item_type != "":
 			items = items.filter(item_type=item_type)
-		if status != "":
+		if status != "0":
 			items = items.filter(status=status)
 
 		feed = ItemFeedSerializer(items[:30],many=True,context={'user': request.user})
@@ -231,16 +231,19 @@ class UserView(APIView):
 		user = get_object_or_404(User, id = user_id)
 		max_last_date = request.GET.get("max_last_date","")
 		item_type = request.GET.get("item_type","")
-		status = request.GET.get("status","")
+		status = request.GET.get("status","0")
+		tag = request.GET.get("tag","")
 		if max_last_date != "":
 			items = user.viewable_items(request.user).filter(last_date__lt= max_last_date)
 		else:
 			items = user.viewable_items(request.user)
 		if item_type != "":
 			items = items.filter(item_type=item_type)
-		if status != "":
+		if status != "0":
 			items = items.filter(status=status)
-			
+		if tag != "":
+			items = items.filter(tagged__tag=tag)
+
 		serializer = ItemFeedSerializer(items[:25],many=True,context={'user': request.user})
 		return Response(serializer.data)
 
