@@ -229,6 +229,28 @@ class UserView(APIView):
 
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
+		serializer = UserSerializer(user,many=False,context={'user': request.user})
+		return Response(serializer.data)
+
+	def post(self, request,user_id,format=None):
+		user = get_object_or_404(User, id = user_id)
+		if user != request.user:
+			new_follow = Follow.toggleFollow(user=request.user, following=user)
+			if new_follow:
+				Activity.objects.create(user=user,follow=new_follow,action='follow')
+			text = get_button_text(request.user,user)
+			return HttpResponse(text) # Sending an success response
+		else:
+			return HttpResponse("whoops")
+
+
+class UserItemsView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request,user_id,format=None):
+		user = get_object_or_404(User, id = user_id)
 		max_last_date = request.GET.get("max_last_date","")
 		item_type = request.GET.get("item_type","")
 		status = request.GET.get("status","0")
@@ -246,17 +268,6 @@ class UserView(APIView):
 
 		serializer = ItemFeedSerializer(items[:25],many=True,context={'user': request.user})
 		return Response(serializer.data)
-
-	def post(self, request,user_id,format=None):
-		user = get_object_or_404(User, id = user_id)
-		if user != request.user:
-			new_follow = Follow.toggleFollow(user=request.user, following=user)
-			if new_follow:
-				Activity.objects.create(user=user,follow=new_follow,action='follow')
-			text = get_button_text(request.user,user)
-			return HttpResponse(text) # Sending an success response
-		else:
-			return HttpResponse("whoops")
 
 
 class ActivityCountView(APIView):
@@ -310,6 +321,22 @@ class SearchView(APIView):
 			return Response(serializer.data)
 		else:
 			return HttpResponse("whoops")
+
+
+class SearchSuggestionsView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, **kwargs):
+		query = request.GET.get("q",'')
+		items = Item.objects.filter(Q(name__icontains=query)
+		                    | Q(author__icontains=query)).order_by("name").annotate(suggestion=F("name")).values("suggestion").distinct()
+		users = User.objects.filter(Q(username__icontains=query) | Q(bio__icontains=query)
+					| Q(email__icontains=query)).order_by("username").annotate(suggestion=F("username")).values("suggestion").distinct()
+		combined = users.union(items)
+		suggestions = list((combined.values_list("suggestion",flat=True))[:5])
+		suggestions.insert(0,query)
+		return Response(suggestions)
 
 
 class ExploreView(APIView):

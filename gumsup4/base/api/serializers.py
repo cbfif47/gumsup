@@ -14,16 +14,25 @@ class UserSerializer(ModelSerializer):
     def to_representation(self,instance):
         ret = super().to_representation(instance)
         ret['follow_button_text'] = get_button_text(self.context.get("user"),instance)
+        ret['follower_count'] = instance.follower_count()
+        ret['following_count'] = instance.following_count()
         return ret
 
     class Meta:
         model = User
         fields = ["username", "bio","is_private","id"]
 
+class LiteUserSerializer(ModelSerializer):
+    """Serializer for custom users."""
+
+    class Meta:
+        model = User
+        fields = ["username", "is_private","id"]
+
 
 
 class ItemFeedSerializer(ModelSerializer):
-    user = UserSerializer()
+    user = LiteUserSerializer()
 
     def to_representation(self, instance):
         """Convert `username` to lowercase."""
@@ -68,7 +77,7 @@ class ItemSerializer(ModelSerializer):
 class ActivitySerializer(ModelSerializer):
     message = serializers.CharField(default="")
     item = ItemFeedSerializer()
-    user = UserSerializer()
+    user = LiteUserSerializer()
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -81,7 +90,7 @@ class ActivitySerializer(ModelSerializer):
 
 
 class CommentSerializer(ModelSerializer):
-    user = UserSerializer()
+    user = LiteUserSerializer()
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
