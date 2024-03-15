@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
+from .serializers import UserSerializer, LiteUserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from rest_framework import status
