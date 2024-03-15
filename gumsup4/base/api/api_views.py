@@ -314,7 +314,7 @@ class SearchView(APIView):
 					| Q(bio__icontains=query)
 					| Q(email__icontains=query))
 					& Q(username__isnull=False))
-				serializer = UserSerializer(users,many=True,context={'user': request.user})
+				serializer = LiteUserSerializer(users,many=True,context={'user': request.user})
 			else:
 				return HttpResponse("whoops")
 			#stats = raw_feed.aggregate(count=Count("id"),ratings=Count("rating"),avg_rating=Avg("rating"))
