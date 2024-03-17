@@ -48,3 +48,7 @@ class ActivityAdmin(admin.ModelAdmin):
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.AppleSSO)
+class AppleSSOAdmin(admin.ModelAdmin):
+    """Admin for posts."""

@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserSerializer, LiteUserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
+from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
@@ -28,12 +28,9 @@ def ConvertToken(request):
 		useremail = idinfo['email']
 		user, created = User.objects.get_or_create(email=useremail)
 		rex_token, created = Token.objects.get_or_create(user=user)
-		print(rex_token)
 		return JsonResponse({"token": rex_token.key
             ,"username": user.username
             , "user_id": user.id})
-        #item = Item.create(user=user,name=request.post.get('name', 'name'),item_type="BOOK",status=1)
-        #return JsonResponse(item.values_list('name',flat=True))
 	else:
 		return HttpResponse("Request method is not a get")
 
@@ -370,3 +367,33 @@ class EditUserView(APIView):
 				serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.data)
+
+
+@csrf_exempt
+def AppleLogin(request):
+
+	if request.method == 'POST':
+		data = json.loads(request.body)
+		try:
+			email = data["email"]
+			apple_id = data["apple_id"]
+			apple_sso_key = data["apple_sso_key"]
+		except:
+			return HttpResponse("Missing data")
+		if apple_sso_key != settings.APPLE_SSO_KEY:
+			return HttpResponse("Bad sso key")
+		if email != "":
+			apple_sso, created = AppleSSO.objects.get_or_create(email=email,apple_id=apple_id)
+		else:
+			# apple only gives the email the first time, so if we dont get it in the request, find the record
+			apple_sso = get_object_or_404(AppleSSO,apple_id=apple_id)
+			email = apple_sso.email
+
+		user, created = User.objects.get_or_create(email=email)
+		rex_token, created = Token.objects.get_or_create(user=user)
+		return JsonResponse({"token": rex_token.key
+            ,"username": user.username
+            , "user_id": user.id})
+	else:
+		return HttpResponse("Request method is not a post")
+

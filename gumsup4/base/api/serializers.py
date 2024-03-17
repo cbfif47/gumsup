@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag
+from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO
 from gumsup4.base.utilities import get_button_text, cbtimesince
 
 
@@ -127,8 +127,16 @@ class TagSerializer(ModelSerializer):
         model = ItemTag
         fields = ["tag"]
 
+
 class ExploreSerializer(serializers.Serializer):
     name = serializers.CharField()
     total = serializers.IntegerField()
     avg_rating = serializers.IntegerField()
     segment = serializers.CharField()
+
+
+class AppleSSOSerializer(ModelSerializer):
+
+    class Meta:
+        model = AppleSSO
+        fields = ["email","apple_id"]

@@ -428,3 +428,15 @@ class ItemTag(BaseModel):
 
         ordering = ["-created"]
 
+
+class AppleSSO(BaseModel):
+    email = models.CharField(max_length=80,blank=False)
+    apple_id = models.CharField(max_length=100,blank=False)
+
+    def __str__(self):
+        return f"{self.email}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
