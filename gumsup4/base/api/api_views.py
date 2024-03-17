@@ -397,3 +397,24 @@ def AppleLogin(request):
 	else:
 		return HttpResponse("Request method is not a post")
 
+
+class UserSocialsView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request,user_id,format=None):
+		user = get_object_or_404(User, id = user_id)
+		max_last_date = request.GET.get("max_last_date","")
+		social_type = request.GET.get("social_type","followers")
+		if user.is_private & request.user.is_following(user) == False: # i should just make this a permission class thing
+			Response(status=status.HTTP_400_BAD_REQUEST)
+		if social_type == "followers":
+			users = User.objects.filter(follows__following=user)
+		else:
+			users = User.objects.filter(followers__user=user)
+		if max_last_date != "":
+			users = users.filter(created__lt= max_last_date)
+
+		serializer = LiteUserSerializer(users[:25],many=True)
+		return Response(serializer.data)

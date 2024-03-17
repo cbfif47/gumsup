@@ -68,6 +68,7 @@ urlpatterns = [
     path('api/like-item/', api_views.LikeItemView.as_view()),
     path('api/user/<user_id>/', api_views.UserView.as_view()),
     path('api/user/<user_id>/items/', api_views.UserItemsView.as_view()),
+    path('api/user/<user_id>/socials/', api_views.UserSocialsView.as_view()),
     path('api/activity/', api_views.ActivityView.as_view()),
     path('api/activity/count', api_views.ActivityCountView.as_view()),
     path('api/search/', api_views.SearchView.as_view()),
