@@ -416,5 +416,5 @@ class UserSocialsView(APIView):
 		if max_last_date != "":
 			users = users.filter(created__lt= max_last_date)
 
-		serializer = LiteUserSerializer(users[:25],many=True)
+		serializer = LiteUserSerializer(users[:100],many=True)
 		return Response(serializer.data)
