@@ -27,7 +27,7 @@ class LiteUserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "is_private","id"]
+        fields = ["username", "is_private","id","bio"]
 
 
 
