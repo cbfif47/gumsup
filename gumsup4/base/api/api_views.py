@@ -28,9 +28,14 @@ def ConvertToken(request):
 		useremail = idinfo['email']
 		user, created = User.objects.get_or_create(email=useremail)
 		rex_token, created = Token.objects.get_or_create(user=user)
-		return JsonResponse({"token": rex_token.key
-            ,"username": user.username
-            , "user_id": user.id})
+		if user.username:
+			return JsonResponse({"token": rex_token.key
+	            ,"username": user.username
+	            , "user_id": user.id})
+		else:
+			return JsonResponse({"token": rex_token.key
+	            ,"username": ""
+	            , "user_id": user.id})
 	else:
 		return HttpResponse("Request method is not a get")
 
