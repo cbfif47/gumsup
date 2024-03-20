@@ -75,6 +75,7 @@ urlpatterns = [
     path('api/suggestions/search/', api_views.SearchSuggestionsView.as_view()),
     path('api/edit-user/', api_views.EditUserView.as_view()),
     path('api/explore/', api_views.ExploreView.as_view()),
+    path('api/suggested-users/', api_views.SuggestedUsersView.as_view()),
     path("api/convert-token/", api_views.ConvertToken, name='convert-token'),
     path("api/apple-login/", api_views.AppleLogin),
 ]

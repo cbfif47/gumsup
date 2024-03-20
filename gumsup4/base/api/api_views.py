@@ -423,3 +423,15 @@ class UserSocialsView(APIView):
 
 		serializer = LiteUserSerializer(users[:100],many=True)
 		return Response(serializer.data)
+
+
+class SuggestedUsersView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request,format=None):
+		users = request.user.suggested_users()
+
+		serializer = UserSerializer(users,many=True,context={'user': request.user})
+		return Response(serializer.data)
