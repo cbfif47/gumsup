@@ -52,3 +52,15 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(models.AppleSSO)
 class AppleSSOAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.DemoFolder)
+class DemoFolderAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.DemoSong)
+class DemoSongAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.DemoDemo)
+class DemoDemoAdmin(admin.ModelAdmin):
+    """Admin for posts."""

@@ -19,7 +19,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from rest_framework import routers
 from gumsup4 import views
-from gumsup4.base.api import serializers, viewsets, api_views
+from gumsup4.base.api import serializers, viewsets, api_views, demo_views
 from django.contrib.auth.views import LogoutView
 
 # from .router import router
@@ -78,4 +78,7 @@ urlpatterns = [
     path('api/suggested-users/', api_views.SuggestedUsersView.as_view()),
     path("api/convert-token/", api_views.ConvertToken, name='convert-token'),
     path("api/apple-login/", api_views.AppleLogin),
+    path('demoitis/main/', demo_views.MainView.as_view()),
+    path('demoitis/song/<song_id>/', demo_views.EditSongView.as_view()),
+    path('demoitis/demo/<demo_id>/', demo_views.EditDemoView.as_view()),
 ]

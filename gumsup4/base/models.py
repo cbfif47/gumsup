@@ -440,3 +440,59 @@ class AppleSSO(BaseModel):
         """Metadata."""
 
         ordering = ["-created"]
+
+
+
+####################### START DEMOER MODELS ###########################
+
+class DemoFolder(BaseModel):
+    user = models.ForeignKey(
+        User, verbose_name="User", on_delete=models.CASCADE,related_name="folders")
+    name = models.CharField(max_length=80,blank=False)
+    url = models.URLField(blank=False)
+    folder_type = models.CharField(max_length=80,blank=False,default="dropbox")
+    shared_by = models.ForeignKey(
+        User, verbose_name="User", on_delete=models.CASCADE,related_name="shared_folders",blank=True,default="",null=True)
+
+    def __str__(self):
+        return f"{self.user} folder {self.name}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class DemoSong(BaseModel):
+    folder = models.ForeignKey(
+        DemoFolder, verbose_name="Folder", on_delete=models.CASCADE,related_name="songs")
+    title = models.CharField(max_length=80,blank=False)
+    is_starred = models.BooleanField(default=False)
+    is_archived = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class DemoDemo(BaseModel):
+    song = models.ForeignKey(
+        DemoSong, verbose_name="Song", on_delete=models.CASCADE,related_name="demos")
+    version = models.CharField(max_length=80,blank=False)
+    is_primary = models.BooleanField(default=False)
+    url = models.URLField(blank=False)
+    file_extension = models.CharField(max_length=4,blank=False,default="mp3")
+    source_created = models.CharField(max_length=80,default="",blank=True)
+
+    def __str__(self):
+        return f"{self.song.title} {self.version}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
