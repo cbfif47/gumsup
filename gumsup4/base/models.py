@@ -48,8 +48,6 @@ class User(BaseModel, AbstractUser):
 
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):
-        if Token.objects.filter(user=self).exists() == False:
-            Token.objects.create(user=self)
         if self.username:
             self.username = self.username.lower() # force lowercase
         if self.bio:
