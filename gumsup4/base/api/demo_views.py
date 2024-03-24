@@ -18,15 +18,8 @@ from django.db.models.functions import RowNumber
 from django.db.models import F
 
 
-class MainView(APIView):
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
-
-	def get(self, request, format=None): 
-		folders = DemoFolder.objects.filter(user=request.user)
-
-		# Go get stuff from google
-		for folder in folders:
+def ParseFolders(folders):
+	for folder in folders:
 			id_index = folder.url.find("folders/") + 8
 			folder_id = folder.url[id_index:1000]
 			# need to do api key securley
@@ -58,6 +51,18 @@ class MainView(APIView):
 			for demo in demos:
 				demo.is_primary = (demo.row_number == 1) #all row 1s are primary TODO deal with manuals
 				demo.save()
+			return True
+
+class MainView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, format=None): 
+		full_refresh = request.GET.get("full_refresh","")
+		folders = DemoFolder.objects.filter(user=request.user)
+
+		if full_refresh == "true":
+			ParseFolders(folders)
 
 		fs = ds.FolderSerializer(folders,many=True)
 		return Response(fs.data)
@@ -68,7 +73,7 @@ class EditSongView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def post(self, request, song_id, format=None):
-		action = request.GET.get("action","")
+		action = request.query_params.get("action","")
 		song = get_object_or_404(DemoSong,id=song_id)
 		if action == "":
 			return HttpResponse("No action provided")
@@ -90,7 +95,7 @@ class EditDemoView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def post(self, request, demo_id, format=None):
-		is_primary = request.GET.get("is_primary","")
+		is_primary = request.query_params.get("is_primary","")
 		demo = get_object_or_404(DemoDemo,id=demo_id)
 		song = demo.song
 		other_demos = DemoDemo.objects.filter(song=song).exclude(id=demo.id)
