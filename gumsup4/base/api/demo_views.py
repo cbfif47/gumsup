@@ -39,10 +39,11 @@ def ParseFolders(folders):
 					else:
 						song_title = file_name[0:-4].strip()
 						version = "v1"
+					file_type = file_name[-3:]
 					# lets make songs if they dont exist, will default to no star or archive
 					song, song_created = DemoSong.objects.get_or_create(folder=folder,title=song_title)
 					if DemoDemo.objects.filter(song=song,url=file_url).exists() == False:
-						new_demo = DemoDemo.objects.create(song=song,url=file_url,version=version,source_created=createdTime)
+						new_demo = DemoDemo.objects.create(song=song,url=file_url,version=version,source_created=createdTime,file_extension=file_type)
 			# now set priority
 			#songs = DemoSong.objects.filter(folder=folder)
 			demos = DemoDemo.objects.filter(song__folder=folder).annotate(row_number=Window(expression=RowNumber()
