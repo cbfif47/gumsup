@@ -314,8 +314,10 @@ class Item(BaseModel):
                 if user:
                     existing_save = Activity.objects.filter(user=user,item=self,action="item_save")
                     existing_mention = Activity.objects.filter(user=user,item=self,action="item_mention")
-                    if not existing_save and not existing_mention:
+                    if not existing_mention:
                         Activity.objects.create(user=user,item=self,action='item_mention')
+                    if not existing_save:
+                        Activity.objects.create(user=user,item=self,action='item_save')
 
         # now do tags
         tags = re.findall("#[-\w]*",self.note)

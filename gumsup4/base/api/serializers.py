@@ -32,7 +32,7 @@ class LiteUserSerializer(ModelSerializer):
 
 class ItemFeedSerializer(ModelSerializer):
     user = LiteUserSerializer()
-    original_item = SerializerMethodField()
+    saved_from = SerializerMethodField()
 
     def to_representation(self, instance):
         """Convert `username` to lowercase."""
@@ -52,7 +52,7 @@ class ItemFeedSerializer(ModelSerializer):
         model = Item
         fields = ["id","name","author","note","item_type","rating"
         ,"status","started_date","ended_date","last_date","hide_from_feed"
-        ,"user","original_item"]
+        ,"user","saved_from"]
 
     id = serializers.CharField(read_only=True)
     name = serializers.CharField(required=True,max_length=75)
@@ -66,7 +66,7 @@ class ItemFeedSerializer(ModelSerializer):
     last_date = serializers.DateTimeField(read_only=True)
     hide_from_feed = serializers.BooleanField(default=False)
 
-    def get_original_item(self,obj):
+    def get_saved_from(self,obj):
         if obj.original_item is not None:
             return ItemFeedSerializer(obj.original_item).data
         else:
