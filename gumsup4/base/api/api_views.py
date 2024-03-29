@@ -56,11 +56,13 @@ class FeedView(APIView):
 		user = UserSerializer(request.user,context={'user': request.user})
 		tags = TagSerializer(my_tags,many=True)
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
+		friends = User.objects.filter(followers__user=request.user).values_list('username',flat=True)
 		content = {
             'activity_count': activity_count,
             'user': user.data,
             'feed': feed.data,  # None
-            'tags': tags.data
+            'tags': tags.data,
+            'friends': friends
         }
 		return Response(content)
 
