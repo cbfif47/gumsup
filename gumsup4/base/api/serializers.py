@@ -1,7 +1,7 @@
 """Serializers for base models."""
 
 
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework import serializers
 
 from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO
@@ -30,9 +30,9 @@ class LiteUserSerializer(ModelSerializer):
         fields = ["username", "is_private","id","bio"]
 
 
-
 class ItemFeedSerializer(ModelSerializer):
     user = LiteUserSerializer()
+    original_item = SerializerMethodField()
 
     def to_representation(self, instance):
         """Convert `username` to lowercase."""
@@ -43,13 +43,16 @@ class ItemFeedSerializer(ModelSerializer):
         ret['is_saved'] = Item.objects.filter(user=self.context.get("user"),original_item=instance).exists()
         ret['timesince'] = cbtimesince(instance.last_date)
         ret['tags'] = ItemTag.objects.filter(item=instance).values('tag')
+        mentioned_user_list = Activity.objects.filter(item=instance,action='item_mention').values_list('user')
+        mentioned_users = User.objects.filter(id__in=mentioned_user_list)
+        ret['mentions'] = LiteUserSerializer(mentioned_users,many=True).data
         return ret
 
     class Meta:
         model = Item
         fields = ["id","name","author","note","item_type","rating"
         ,"status","started_date","ended_date","last_date","hide_from_feed"
-        ,"user"]
+        ,"user","original_item"]
 
     id = serializers.CharField(read_only=True)
     name = serializers.CharField(required=True,max_length=75)
@@ -62,6 +65,12 @@ class ItemFeedSerializer(ModelSerializer):
     ended_date = serializers.DateField(required=False)
     last_date = serializers.DateTimeField(read_only=True)
     hide_from_feed = serializers.BooleanField(default=False)
+
+    def get_original_item(self,obj):
+        if obj.original_item is not None:
+            return ItemFeedSerializer(obj.original_item).data
+        else:
+            return None
 
 
 class ItemSerializer(ModelSerializer):
