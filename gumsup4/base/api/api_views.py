@@ -16,6 +16,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
 from django.db.models import Q, F, Count, Avg, Max, Value
+from django.db.models.functions import Coalesce
 
 
 @csrf_exempt
@@ -350,7 +351,7 @@ class AutocompleteView(APIView):
 
 	def get(self, request, **kwargs):
 		query = request.GET.get("q",'')
-		items = Item.objects.filter(Q(name__icontains=query)).order_by('name','author').values('name','author').distinct()[:5]
+		items = Item.objects.filter(Q(name__icontains=query)).annotate(clean_author=Coalesce('author',Value(""))).order_by('name','clean_author').values('name','clean_author').distinct()[:5]
 		serializer = AutocompleteSerializer(items,many=True)
 		return Response(serializer.data)
 

@@ -151,6 +151,7 @@ class AppleSSOSerializer(ModelSerializer):
         fields = ["email","apple_id"]
 
 class AutocompleteSerializer(ModelSerializer):
+    author = serializers.CharField(source='clean_author')
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
