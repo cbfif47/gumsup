@@ -149,3 +149,14 @@ class AppleSSOSerializer(ModelSerializer):
     class Meta:
         model = AppleSSO
         fields = ["email","apple_id"]
+
+class AutocompleteSerializer(ModelSerializer):
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['object_type'] = "item"
+        return(ret)
+
+    class Meta:
+        model = Item
+        fields = ["name","author"]

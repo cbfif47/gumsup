@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, LiteUserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer
+from .serializers import UserSerializer, LiteUserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer, AutocompleteSerializer
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO
 from rest_framework import status
@@ -342,6 +342,17 @@ class SearchSuggestionsView(APIView):
 		suggestions = list((combined.values_list("suggestion",flat=True))[:5])
 		suggestions.insert(0,query)
 		return Response(suggestions)
+
+
+class AutocompleteView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, **kwargs):
+		query = request.GET.get("q",'')
+		items = Item.objects.filter(Q(name__icontains=query)).order_by('name','author').values('name','author').distinct()[:5]
+		serializer = AutocompleteSerializer(items,many=True)
+		return Response(serializer.data)
 
 
 class ExploreView(APIView):
