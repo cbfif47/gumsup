@@ -178,10 +178,11 @@ class ActivityView(APIView):
 		serializer = sz.ActivitySerializer(activities,many=True,context={'user': request.user})
 		data = serializer.data
 		# now mark them all as seen
-		for a in activities:
-			if a.seen == False:
-				a.seen = True
-				a.save()
+		Activity.objects.filter(user=request.user,seen=False).update(seen=True)
+		# for a in activities:
+		# 	if a.seen == False:
+		# 		a.seen = True
+		# 		a.save()
 		return Response(serializer.data)
 
 
