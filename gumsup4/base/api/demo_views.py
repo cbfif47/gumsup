@@ -15,7 +15,7 @@ from django.shortcuts import get_object_or_404
 import requests
 from django.db.models.expressions import Window
 from django.db.models.functions import RowNumber
-from django.db.models import F
+from django.db.models import F, Q
 
 
 def ParseFolders(folders):
@@ -26,6 +26,7 @@ def ParseFolders(folders):
 		parsed_url = "https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(id,name, createdTime, mimeType)&q='" + folder_id + "'+in+parents&key=" + settings.GOOGLE_DRIVE_KEY
 		r = requests.get(parsed_url)
 		files = r.json()["files"]
+		songs = []
 		for f in files:
 			if f["mimeType"][0:5] == "audio":
 				file_url = "https://drive.google.com/uc?export=download&id=" + f["id"]
@@ -42,16 +43,19 @@ def ParseFolders(folders):
 				file_type = file_name[-3:]
 				# lets make songs if they dont exist, will default to no star or archive
 				song, song_created = DemoSong.objects.get_or_create(folder=folder,title=song_title)
+				songs.append(song.id)
 				if DemoDemo.objects.filter(song=song,url=file_url).exists() == False:
 					new_demo = DemoDemo.objects.create(song=song,url=file_url,version=version,source_created=createdTime,file_extension=file_type)
 		# now set priority
 		#songs = DemoSong.objects.filter(folder=folder)
 		demos = DemoDemo.objects.filter(song__folder=folder).annotate(row_number=Window(expression=RowNumber()
 			,partition_by=[F("song")]
-			,order_by=[F("source_created").desc()]))
+			,order_by=[F("source_created").desc(),F("version").asc()]))
 		for demo in demos:
 			demo.is_primary = (demo.row_number == 1) #all row 1s are primary TODO deal with manuals
 			demo.save()
+		#delete songs no longer in the folder
+		DemoSong.objects.filter(folder=folder).exclude(Q(id__in=songs)).delete()
 	return True
 
 class MainView(APIView):
