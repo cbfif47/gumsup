@@ -480,8 +480,8 @@ class ItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
             new_item = f.save()
 
             # log activity if its a save
-            if new_item.original_item:
-                Activity.objects.create(user=new_item.original_item.user,item=new_item,action='item_save')
+            # if new_item.original_item:
+            #     Activity.objects.create(user=new_item.original_item.user,item=new_item,action='item_save')
             if request.GET.get('status', '') == 'done':
                 return redirect(to='finish-item',item_id=new_item.id)
             else:
