@@ -312,12 +312,9 @@ class Item(BaseModel):
                 username = mention.replace("@","")
                 user = User.objects.filter(username=username.lower()).first()
                 if user:
-                    existing_save = Activity.objects.filter(user=user,item=self,action="item_save")
                     existing_mention = Activity.objects.filter(user=user,item=self,action="item_mention")
                     if not existing_mention:
                         Activity.objects.create(user=user,item=self,action='item_mention')
-                    if not existing_save:
-                        Activity.objects.create(user=user,item=self,action='item_save')
 
         # now do tags
         tags = re.findall("#[-\w]*",self.note)
@@ -327,6 +324,13 @@ class Item(BaseModel):
                 existing_tag = ItemTag.objects.filter(item=self,tag=text)
                 if not existing_tag:
                     ItemTag.objects.create(item=self,tag=text)
+
+        # now saves
+        if self.original_item:
+            existing_save = Activity.objects.filter(user=self.original_item.user,item=self,action="item_save")
+            if not existing_save:
+                Activity.objects.create(user=self.original_item.user,item=self,action='item_save')
+
 
     def __str__(self):
         return f"{self.name}"
@@ -469,6 +473,7 @@ class DemoSong(BaseModel):
     title = models.CharField(max_length=80,blank=False)
     is_starred = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
+    priority_as_of = models.CharField(max_length=80,default="",blank=True)
 
     def __str__(self):
         return f"{self.title}"
