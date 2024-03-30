@@ -375,10 +375,6 @@ class Comment(BaseModel):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        # log activity
-        if self.item.user != self.user:
-            Activity.objects.create(user=self.item.user,item=self.item,comment=self,action="item_comment")
-
         # log mentions, save item activity is in the view
         mentions = re.findall("@[-\w]*",self.body)
         if mentions:
@@ -386,9 +382,12 @@ class Comment(BaseModel):
                 username = mention.replace("@","")
                 user = User.objects.filter(username=username.lower()).first()
                 if user and user != self.user:
-                    existing_activity = Activity.objects.filter(user=user,comment=self)
-                    if not existing_activity:
-                        Activity.objects.create(user=user,item=self.item,comment=self,action="item_comment_mention")
+                    Activity.objects.create(user=user,item=self.item,comment=self,action="item_comment_mention")
+
+        # log activity if no mention
+        existing_activity = Activity.objects.filter(user=user,comment=self)
+        if not existing_activity and self.item.user != self.user:
+            Activity.objects.create(user=self.item.user,item=self.item,comment=self,action="item_comment")
 
     def __str__(self):
         return f"{self.user} comment on {self.item}"
