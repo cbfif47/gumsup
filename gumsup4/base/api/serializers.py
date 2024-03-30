@@ -104,6 +104,9 @@ class CommentSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret['timesince'] = cbtimesince(instance.created)
+        mentioned_user_list = Activity.objects.filter(item=instance.item,action='item_comment_mention').values_list('user')
+        mentioned_users = User.objects.filter(id__in=mentioned_user_list)
+        ret['mentions'] = LiteUserSerializer(mentioned_users,many=True).data
         return(ret)
 
     class Meta:

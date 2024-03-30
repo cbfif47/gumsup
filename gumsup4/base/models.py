@@ -208,11 +208,13 @@ class FollowRequest(BaseModel):
                 super().save(*args, **kwargs)
                 Activity.objects.create(user=self.user,follow_request=self,action='follow_request_approved') #log the activity for requester
         elif FollowRequest.objects.filter(user=self.user,following=self.following,is_approved=False).exclude(id=self.id).exists():
+            # if this person has requested before, auto deny it
             self.auto_denied = True
             super().save(*args, **kwargs)
         elif self.is_approved == False: #adding this in case we approved it, then unapprove it
             Follow.objects.filter(user=self.user,following=self.following).delete()
         else:
+            # this will just be new unknown ones
             super().save(*args, **kwargs)
             Activity.objects.create(user=self.following,follow_request=self,action='follow_request')
 
