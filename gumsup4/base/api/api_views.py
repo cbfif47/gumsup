@@ -9,9 +9,9 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, LiteUserSerializer, ItemSerializer, ItemFeedSerializer, ActivitySerializer, CommentSerializer, ExploreSerializer, ItemLikeSerializer, NewCommentSerializer, TagSerializer, AutocompleteSerializer
+from . import serializers as sz
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO
+from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
@@ -53,9 +53,9 @@ class FeedView(APIView):
 			items = request.user.item_feed()[:30]
 		
 		my_tags = ItemTag.objects.filter(item__user=request.user).order_by().values('tag').distinct()
-		feed = ItemFeedSerializer(items,many=True,context={'user': request.user})
-		user = UserSerializer(request.user,context={'user': request.user})
-		tags = TagSerializer(my_tags,many=True)
+		feed = sz.ItemFeedSerializer(items,many=True,context={'user': request.user})
+		user = sz.UserSerializer(request.user,context={'user': request.user})
+		tags = sz.TagSerializer(my_tags,many=True)
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
 		friends = User.objects.filter(followers__user=request.user).values_list('username',flat=True)
 		content = {
@@ -71,11 +71,11 @@ class FeedView(APIView):
 		try:
 			item = Item.objects.get(id=request.data["id"])
 			if item.user == request.user:
-				serializer = ItemSerializer(item,data=request.data)
+				serializer = sz.ItemSerializer(item,data=request.data)
 			else:
 				return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 		except:
-			serializer = ItemSerializer(data=request.data)
+			serializer = sz.ItemSerializer(data=request.data)
 		serializer.initial_data["user"] = request.user.id
 		if serializer.is_valid():
 			serializer.save()
@@ -111,7 +111,7 @@ class MoreItemsView(APIView):
 		if status != "0":
 			items = items.filter(status=status)
 
-		feed = ItemFeedSerializer(items[:30],many=True,context={'user': request.user})
+		feed = sz.ItemFeedSerializer(items[:30],many=True,context={'user': request.user})
 
 		return Response(feed.data)
 
@@ -175,7 +175,7 @@ class ActivityView(APIView):
 				a.item.is_saved = Item.objects.filter(user=request.user,original_item=a.item).exists()
 				a.item.likes_count = ItemLike.objects.filter(item=a.item).count()
 				a.item.comments_count = Comment.objects.filter(item=a.item).count()
-		serializer = ActivitySerializer(activities,many=True,context={'user': request.user})
+		serializer = sz.ActivitySerializer(activities,many=True,context={'user': request.user})
 		data = serializer.data
 		# now mark them all as seen
 		for a in activities:
@@ -193,9 +193,9 @@ class ItemView(APIView):
 	def get(self, request, item_id,format=None):
 		# get comments and likes detail
 		comments = Comment.objects.filter(item=item_id)
-		serializer = CommentSerializer(comments,many=True,context={'user': request.user})
+		serializer = sz.CommentSerializer(comments,many=True,context={'user': request.user})
 		likes = ItemLike.objects.filter(item=item_id)
-		likes_serializer = ItemLikeSerializer(likes,many=True,context={'user': request.user})
+		likes_serializer = sz.ItemLikeSerializer(likes,many=True,context={'user': request.user})
 
 		content = {
             'comments': serializer.data,
@@ -206,7 +206,7 @@ class ItemView(APIView):
 	def post(self, request, item_id,format=None):
 		# make a comment
 		item = get_object_or_404(Item, id = item_id)
-		serializer = NewCommentSerializer(data=request.data)
+		serializer = sz.NewCommentSerializer(data=request.data)
 		serializer.initial_data["user"] = request.user.id
 		serializer.initial_data["item"] = item_id
 		if serializer.is_valid():
@@ -235,7 +235,7 @@ class UserView(APIView):
 
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
-		serializer = UserSerializer(user,many=False,context={'user': request.user})
+		serializer = sz.UserSerializer(user,many=False,context={'user': request.user})
 		return Response(serializer.data)
 
 	def post(self, request,user_id,format=None):
@@ -272,7 +272,7 @@ class UserItemsView(APIView):
 		if tag != "":
 			items = items.filter(tagged__tag=tag)
 
-		serializer = ItemFeedSerializer(items[:25],many=True,context={'user': request.user})
+		serializer = sz.ItemFeedSerializer(items[:25],many=True,context={'user': request.user})
 		return Response(serializer.data)
 
 
@@ -314,13 +314,13 @@ class SearchView(APIView):
 		                & (Q(user=request.user) #owned by user
 		                | Q(user__is_private=False) #public user
 		                | Q(user__followers__user=request.user))).distinct() #or one we're following
-				serializer = ItemFeedSerializer(items,many=True,context={'user': request.user})
+				serializer = sz.ItemFeedSerializer(items,many=True,context={'user': request.user})
 			elif query_object == "user":
 				users = User.objects.filter((Q(username__icontains=query) 
 					| Q(bio__icontains=query)
 					| Q(email__icontains=query))
 					& Q(username__isnull=False))
-				serializer = LiteUserSerializer(users,many=True,context={'user': request.user})
+				serializer = sz.LiteUserSerializer(users,many=True,context={'user': request.user})
 			else:
 				return HttpResponse("whoops")
 			#stats = raw_feed.aggregate(count=Count("id"),ratings=Count("rating"),avg_rating=Avg("rating"))
@@ -352,7 +352,7 @@ class AutocompleteView(APIView):
 	def get(self, request, **kwargs):
 		query = request.GET.get("q",'')
 		items = Item.objects.filter(Q(name__icontains=query)).annotate(clean_author=Coalesce('author',Value(""))).order_by('name','clean_author').values('name','clean_author').distinct()[:5]
-		serializer = AutocompleteSerializer(items,many=True)
+		serializer = sz.AutocompleteSerializer(items,many=True)
 		return Response(serializer.data)
 
 
@@ -369,7 +369,7 @@ class ExploreView(APIView):
 		highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
 			,avg_rating=Avg('rating')
             ,max_date=Max('last_date'),segment=Value("highest_rated")).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
-		serializer = ExploreSerializer(popular.union(highest_rated),many=True)
+		serializer = sz.ExploreSerializer(popular.union(highest_rated),many=True)
 		return Response(serializer.data)
 
 
@@ -381,7 +381,7 @@ class EditUserView(APIView):
 		user = get_object_or_404(User, id = request.data["id"])
 
 		if user == request.user:
-			serializer = UserSerializer(user,data=request.data,context={'user': request.user})
+			serializer = sz.UserSerializer(user,data=request.data,context={'user': request.user})
 			if serializer.is_valid():
 				serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -435,7 +435,7 @@ class UserSocialsView(APIView):
 		if max_last_date != "":
 			users = users.filter(created__lt= max_last_date)
 
-		serializer = LiteUserSerializer(users[:100],many=True)
+		serializer = sz.LiteUserSerializer(users[:100],many=True)
 		return Response(serializer.data)
 
 
@@ -447,5 +447,25 @@ class SuggestedUsersView(APIView):
 	def get(self, request,format=None):
 		users = request.user.suggested_users()
 
-		serializer = UserSerializer(users,many=True,context={'user': request.user})
+		serializer = sz.UserSerializer(users,many=True,context={'user': request.user})
 		return Response(serializer.data)
+
+
+class FollowRequestsView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, **kwargs):
+		requests = FollowRequest.objects.filter(following=request.user)
+		serializer = sz.FollowRequestSerializer(requests,many=True)
+		return Response(serializer.data)
+
+	def post(self, request, **kwargs):
+		follow_request = get_object_or_404(FollowRequest, id = request.data["id"])
+
+		if follow_request.following == request.user:
+			follow_request.is_approved = request.data["is_approved"]
+			follow_request.save()
+			serializer = sz.FollowRequestSerializer(follow_request)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response("didnt work")

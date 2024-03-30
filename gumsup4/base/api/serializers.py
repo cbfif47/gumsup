@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework import serializers
 
-from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO
+from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO, FollowRequest
 from gumsup4.base.utilities import get_button_text, cbtimesince
 
 
@@ -161,3 +161,12 @@ class AutocompleteSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ["name","author"]
+
+
+class FollowRequestSerializer(ModelSerializer):
+    user = LiteUserSerializer()
+
+    class Meta:
+        model = FollowRequest
+        fields = ["id","user","is_approved"]
+        read_only_fields = ['user']
