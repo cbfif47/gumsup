@@ -202,10 +202,11 @@ class FollowRequest(BaseModel):
     def save(self, *args, **kwargs):
         if self.is_approved == True:
                 # if approving, create the follow
-            new_follow = Follow.objects.create(user=self.user,following=self.following)
-            Activity.objects.create(user=self.following,follow=new_follow,seen=True,action='follow') #log the activity for the one who approved it as seen
-            super().save(*args, **kwargs)
-            Activity.objects.create(user=self.user,follow_request=self,action='follow_request_approved') #log the activity for requester
+            existing_follow = Follow.objects.filter(user=self.user,following=self.following)
+            if not existing_follow:
+                new_follow = Follow.objects.create(user=self.user,following=self.following)
+                super().save(*args, **kwargs)
+                Activity.objects.create(user=self.user,follow_request=self,action='follow_request_approved') #log the activity for requester
         elif FollowRequest.objects.filter(user=self.user,following=self.following,is_approved=False).exists():
             self.auto_denied = True
             super().save(*args, **kwargs)
