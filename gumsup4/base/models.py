@@ -385,7 +385,7 @@ class Comment(BaseModel):
                     Activity.objects.create(user=user,item=self.item,comment=self,action="item_comment_mention")
 
         # log activity if no mention
-        existing_activity = Activity.objects.filter(user=user,comment=self)
+        existing_activity = Activity.objects.filter(user=self.item.user,comment=self)
         if not existing_activity and self.item.user != self.user:
             Activity.objects.create(user=self.item.user,item=self.item,comment=self,action="item_comment")
 
