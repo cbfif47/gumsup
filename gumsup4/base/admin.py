@@ -64,3 +64,7 @@ class DemoSongAdmin(admin.ModelAdmin):
 @admin.register(models.DemoDemo)
 class DemoDemoAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.DemoComment)
+class DemoCommentAdmin(admin.ModelAdmin):
+    """Admin for posts."""

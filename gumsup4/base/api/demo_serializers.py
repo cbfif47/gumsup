@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo
+from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo, DemoComment
 
 
 class LiteUserSerializer(ModelSerializer):
@@ -14,13 +14,21 @@ class LiteUserSerializer(ModelSerializer):
         model = User
         fields = ["username", "is_private","id","bio"]
 
+class DemoCommentSerializer(ModelSerializer):
+    """Serializer for custom users."""
+    user = LiteUserSerializer()
+
+    class Meta:
+        model = DemoComment
+        fields = ["id", "user","body","timestamp","created"]
+
 
 class DemoSerializer(ModelSerializer):
-    """Serializer for custom users."""
+    comments = DemoCommentSerializer(many=True)
 
     class Meta:
         model = DemoDemo
-        fields = ["id","version", "is_primary","url","created","file_extension"]
+        fields = ["id","version", "is_primary","url","created","file_extension","comments"]
 
 
 class SongSerializer(ModelSerializer):
