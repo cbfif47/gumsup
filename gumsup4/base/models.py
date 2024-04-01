@@ -511,7 +511,7 @@ class DemoComment(BaseModel):
         User, verbose_name="commenter", on_delete=models.CASCADE,related_name="demo_comments")
     demo = models.ForeignKey(
         DemoDemo, on_delete=models.CASCADE,related_name="comments")
-    body = models.TextField(max_length=250, blank=False)
+    comment = models.TextField(max_length=250, blank=False)
     timestamp = models.IntegerField(blank=True,null=True)
 
     def __str__(self):
