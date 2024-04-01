@@ -20,7 +20,7 @@ class DemoCommentSerializer(ModelSerializer):
 
     class Meta:
         model = DemoComment
-        fields = ["id", "user","comment","timestamp","created"]
+        fields = ["id", "user","body","timestamp","created"]
 
 
 class DemoSerializer(ModelSerializer):
