@@ -54,8 +54,8 @@ def ParseFolders(folders):
 		songs = DemoSong.objects.filter(folder=folder)
 		for song in songs:
 			new_max_created = DemoDemo.objects.filter(song=song).aggregate(Max("source_created", default=""))
-			if new_max_created['source_created__max'] > song.priority_as_of or song.priority_as_of == "":
-				demos = DemoDemo.objects.filter(song__folder=folder).annotate(row_number=Window(expression=RowNumber()
+			if new_max_created['source_created__max'] > song.priority_as_of:
+				demos = DemoDemo.objects.filter(song__folder=folder,song=song).annotate(row_number=Window(expression=RowNumber()
 					,order_by=[F("source_created").desc(),F("version").asc()]))
 				for demo in demos:
 					demo.is_primary = (demo.row_number == 1) #all row 1s are primary TODO deal with manuals
