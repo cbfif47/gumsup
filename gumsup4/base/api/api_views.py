@@ -364,12 +364,12 @@ class ExploreView(APIView):
 	def get(self, request, **kwargs):
 		popular = Item.objects.all().values('name').annotate(total=Count('name')
 			,avg_rating=Avg('rating')
-            ,max_date=Max('last_date'),segment=Value("popular")).order_by('-total','-avg_rating','-max_date').exclude(total=1)[:3]
+            ,max_date=Max('last_date'),segment=Value("popular")).order_by('-total','-max_date').exclude(total=1)[:3]
 
 
 		highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
 			,avg_rating=Avg('rating')
-            ,max_date=Max('last_date'),segment=Value("highest_rated")).filter(total__gte=2).order_by('-avg_rating','-total','-max_date')[:3]
+            ,max_date=Max('last_date'),segment=Value("highest_rated")).filter(total__gte=2).order_by('-avg_rating','-max_date','-total')[:3]
 		serializer = sz.ExploreSerializer(popular.union(highest_rated),many=True)
 		return Response(serializer.data)
 
