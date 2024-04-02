@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .serializers import LiteUserSerializer
 from gumsup4.base.api import demo_serializers as ds
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, DemoFolder, DemoSong, DemoDemo
+from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 import requests
@@ -119,3 +119,18 @@ class EditDemoView(APIView):
 			demo.save()
 		ss = ds.SongSerializer(song)
 		return Response(ss.data)
+
+
+class CreateCommentView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, demo_id, format=None):
+		demo = get_object_or_404(DemoDemo,id=demo_id)
+		timestamp = request.data["timestamp"]
+		if timestamp >0:
+			comment = DemoComment.objects.create(user=request.user,body=request.data["body"],demo=demo,timestamp=timestamp)
+		else:
+			comment = DemoComment.objects.create(user=request.user,body=request.data["body"],demo=demo)
+		serializer = ds.DemoSerializer(demo)
+		return Response(serializer.data)
