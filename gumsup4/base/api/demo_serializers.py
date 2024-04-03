@@ -5,6 +5,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
 from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare
+from gumsup4.base.utilities import get_button_text, cbtimesince
 
 
 class LiteUserSerializer(ModelSerializer):
@@ -17,10 +18,14 @@ class LiteUserSerializer(ModelSerializer):
 class DemoCommentSerializer(ModelSerializer):
     """Serializer for custom users."""
     user = LiteUserSerializer()
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['created'] = cbtimesince(instance.created)
+        return ret
 
     class Meta:
         model = DemoComment
-        fields = ["id", "user","body","timestamp","created"]
+        fields = ["id", "user","body","timestamp"]
 
 
 class DemoSerializer(ModelSerializer):

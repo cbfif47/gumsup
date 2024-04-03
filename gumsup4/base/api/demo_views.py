@@ -64,6 +64,7 @@ def ParseFolders(folders):
 				song.save()
 	return True
 
+
 class MainView(APIView):
 	authentication_classes = [TokenAuthentication]
 	permission_classes = [IsAuthenticated]
@@ -143,3 +144,5 @@ class CreateCommentView(APIView):
 		else:
 			success = False
 		return Response(success)
+
+
