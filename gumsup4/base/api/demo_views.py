@@ -134,3 +134,12 @@ class CreateCommentView(APIView):
 			comment = DemoComment.objects.create(user=request.user,body=request.data["body"],demo=demo)
 		serializer = ds.DemoSerializer(demo)
 		return Response(serializer.data)
+
+	def delete(self, request, demo_id, format=None):
+		comment = get_object_or_404(DemoComment,id=request.data["comment_id"])
+		if comment.user == request.user:
+			comment .delete()
+			success = True
+		else:
+			success = False
+		return Response(success)
