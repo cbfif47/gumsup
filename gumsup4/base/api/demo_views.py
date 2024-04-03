@@ -70,12 +70,12 @@ class MainView(APIView):
 
 	def get(self, request, format=None): 
 		full_refresh = request.GET.get("full_refresh","")
-		folders = DemoFolder.objects.filter(user=request.user)
+		folders = DemoFolder.objects.filter(Q(user=request.user) | Q(shares__shared_to_user=request.user))
 
 		if full_refresh == "true":
 			ParseFolders(folders)
 
-		fs = ds.FolderSerializer(folders,many=True)
+		fs = ds.FolderSerializer(folders,many=True,context={'user': request.user})
 		return Response(fs.data)
 
 

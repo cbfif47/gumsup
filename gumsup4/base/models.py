@@ -459,8 +459,6 @@ class DemoFolder(BaseModel):
     name = models.CharField(max_length=80,blank=False)
     url = models.URLField(blank=False)
     folder_type = models.CharField(max_length=80,blank=False,default="dropbox")
-    shared_by = models.ForeignKey(
-        User, verbose_name="User", on_delete=models.CASCADE,related_name="shared_folders",blank=True,default="",null=True)
 
     def __str__(self):
         return f"{self.user} folder {self.name}"
@@ -516,6 +514,35 @@ class DemoComment(BaseModel):
 
     def __str__(self):
         return f"{self.user} comment on {self.demo}"
+
+    class Meta:
+        ordering = ["-created"]
+
+
+class DemoShare(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="shares")
+    folder = models.ForeignKey(
+        DemoFolder, on_delete=models.CASCADE,related_name="shares")
+    shared_to_user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="shares_received")
+    can_edit = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} shared {self.folder}"
+
+    class Meta:
+        ordering = ["-created"]
+
+
+class DemoShareKey(BaseModel):
+    folder = models.ForeignKey(
+        DemoFolder, on_delete=models.CASCADE,related_name="keys")
+    key = models.CharField(max_length=80,blank=True,default="")
+    can_edit = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.folder} key"
 
     class Meta:
         ordering = ["-created"]

@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo, DemoComment
+from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare
 
 
 class LiteUserSerializer(ModelSerializer):
@@ -42,9 +42,20 @@ class SongSerializer(ModelSerializer):
 
 class FolderSerializer(ModelSerializer):
     songs = SongSerializer(many=True)
-    user = LiteUserSerializer()
-    shared_by = LiteUserSerializer()
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if instance.user == self.context.get("user"):
+            ret['can_edit'] = True
+            ret['is_owner'] = True
+        else:
+            share = DemoShare.objects.filter(folder=instance,shared_to_user=self.context.get("user")).first()
+            ret['can_edit'] = share.can_edit
+            ret['is_owner'] = False
+            ret['url'] = ""
+            ret['folder_type'] = ""
+        return(ret)
 
     class Meta:
         model = DemoFolder
-        fields = ["id", "name","url","folder_type","shared_by","user","songs"]
+        fields = ["id", "name","url","folder_type","songs"]
