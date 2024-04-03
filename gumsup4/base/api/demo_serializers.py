@@ -12,7 +12,7 @@ class LiteUserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "is_private","id","bio"]
+        fields = ["username","id"]
 
 class DemoCommentSerializer(ModelSerializer):
     """Serializer for custom users."""
@@ -28,7 +28,7 @@ class DemoSerializer(ModelSerializer):
 
     class Meta:
         model = DemoDemo
-        fields = ["id","version", "is_primary","url","created","file_extension","comments"]
+        fields = ["id","version", "is_primary","url","source_created","file_extension","comments"]
 
 
 class SongSerializer(ModelSerializer):
