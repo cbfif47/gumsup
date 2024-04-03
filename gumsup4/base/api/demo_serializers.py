@@ -42,6 +42,7 @@ class SongSerializer(ModelSerializer):
 
 class FolderSerializer(ModelSerializer):
     songs = SongSerializer(many=True)
+    user = LiteUserSerializer()
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -58,4 +59,4 @@ class FolderSerializer(ModelSerializer):
 
     class Meta:
         model = DemoFolder
-        fields = ["id", "name","url","folder_type","songs"]
+        fields = ["id", "name","url","folder_type","songs","user"]
