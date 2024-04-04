@@ -32,7 +32,9 @@
       <li><a href="?{{ status_param }}{{ tags_param }}{{ query_param }}">ALL</a></li>
       {% for item_type in item_types %}
         {% if selected_item_type != item_type.1|lower or selected_item_type is None %}
+          {% if item_type.1 != "x" %}
           <li><a href="?{{ status_param }}{{ tags_param }}&item_type={{ item_type.1|lower }}{{ query_param }}">{{ item_type.1|upper }}</a></li>
+          {% endif %}
         {% endif %}
       {% endfor %}
       </div> <!-- dropdown-options -->

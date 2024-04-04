@@ -238,11 +238,16 @@ class Item(BaseModel):
         ]
 
     TYPE_CHOICES = [
-        ('MOVIE','movie'),
-        ('BOOK','book'),
-        ('TV','tv'),
-        ('FOOD','food'),
-        ('LIFE','life')
+        ('WATCH','watch'),
+        ('READ','read'),
+        ('EAT','eat'),
+        ('LISTEN','listen'),
+        ('MISC','misc'),
+        ('BOOK','x'),
+        ('FOOD','x'),
+        ('LIFE','x'),
+        ('MOVIE','x'),
+        ('TV','x')
         ]
 
     STATUS_CHOICES = [
@@ -259,7 +264,7 @@ class Item(BaseModel):
     author = models.CharField(max_length=40,blank=True,null=True,default='')
     item_type = models.CharField(max_length=50
         , choices = TYPE_CHOICES
-        , default='MOVIE'
+        , default='WATCH'
         , verbose_name="Type", blank=False)
     note = models.TextField(max_length=250,blank=True,null=True,default='')
     rating = models.IntegerField(choices=RATING_CHOICES,blank=True,null=True)
@@ -308,6 +313,16 @@ class Item(BaseModel):
             self.ended_date = datetime.now()
         if self.ended_date is not None and self.started_date is None:
             self.started_date = self.ended_date
+        if self.item_type == "MOVIE":
+            self.item_type = "WATCH"
+        elif self.item_type == "TV":
+            self.item_type = "WATCH"
+        elif self.item_type == "BOOK":
+            self.item_type = "READ"
+        elif self.item_type == "FOOD":
+            self.item_type = "EAT"
+        elif self.item_type == "LIFE":
+            self.item_type = "MISC"
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view

@@ -98,7 +98,6 @@ class ItemEditForm(forms.ModelForm):
             "started_date": forms.TextInput(),
             "item_type": forms.RadioSelect(attrs={"class":"tab-input"}),
             "status": forms.RadioSelect(attrs={"class":"tab-input"}),
-            "item_type": forms.RadioSelect(attrs={"class":"tab-input"}),
             "rating": forms.RadioSelect(attrs={"class":"tab-input"})
       }
 
