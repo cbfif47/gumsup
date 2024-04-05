@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .serializers import LiteUserSerializer
 from gumsup4.base.api import demo_serializers as ds
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare, DemoShareKey
+from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 import requests
@@ -164,8 +164,11 @@ class FolderView(APIView):
 
 	def post(self, request, format=None):
 		# no editing of shared folders. can edit just means messing with the songs
-		folder, created = DemoFolder.objects.get_or_create(user=request.user,url=request.data["url"], defaults={"name": request.data["name"],"name": request.data["name"],"folder_type": request.data["folder_type"]})
-		serializer = ds.FolderSerializer(folder)
+		folder, created = DemoFolder.objects.update_or_create(user=request.user,url=request.data["url"], defaults={"name": request.data["name"],"name": request.data["name"],"folder_type": request.data["folder_type"]})
+		if created == True:
+			serializer = get_feed(request,"true")
+		else:
+			serializer = get_feed(request,"false")
 		return Response(serializer.data)
 
 
@@ -175,15 +178,10 @@ class ShareView(APIView):
 	permission_classes = [IsAuthenticated]
 	
 	def post(self, request, format=None):
-		share_key = get_object_or_404(DemoShareKey,key=request.data["key"])
+		folder = get_object_or_404(DemoFolder,key=request.data["key"])
 
-		if DemoShare.objects.filter(shared_to_user=request.user,folder=share_key.folder).exists():
-			existing_share = DemoShare.objects.filter(shared_to_user=request.user,folder=share_key.folder).first()
-			if existing_share.can_edit == False and share_key.can_edit == True:
-				existing_share.can_edit = True
-				existing_share.save()
-		elif share_key.folder.user != request.user:
-			new_share = DemoShare.objects.create(user=share_key.folder.user,folder=share_key.folder,shared_to_user=request.user,can_edit=share_key.can_edit)
+		if not DemoShare.objects.filter(shared_to_user=request.user,folder=folder).exists() and folder.user != request.user:
+			new_share = DemoShare.objects.create(user=folder.user,folder=folder,shared_to_user=request.user,can_edit=False)
 	        # now lets refresh their feed, itll include this one now. i can make that a function
 		fs = get_feed(request,full_refresh="false")
 		return Response(fs.data)

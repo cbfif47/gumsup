@@ -467,6 +467,16 @@ class AppleSSO(BaseModel):
 
 
 ####################### START DEMOER MODELS ###########################
+import random
+import string
+
+def make_share_key():
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(50))
+    return result_str
+
+    #put below in folder model
+    
 
 class DemoFolder(BaseModel):
     user = models.ForeignKey(
@@ -474,6 +484,14 @@ class DemoFolder(BaseModel):
     name = models.CharField(max_length=80,blank=False)
     url = models.URLField(blank=False)
     folder_type = models.CharField(max_length=80,blank=False,default="dropbox")
+    key = models.CharField(max_length=80,blank=True,default="")
+
+    def save(self, *args, **kwargs):
+        if self.key == "":
+            self.key = make_share_key()
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user} folder {self.name}"
