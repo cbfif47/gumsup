@@ -17,6 +17,7 @@ from django.db.models.expressions import Window
 from django.db.models.functions import RowNumber
 from django.db.models import F, Q, Max
 from urllib import parse
+from django.views.decorators.csrf import csrf_exempt
 
 def ParseFolders(folders):
 	for folder in folders:
@@ -213,3 +214,24 @@ class ShareView(APIView):
 		if share.folder.user == request.user or share.shared_to_user == request.user:
 			share.delete()
 			return Response(True)
+
+
+@csrf_exempt
+def AppleSiteAssociationView(request):
+	the_json = """{
+				  "applinks": {
+				      "details": [
+				           {
+				             "appIDs": [ "SN4RBG3Z5J.rexwithfriends.demoitis" ],
+				             "components": [
+				               {
+				                  "/": "/demoitis/sharelink/",
+				                  "?": { "key": * }
+				               }
+				             ]
+				           }
+				       ]
+				   }
+				}"""
+	return HttpResponse(the_json)
+

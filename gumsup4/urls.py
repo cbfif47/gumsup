@@ -86,4 +86,5 @@ urlpatterns = [
     path('demoitis/demo/<demo_id>/', demo_views.EditDemoView.as_view()),
     path('demoitis/demo/<demo_id>/comment/', demo_views.CreateCommentView.as_view()),
     path('api/follow-requests/', api_views.FollowRequestsView.as_view()),
+    path('.well-known/apple-app-site-association', demo_views.AppleSiteAssociationView),
 ]
