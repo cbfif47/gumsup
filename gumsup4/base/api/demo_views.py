@@ -175,13 +175,23 @@ class FolderView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def post(self, request, format=None):
-		# no editing of shared folders. can edit just means messing with the songs
-		folder, created = DemoFolder.objects.update_or_create(user=request.user,url=request.data["url"], defaults={"name": request.data["name"],"name": request.data["name"],"folder_type": request.data["folder_type"]})
+		try: 
+			folder, created = DemoFolder.objects.update_or_create(user=request.user,id=request.data["id"], defaults={"url":request.data["url"],"name": request.data["name"],"name": request.data["name"],"folder_type": request.data["folder_type"]})
+		except:
+			folder, created = DemoFolder.objects.update_or_create(user=request.user,url=request.data["url"], defaults={"name": request.data["name"],"name": request.data["name"],"folder_type": request.data["folder_type"]})
 		if created == True:
 			serializer = get_feed(request,"true")
 		else:
 			serializer = get_feed(request,"false")
 		return Response(serializer.data)
+
+	def delete(self, request, format=None):
+		folder = get_object_or_404(DemoFolder,id=request.data["id"])
+		if folder.user == request.user:
+			folder.delete()
+			return Response(True)
+		else:
+			return Response(False)
 
 
 # share view for deleting shares if person who shared or person shared to, also to handle following link
