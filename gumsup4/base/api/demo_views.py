@@ -16,15 +16,28 @@ import requests
 from django.db.models.expressions import Window
 from django.db.models.functions import RowNumber
 from django.db.models import F, Q, Max
-
+from urllib import parse
 
 def ParseFolders(folders):
 	for folder in folders:
+		print(folder.name)
 		id_index = folder.url.find("folders/") + 8
-		folder_id = folder.url[id_index:1000]
+		params_index = folder.url.find("?")
+		if params_index > 0:
+			folder_id = folder.url[id_index:params_index]
+		else:
+			folder_id = folder.url[id_index:1000]
 		# need to do api key securley
 		parsed_url = "https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(id,name, createdTime, mimeType)&q='" + folder_id + "'+in+parents&key=" + settings.GOOGLE_DRIVE_KEY
-		r = requests.get(parsed_url)
+		try:
+			resource_key = parse.parse_qs(parse.urlparse(folder.url).query)['resourcekey'][0]
+			headers = {"X-Goog-Drive-Resource-Keys": folder_id + "/" + resource_key}
+			print(headers)
+			r = requests.get(parsed_url,headers = headers)
+		except:
+			r = requests.get(parsed_url)
+		print(parsed_url)
+		print(r.json())
 		files = r.json()["files"]
 		songs = []
 		for f in files:
@@ -33,7 +46,6 @@ def ParseFolders(folders):
 			if f["mimeType"][0:5] == "audio" and (file_type == "mp3" or file_type == "m4a"):
 				file_url = "https://drive.google.com/uc?export=download&id=" + f["id"]
 				createdTime = f["createdTime"]
-				print(createdTime)
 				separator = file_name.find("-")
 				if separator > 0:
 					song_title = file_name[0:separator].strip()
