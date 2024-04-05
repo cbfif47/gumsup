@@ -220,13 +220,13 @@ class ShareView(APIView):
 def AppleSiteAssociationView(request):
 	the_json = """{
 				  "applinks": {
+       			  "apps": [],
 				      "details": [
 				           {
 				             "appIDs": [ "SN4RBG3Z5J.rexwithfriends.demoitis" ],
 				             "components": [
 				               {
-				                  "/": "/demoitis/sharelink/",
-				                  "?": { "key": * }
+				                  "/": "/demoitis/sharelink/"
 				               }
 				             ]
 				           }
