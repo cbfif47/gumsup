@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .serializers import LiteUserSerializer
 from gumsup4.base.api import demo_serializers as ds
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment
+from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare, DemoShareKey
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 import requests
@@ -44,8 +44,15 @@ def ParseFolders(folders):
 				# lets make songs if they dont exist, will default to no star or archive
 				song, song_created = DemoSong.objects.get_or_create(folder=folder,title=song_title)
 				songs.append(song.id)
-				if DemoDemo.objects.filter(song=song,url=file_url).exists() == False:
+				# same url could be referenced by multiple users
+				if DemoDemo.objects.filter(song__folder=folder,url=file_url).exists() == False:
 					new_demo = DemoDemo.objects.create(song=song,url=file_url,version=version,source_created=createdTime,file_extension=file_type)
+				else:
+					existing = DemoDemo.objects.filter(song__folder=folder,url=file_url).get()
+					if existing.song != song or existing.version != version:
+						existing.song = song
+						existing.version = version
+						existing.save()
 		
 		#delete songs no longer in the folder
 		DemoSong.objects.filter(folder=folder).exclude(Q(id__in=songs)).delete()
@@ -64,6 +71,15 @@ def ParseFolders(folders):
 				song.save()
 	return True
 
+def get_feed(request,full_refresh):
+	folders = DemoFolder.objects.filter(Q(user=request.user) | Q(shares__shared_to_user=request.user))
+
+	if full_refresh == "true":
+		ParseFolders(folders)
+
+	fs = ds.FolderSerializer(folders,many=True,context={'user': request.user})
+	return fs
+
 
 class MainView(APIView):
 	authentication_classes = [TokenAuthentication]
@@ -71,12 +87,8 @@ class MainView(APIView):
 
 	def get(self, request, format=None): 
 		full_refresh = request.GET.get("full_refresh","")
-		folders = DemoFolder.objects.filter(Q(user=request.user) | Q(shares__shared_to_user=request.user))
 
-		if full_refresh == "true":
-			ParseFolders(folders)
-
-		fs = ds.FolderSerializer(folders,many=True,context={'user': request.user})
+		fs = get_feed(request,full_refresh)
 		return Response(fs.data)
 
 
@@ -146,3 +158,38 @@ class CreateCommentView(APIView):
 		return Response(success)
 
 
+class FolderView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, format=None):
+		# no editing of shared folders. can edit just means messing with the songs
+		folder, created = DemoFolder.objects.get_or_create(user=request.user,url=request.data["url"], defaults={"name": request.data["name"],"name": request.data["name"],"folder_type": request.data["folder_type"]})
+		serializer = ds.FolderSerializer(folder)
+		return Response(serializer.data)
+
+
+# share view for deleting shares if person who shared or person shared to, also to handle following link
+class ShareView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+	
+	def post(self, request, format=None):
+		share_key = get_object_or_404(DemoShareKey,key=request.data["key"])
+
+		if DemoShare.objects.filter(shared_to_user=request.user,folder=share_key.folder).exists():
+			existing_share = DemoShare.objects.filter(shared_to_user=request.user,folder=share_key.folder).first()
+			if existing_share.can_edit == False and share_key.can_edit == True:
+				existing_share.can_edit = True
+				existing_share.save()
+		elif share_key.folder.user != request.user:
+			new_share = DemoShare.objects.create(user=share_key.folder.user,folder=share_key.folder,shared_to_user=request.user,can_edit=share_key.can_edit)
+	        # now lets refresh their feed, itll include this one now. i can make that a function
+		fs = get_feed(request,full_refresh="false")
+		return Response(fs.data)
+			
+	def delete(self, request, format=None):
+		share = get_object_or_404(DemoShare,id=request.data["id"])
+		if share.folder.user == request.user or share.shared_to_user == request.user:
+			share.delete()
+			return Response(True)

@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare
+from gumsup4.base.models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare, DemoShareKey
 from gumsup4.base.utilities import get_button_text, cbtimesince
 
 
@@ -45,9 +45,26 @@ class SongSerializer(ModelSerializer):
         fields = ["id", "title","is_starred","is_archived","demos"]
 
 
+class ShareKeysSerializer(ModelSerializer):
+
+    class Meta:
+        model = DemoShareKey
+        fields = ["id", "key","can_edit"]
+
+
+class ShareSerializer(ModelSerializer):
+    shared_to_user = LiteUserSerializer()
+
+    class Meta:
+        model = DemoShare
+        fields = ["id", "shared_to_user","can_edit"]
+
+
 class FolderSerializer(ModelSerializer):
     songs = SongSerializer(many=True)
     user = LiteUserSerializer()
+    shares = ShareSerializer(many=True)
+    keys = ShareKeysSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -60,8 +77,10 @@ class FolderSerializer(ModelSerializer):
             ret['is_owner'] = False
             ret['url'] = ""
             ret['folder_type'] = ""
+        if ret['can_edit'] == False: #dont give em the keys if they dont have edit access
+            ret['keys'] = [] #not sure if this will work
         return(ret)
 
     class Meta:
         model = DemoFolder
-        fields = ["id", "name","url","folder_type","songs","user"]
+        fields = ["id", "name","url","folder_type","songs","user","shares","keys"]
