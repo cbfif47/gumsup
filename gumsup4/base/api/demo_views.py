@@ -233,5 +233,5 @@ def AppleSiteAssociationView(request):
 				       ]
 				   }
 				}"""
-	return HttpResponse(the_json)
+	return JsonResponse(json.loads(the_json))
 
