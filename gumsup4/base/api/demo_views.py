@@ -192,8 +192,8 @@ class FolderView(APIView):
 		if folder.user == request.user:
 			folder.delete()
 			return Response(True)
-		elif DemoShare(folder=folder,shared_to_user=request.user).exists():
-			DemoShare(folder=folder,shared_to_user=request.user).first().delete()
+		elif DemoShare.objects.filter(folder=folder,shared_to_user=request.user).exists():
+			DemoShare.objects.filter(folder=folder,shared_to_user=request.user).first().delete()
 			return Response(True)
 		else:
 			return Response(False)
