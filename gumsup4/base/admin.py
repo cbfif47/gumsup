@@ -72,7 +72,3 @@ class DemoCommentAdmin(admin.ModelAdmin):
 @admin.register(models.DemoShare)
 class DemoShareAdmin(admin.ModelAdmin):
     """Admin for posts."""
-
-@admin.register(models.DemoShareKey)
-class DemoShareKeyAdmin(admin.ModelAdmin):
-    """Admin for posts."""

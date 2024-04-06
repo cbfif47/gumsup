@@ -81,7 +81,7 @@ urlpatterns = [
     path("api/apple-login/", api_views.AppleLogin),
     path('demoitis/main/', demo_views.MainView.as_view()),
     path('demoitis/share/', demo_views.ShareView.as_view()),
-    path('demoitis/sharelink/', views.ItemsFeedView.as_view()),
+    path('demoitis/sharelink/', demo_views.ShareWebView.as_view()),
     path('demoitis/folder/', demo_views.FolderView.as_view()),
     path('demoitis/song/<song_id>/', demo_views.EditSongView.as_view()),
     path('demoitis/demo/<demo_id>/', demo_views.EditDemoView.as_view()),

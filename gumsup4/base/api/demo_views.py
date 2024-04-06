@@ -11,13 +11,14 @@ from gumsup4.base.api import demo_serializers as ds
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 import requests
 from django.db.models.expressions import Window
 from django.db.models.functions import RowNumber
 from django.db.models import F, Q, Max
 from urllib import parse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 
 def ParseFolders(folders):
 	for folder in folders:
@@ -191,6 +192,9 @@ class FolderView(APIView):
 		if folder.user == request.user:
 			folder.delete()
 			return Response(True)
+		elif DemoShare(folder=folder,shared_to_user=request.user).exists():
+			DemoShare(folder=folder,shared_to_user=request.user).first().delete()
+			return Response(True)
 		else:
 			return Response(False)
 
@@ -214,6 +218,16 @@ class ShareView(APIView):
 		if share.folder.user == request.user or share.shared_to_user == request.user:
 			share.delete()
 			return Response(True)
+
+class ShareWebView(TemplateView):
+
+	def get(self, request, *args, **kwargs):
+		folder = get_object_or_404(DemoFolder,key=request.GET.get("key"))
+		context = {
+			"folder": folder
+		}
+
+		return render(request, 'demoitis/share.html',context)
 
 
 @csrf_exempt

@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'main.css' %}" />
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" >
+        <title>DEMOITIS</title>
+    </head>
+
+    <body>
+        <main>
+            <div class="w3-container">
+              <h1>Welcome to demoitis</h1>
+              <p>Wow {{ folder.user.username }} has invited you to collaborate on {{ folder.name }}!</p>
+
+                <p>If you don't have the Demoitis app yet, you'll need to download it. Otherwise click the button at the top of the screen to accept this invitation in the app.</p>
+              </div>
+        </main>
+        <footer class="footer">
+            <br><br>
+        </footer>    
+
+    </body>
+
+</html>

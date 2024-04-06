@@ -566,16 +566,3 @@ class DemoShare(BaseModel):
 
     class Meta:
         ordering = ["-created"]
-
-
-class DemoShareKey(BaseModel):
-    folder = models.ForeignKey(
-        DemoFolder, on_delete=models.CASCADE,related_name="keys")
-    key = models.CharField(max_length=80,blank=True,default="")
-    can_edit = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.folder} key"
-
-    class Meta:
-        ordering = ["-created"]
