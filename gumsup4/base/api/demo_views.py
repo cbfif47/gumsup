@@ -227,7 +227,7 @@ def AppleSiteAssociationView(request):
 				             "components": [
 				               {
 				                  "/": "demoitis/sharelink",
-				                  '?': "key"
+				                  "?": { "key": * }
 				               }
 				             ]
 				           }
