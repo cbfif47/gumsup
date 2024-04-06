@@ -226,7 +226,8 @@ def AppleSiteAssociationView(request):
 				             "appIDs": [ "SN4RBG3Z5J.rexwithfriends.demoitis" ],
 				             "components": [
 				               {
-				                  "/": "demoitis/sharelink"
+				                  "/": "demoitis/sharelink",
+				                  '?': "key"
 				               }
 				             ]
 				           }
