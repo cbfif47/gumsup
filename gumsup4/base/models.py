@@ -242,12 +242,7 @@ class Item(BaseModel):
         ('READ','read'),
         ('EAT','eat'),
         ('LISTEN','listen'),
-        ('MISC','misc'),
-        ('BOOK','x'),
-        ('FOOD','x'),
-        ('LIFE','x'),
-        ('MOVIE','x'),
-        ('TV','x')
+        ('MISC','misc')
         ]
 
     STATUS_CHOICES = [

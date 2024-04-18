@@ -78,8 +78,11 @@ class FeedView(APIView):
 			serializer = sz.ItemSerializer(data=request.data)
 		serializer.initial_data["user"] = request.user.id
 		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+			i = serializer.save()
+			if "v2" in request.data:
+				return Response(sz.ItemFeedSerializer(i).data, status=status.HTTP_201_CREATED)
+			else:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, format=None):
@@ -211,8 +214,11 @@ class ItemView(APIView):
 		serializer.initial_data["user"] = request.user.id
 		serializer.initial_data["item"] = item_id
 		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+			c = serializer.save()
+			if "v2" in request.data:
+				return Response(sz.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
+			else:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, item_id, format=None):
