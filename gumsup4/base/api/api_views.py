@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers as sz
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest
+from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
@@ -148,10 +148,21 @@ class ActivityView(APIView):
 
 	def get(self, request, format=None):
 		max_last_date = request.GET.get("max_last_date","")
+		activity_base = Activity.objects.filter(
+			Q(user=request.user)
+			# nothing from blocked users
+			& ~Q(follow__user__blocks_received__user=request.user) & ~Q(item__user__blocks_received__user=request.user)
+			 & ~Q(item_like__user__blocks_received__user=request.user) & ~Q(comment__user__blocks_received__user=request.user)
+			  & ~Q(follow_request__user__blocks_received__user=request.user)
+			# nothing from users who blocked me
+			& ~Q(follow__user__blocks__blocked_user=request.user) & ~Q(item__user__blocks__blocked_user=request.user)
+			 & ~Q(item_like__user__blocks__blocked_user=request.user) & ~Q(comment__user__blocks__blocked_user=request.user)
+			  & ~Q(follow_request__user__blocks__blocked_user=request.user)
+			)
 		if max_last_date != "":
-			activities = Activity.objects.filter(user=request.user,created__lt=max_last_date)[:50]
+			activities = activity_base.filter(Q(created__lt=max_last_date))[:50]
 		else:
-			activities = Activity.objects.filter(user=request.user)[:50]
+			activities = activity_base[:50]
 		for activity in activities:
 			if activity.action == "follow":
 				activity.message = activity.follow.user.username + " followed you."
@@ -195,6 +206,9 @@ class ItemView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, item_id,format=None):
+		get_object_or_404(Item, id = item_id)
+		if request.user.is_blocked_or_blocking(item.user):
+			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		# get comments and likes detail
 		comments = Comment.objects.filter(item=item_id)
 		serializer = sz.CommentSerializer(comments,many=True,context={'user': request.user})
@@ -210,6 +224,8 @@ class ItemView(APIView):
 	def post(self, request, item_id,format=None):
 		# make a comment
 		item = get_object_or_404(Item, id = item_id)
+		if request.user.is_blocked_or_blocking(item.user):
+			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		serializer = sz.NewCommentSerializer(data=request.data)
 		serializer.initial_data["user"] = request.user.id
 		serializer.initial_data["item"] = item_id
@@ -242,6 +258,8 @@ class UserView(APIView):
 
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
+		if request.user.is_blocked_or_blocking(user):
+			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		serializer = sz.UserSerializer(user,many=False,context={'user': request.user})
 		return Response(serializer.data)
 
@@ -264,6 +282,8 @@ class UserItemsView(APIView):
 
 	def get(self, request,user_id,format=None):
 		user = get_object_or_404(User, id = user_id)
+		if request.user.is_blocked_or_blocking(user):
+			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		max_last_date = request.GET.get("max_last_date","")
 		item_type = request.GET.get("item_type","")
 		status = request.GET.get("status","0")
@@ -301,32 +321,34 @@ class SearchView(APIView):
 		mode = request.GET.get("mode",'')
 		query_object = request.GET.get("object",'')
 		if len(query) > 2:
+			base_items = Item.objects.filter(
+				(Q(user=request.user) #owned by user
+		                | Q(user__is_private=False) #public user
+		                | Q(user__followers__user=request.user) #following user
+		                )
+				& ~Q(user__blocks_received__user=request.user) #not someone ive blocked
+				& ~Q(user__blocks__blocked_user=request.user) #not someone who blocked me
+				)
 			if query_object == "item":
 				if mode == 'strict':
-					items = Item.objects.filter(Q(name=query) #strict match
-		                & (Q(user=request.user) #owned by user
-		                | Q(user__is_private=False) #public user
-		                | Q(user__followers__user=request.user)),).distinct() #or one we're following
+					items = base_items.filter(Q(name=query)).distinct() #strict match
 				elif mode == 'author':
-					items = Item.objects.filter(Q(author=query) #strict match
-						& (Q(user=request.user) #owned by user
-						| Q(user__is_private=False) #public user
-						| Q(user__followers__user=request.user)),).distinct() #or one we're following
+					items = base_items.filter(Q(author=query)).distinct() #strict match
 				else:
-					items = Item.objects.filter(
-		                (Q(name__icontains=query) #term matches
+					items = base_items.filter(
+		                Q(name__icontains=query) #term matches
 		                    | Q(author__icontains=query)
 		                    | Q(note__icontains=query)
-		                )
-		                & (Q(user=request.user) #owned by user
-		                | Q(user__is_private=False) #public user
-		                | Q(user__followers__user=request.user))).distinct() #or one we're following
+		                ).distinct() 
 				serializer = sz.ItemFeedSerializer(items,many=True,context={'user': request.user})
 			elif query_object == "user":
 				users = User.objects.filter((Q(username__icontains=query) 
 					| Q(bio__icontains=query)
 					| Q(email__icontains=query))
-					& Q(username__isnull=False))
+					& Q(username__isnull=False)
+					& ~Q(blocks_received__user=request.user)
+					& ~Q(blocks__blocked_user=request.user)
+					)
 				serializer = sz.LiteUserSerializer(users,many=True,context={'user': request.user})
 			else:
 				return HttpResponse("whoops")
@@ -344,8 +366,11 @@ class SearchSuggestionsView(APIView):
 		query = request.GET.get("q",'')
 		items = Item.objects.filter(Q(name__icontains=query)
 		                    | Q(author__icontains=query)).order_by("name").annotate(suggestion=F("name")).values("suggestion").distinct()
-		users = User.objects.filter(Q(username__icontains=query) | Q(bio__icontains=query)
-					| Q(email__icontains=query)).order_by("username").annotate(suggestion=F("username")).values("suggestion").distinct()
+		users = User.objects.filter((Q(username__icontains=query) | Q(bio__icontains=query)
+					| Q(email__icontains=query))
+					& ~Q(blocks_received__user=request.user)
+					& ~Q(blocks__blocked_user=request.user)
+		).order_by("username").annotate(suggestion=F("username")).values("suggestion").distinct()
 		combined = users.union(items)
 		suggestions = list((combined.values_list("suggestion",flat=True))[:5])
 		suggestions.insert(0,query)
@@ -394,6 +419,14 @@ class EditUserView(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.data)
 
+	def delete(self, request, **kwargs):
+		user = get_object_or_404(User, id = request.data["id"])
+
+		if user == request.user:
+			user.delete()
+			return Response(True, status=status.HTTP_201_DELETED)
+		return Response(False, status=status.HTTP_400_BAD_REQUEST)
+
 
 @csrf_exempt
 def AppleLogin(request):
@@ -435,6 +468,8 @@ class UserSocialsView(APIView):
 		social_type = request.GET.get("social_type","followers")
 		if user.is_private & request.user.is_following(user) == False: # i should just make this a permission class thing
 			Response(status=status.HTTP_400_BAD_REQUEST)
+		if request.user.is_blocked_or_blocking(user):
+			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		if social_type == "followers":
 			users = User.objects.filter(follows__following=user)
 		else:
@@ -476,3 +511,31 @@ class FollowRequestsView(APIView):
 			serializer = sz.FollowRequestSerializer(follow_request)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response("didnt work")
+
+class ObjectionView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, **kwargs):
+		users = User.objects.filter(blocks_received__user=request.user)	
+		serializer = sz.LiteUserSerializer(users,many=True)
+		return Response(serializer.data)
+
+	def post(self, request, **kwargs):
+		if request.data["object_type"] == "item":
+			item = get_object_or_404(Item, id = request.data["id"])
+			if item.user == request.user:
+				return Response(False, status=status.HTTP_400_BAD_REQUEST)
+			flag = Flag.objects.create(user=request.user,item=item)
+		elif request.data["object_type"] == "comment":
+			comment = get_object_or_404(Comment, id = request.data["id"])
+			if comment.user == request.user:
+				return Response(False, status=status.HTTP_400_BAD_REQUEST)
+			flag = Flag.objects.create(user=request.user,comment=comment)
+		elif request.data["object_type"] == "user":
+			user = get_object_or_404(User, id = request.data["id"])
+			if user == request.user:
+				return Response(False, status=status.HTTP_400_BAD_REQUEST)
+			block = Block.objects.create(user=request.user,blocked_user=user)
+		return Response(True, status=status.HTTP_201_CREATED)
+	

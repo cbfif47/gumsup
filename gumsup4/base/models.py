@@ -75,21 +75,29 @@ class User(BaseModel, AbstractUser):
 
     def item_feed(self):
         feed = Item.objects.filter(
-            (Q(user__followers__user=self) & ~Q(hide_from_feed=True))
+            (Q(user__followers__user=self) & ~Q(hide_from_feed=True) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self))
             | Q(user=self)
             ).distinct().order_by("-last_date")
         return feed
+
+    def is_blocked_or_blocking(self,other_user):
+        blocking = Block.objects.filter(user=self,blocked_user=other_user).exists()
+        blocked = Block.objects.filter(user=other_user,blocked_user=self).exists()
+        if blocked or blocking:
+            return True
+        else:
+            return False
 
     def viewable_items(self,other_user):
         if self == other_user:
             feed = Item.objects.filter(user=self).order_by("-last_date")
         elif self.is_private:
             feed = Item.objects.filter(
-            Q(user=self) & ~Q(hide_from_feed=True) & Q(user__followers__user=other_user)
+            Q(user=self) & ~Q(hide_from_feed=True) & Q(user__followers__user=other_user) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self)
             ).distinct().order_by("-last_date")
         else:
             feed = Item.objects.filter(
-            Q(user=self) & ~Q(hide_from_feed=True)
+            Q(user=self) & ~Q(hide_from_feed=True) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self)
             ).distinct().order_by("-last_date")
         return feed
 
@@ -133,15 +141,21 @@ class User(BaseModel, AbstractUser):
                                             on u.id = bf.following_id -- to get count of followers
                                         LEFT JOIN f
                                             on f.following_id = bf.user_id -- followed by someone im following
+                                        LEFT JOIN base_block bb 
+                                            on bb.user_id = %s and bb.blocked_user_id = u.id
+                                        LEFT JOIN base_block bbr 
+                                            on bbr.user_id = u.id and bbr.blocked_user_id = %s
                                         WHERE u.id not in (SELECT following_id from f) -- not following now
                                         and u.id <> %s -- not me
                                         and u.username is not null
+                                        and bb.user_id is null -- not someone i blocked
+                                        and bbr.user_id is null -- not someone who blocked me
                                         GROUP by u.id, u.username, u.bio
                                         ORDER BY count(f.following_id) DESC -- people my follows follow
                                                ,count(bf.user_id) DESC -- popular people
                                                , u.created DESC -- new people
                                         LIMIT 20
-                                        """,[self.id,self.id,self.id])
+                                        """,[self.id,self.id,self.id,self.id,self.id])
 
         return user_list
 
@@ -453,6 +467,39 @@ class AppleSSO(BaseModel):
 
     def __str__(self):
         return f"{self.email}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class Flag(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="flags")
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE,related_name="flags",null=True,blank=True,default=None)
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="flags")
+    is_addressed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} objected to content"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class Block(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="blocks")
+    blocked_user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="blocks_received")
+
+    def __str__(self):
+        return f"{self.user} blocked {self.blocked_user}"
 
     class Meta:
         """Metadata."""

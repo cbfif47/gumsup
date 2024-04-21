@@ -72,3 +72,11 @@ class DemoCommentAdmin(admin.ModelAdmin):
 @admin.register(models.DemoShare)
 class DemoShareAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.Flag)
+class FlagAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.Block)
+class BlockAdmin(admin.ModelAdmin):
+    """Admin for posts."""
