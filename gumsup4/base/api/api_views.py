@@ -206,7 +206,7 @@ class ItemView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, item_id,format=None):
-		get_object_or_404(Item, id = item_id)
+		item = get_object_or_404(Item, id = item_id)
 		if request.user.is_blocked_or_blocking(item.user):
 			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		# get comments and likes detail
