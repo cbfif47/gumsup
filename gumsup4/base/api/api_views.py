@@ -539,3 +539,13 @@ class ObjectionView(APIView):
 			block = Block.objects.create(user=request.user,blocked_user=user)
 		return Response(True, status=status.HTTP_201_CREATED)
 	
+
+class UsernameCheckView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request,format=None):
+		username = request.GET.get("username","")
+		available = not User.objects.filter(username=username).exclude(id=request.user.id).exists()
+		return Response(available)
