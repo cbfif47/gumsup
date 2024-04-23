@@ -413,7 +413,7 @@ class EditUserView(APIView):
 		user = get_object_or_404(User, id = request.data["id"])
 
 		if user == request.user:
-			serializer = sz.UserSerializer(user,data=request.data,context={'user': request.user})
+			serializer = sz.MeSerializer(user,data=request.data,context={'user': request.user})
 			if serializer.is_valid():
 				serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
