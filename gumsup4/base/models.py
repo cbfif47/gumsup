@@ -45,6 +45,7 @@ class User(BaseModel, AbstractUser):
             'unique': ("username taken :("),
         },
     )
+    hide_objectionable_content = models.BooleanField(default=False)
 
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):

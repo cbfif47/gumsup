@@ -54,7 +54,7 @@ class FeedView(APIView):
 		
 		my_tags = ItemTag.objects.filter(item__user=request.user).order_by().values('tag').distinct()
 		feed = sz.ItemFeedSerializer(items,many=True,context={'user': request.user})
-		user = sz.UserSerializer(request.user,context={'user': request.user})
+		user = sz.MeSerializer(request.user)
 		tags = sz.TagSerializer(my_tags,many=True)
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
 		friends = User.objects.filter(followers__user=request.user).values_list('username',flat=True)

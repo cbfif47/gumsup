@@ -30,6 +30,14 @@ class LiteUserSerializer(ModelSerializer):
         fields = ["username", "is_private","id","bio"]
 
 
+class MeSerializer(ModelSerializer):
+    """Serializer for custom users."""
+
+    class Meta:
+        model = User
+        fields = ["username", "is_private","id","bio","hide_objectionable_content"]
+
+
 class ItemFeedSerializer(ModelSerializer):
     user = LiteUserSerializer()
     saved_from = SerializerMethodField()
