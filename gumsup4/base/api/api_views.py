@@ -210,7 +210,10 @@ class ItemView(APIView):
 		if request.user.is_blocked_or_blocking(item.user):
 			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		# get comments and likes detail
-		comments = Comment.objects.filter(item=item_id)
+		if request.user.hide_objectionable_content:
+			comments = Comment.objects.filter(item=item_id,flags__isnull=True)
+		else:
+			comments = Comment.objects.filter(item=item_id)
 		serializer = sz.CommentSerializer(comments,many=True,context={'user': request.user})
 		likes = ItemLike.objects.filter(item=item_id)
 		likes_serializer = sz.ItemLikeSerializer(likes,many=True,context={'user': request.user})
@@ -329,6 +332,8 @@ class SearchView(APIView):
 				& ~Q(user__blocks_received__user=request.user) #not someone ive blocked
 				& ~Q(user__blocks__blocked_user=request.user) #not someone who blocked me
 				)
+			if request.user.hide_objectionable_content:
+				base_items = base_items.filter(Q(flags__isnull=True))
 			if query_object == "item":
 				if mode == 'strict':
 					items = base_items.filter(Q(name=query)).distinct() #strict match

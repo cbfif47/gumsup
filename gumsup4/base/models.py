@@ -75,10 +75,13 @@ class User(BaseModel, AbstractUser):
         return FollowRequest.objects.filter(user=self,following=following,is_approved=False).exists()
 
     def item_feed(self):
-        feed = Item.objects.filter(
+        base_feed = Item.objects.filter(
             (Q(user__followers__user=self) & ~Q(hide_from_feed=True) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self))
             | Q(user=self)
-            ).distinct().order_by("-last_date")
+            )
+        if self.hide_objectionable_content:
+            base_feed = base_feed.filter(Q(flags__isnull=True))
+        feed = base_feed.distinct().order_by("-last_date")
         return feed
 
     def is_blocked_or_blocking(self,other_user):
@@ -90,16 +93,17 @@ class User(BaseModel, AbstractUser):
             return False
 
     def viewable_items(self,other_user):
+        base_feed = Item.objects.filter(~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self)
+            & Q(user=self) & Q(hide_from_feed=False)
+            )
+        if other_user.hide_objectionable_content:
+            base_feed = base_feed.filter(Q(flags__isnull=True))
         if self == other_user:
             feed = Item.objects.filter(user=self).order_by("-last_date")
         elif self.is_private:
-            feed = Item.objects.filter(
-            Q(user=self) & ~Q(hide_from_feed=True) & Q(user__followers__user=other_user) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self)
-            ).distinct().order_by("-last_date")
+            feed = base_feed.filter(Q(user__followers__user=other_user)).distinct().order_by("-last_date")
         else:
-            feed = Item.objects.filter(
-            Q(user=self) & ~Q(hide_from_feed=True) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self)
-            ).distinct().order_by("-last_date")
+            feed = base_feed.distinct().order_by("-last_date")
         return feed
 
     def follower_list(self):
