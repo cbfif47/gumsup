@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO, FollowRequest
 from gumsup4.base.utilities import get_button_text, cbtimesince
+from django.db.models import Q
 
 
 class UserSerializer(ModelSerializer):
@@ -52,7 +53,7 @@ class ItemFeedSerializer(ModelSerializer):
         ret['timesince'] = cbtimesince(instance.last_date)
         ret['tags'] = ItemTag.objects.filter(item=instance).values('tag')
         mentioned_user_list = Activity.objects.filter(item=instance,action='item_mention').values_list('user')
-        mentioned_users = User.objects.filter(id__in=mentioned_user_list)
+        mentioned_users = User.objects.filter(Q(id__in=mentioned_user_list) & ~Q(blocks_received__user=self.context.get("user")))
         ret['mentions'] = LiteUserSerializer(mentioned_users,many=True).data
         return ret
 
@@ -113,7 +114,7 @@ class CommentSerializer(ModelSerializer):
         ret = super().to_representation(instance)
         ret['timesince'] = cbtimesince(instance.created)
         mentioned_user_list = Activity.objects.filter(item=instance.item,action='item_comment_mention').values_list('user')
-        mentioned_users = User.objects.filter(id__in=mentioned_user_list)
+        mentioned_users = User.objects.filter(Q(id__in=mentioned_user_list) & ~Q(blocks_received__user=self.context.get("user")))
         ret['mentions'] = LiteUserSerializer(mentioned_users,many=True).data
         return(ret)
 

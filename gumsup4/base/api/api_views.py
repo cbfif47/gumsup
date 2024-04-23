@@ -210,12 +210,11 @@ class ItemView(APIView):
 		if request.user.is_blocked_or_blocking(item.user):
 			return Response(False, status=status.HTTP_400_BAD_REQUEST)
 		# get comments and likes detail
+		comments = Comment.objects.filter(Q(item=item_id) & ~Q(user__blocks_received__user=request.user))
 		if request.user.hide_objectionable_content:
-			comments = Comment.objects.filter(item=item_id,flags__isnull=True)
-		else:
-			comments = Comment.objects.filter(item=item_id)
+			comments = comments.filter(Q(flags__isnull=True))
 		serializer = sz.CommentSerializer(comments,many=True,context={'user': request.user})
-		likes = ItemLike.objects.filter(item=item_id)
+		likes = ItemLike.objects.filter(Q(item=item_id) & ~Q(user__blocks_received__user=request.user))
 		likes_serializer = sz.ItemLikeSerializer(likes,many=True,context={'user': request.user})
 
 		content = {
@@ -235,7 +234,7 @@ class ItemView(APIView):
 		if serializer.is_valid():
 			c = serializer.save()
 			if "v2" in request.data:
-				return Response(sz.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
+				return Response(sz.CommentSerializer(c,context={'user': request.user}).data, status=status.HTTP_201_CREATED)
 			else:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
