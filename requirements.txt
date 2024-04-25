@@ -11,3 +11,5 @@ gunicorn
 base
 axios
 google-auth
+PyJWT
+cryptography
