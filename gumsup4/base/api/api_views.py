@@ -450,7 +450,7 @@ def AppleLogin(request):
 			apple_sso, created = AppleSSO.objects.get_or_create(email=email,apple_id=apple_id)
 		else:
 			# apple only gives the email the first time, so if we dont get it in the request, find the record
-			apple_sso = get_object_or_404(AppleSSO,apple_id=apple_id)
+			apple_sso = AppleSSO.objects.filter(apple_id=apple_id).first() #if they switch things around, there could be two. get the latest
 			email = apple_sso.email
 
 		user, created = User.objects.get_or_create(email=email)
