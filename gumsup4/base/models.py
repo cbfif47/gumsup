@@ -351,13 +351,13 @@ class Item(BaseModel):
                         Activity.objects.create(user=user,item=self,action='item_mention')
 
         # now do tags
+        #first delete existing. otherwise deleted ones stick around
+        ItemTag.objects.filter(item=self).delete()
         tags = re.findall("#[-\w]*",self.note)
         if tags:
             for tag in tags:
                 text = tag.replace("#","")
-                existing_tag = ItemTag.objects.filter(item=self,tag=text)
-                if not existing_tag:
-                    ItemTag.objects.create(item=self,tag=text)
+                ItemTag.objects.create(item=self,tag=text)
 
         # now saves
         if self.original_item:
