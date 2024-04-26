@@ -15,8 +15,6 @@ class UserSerializer(ModelSerializer):
     def to_representation(self,instance):
         ret = super().to_representation(instance)
         ret['follow_button_text'] = get_button_text(self.context.get("user"),instance)
-        ret['follower_count'] = instance.follower_count()
-        ret['following_count'] = instance.following_count()
         return ret
 
     class Meta:
@@ -60,7 +58,7 @@ class ItemFeedSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ["id","name","author","note","item_type","rating"
-        ,"status","started_date","ended_date","last_date","hide_from_feed"
+        ,"status","last_date","hide_from_feed"
         ,"user","saved_from"]
 
     id = serializers.CharField(read_only=True)
@@ -70,8 +68,6 @@ class ItemFeedSerializer(ModelSerializer):
     item_type = serializers.ChoiceField(choices=Item.TYPE_CHOICES,allow_blank=True)
     rating = serializers.ChoiceField(choices=Item.RATING_CHOICES,allow_blank=True)
     status = serializers.ChoiceField(choices=Item.STATUS_CHOICES,default=1)
-    started_date = serializers.DateField(required=False)
-    ended_date = serializers.DateField(required=False)
     last_date = serializers.DateTimeField(read_only=True)
     hide_from_feed = serializers.BooleanField(default=False)
 
@@ -87,7 +83,7 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ["id","name","author","note","item_type","rating"
-        ,"status","started_date","ended_date","last_date","hide_from_feed"
+        ,"status","last_date","hide_from_feed"
         ,"original_item",
         "user"]
 

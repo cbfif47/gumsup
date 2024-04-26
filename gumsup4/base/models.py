@@ -284,8 +284,6 @@ class Item(BaseModel):
     rating = models.IntegerField(choices=RATING_CHOICES,blank=True,null=True)
     original_item = models.ForeignKey(
         'Item', on_delete=models.SET_DEFAULT,blank=True,null=True,default='')
-    started_date = models.DateField(blank=True,null=True)
-    ended_date = models.DateField(blank=True,null=True)
     status = models.IntegerField(choices=STATUS_CHOICES,default=1)
     last_status = models.IntegerField(choices=STATUS_CHOICES,default=1)
     last_date = models.DateTimeField(default=timezone.now)
@@ -316,17 +314,8 @@ class Item(BaseModel):
             self.note = self.note.lower()
         if self.author:
             self.author = self.author.lower()
-        if self.status == 1:
-            self.started_date = None
-        if self.status == 2:
-            self.ended_date = None
+        if self.status < 3:
             self.rating = None
-        if self.status == 2 and self.started_date == None:
-            self.started_date = datetime.now()
-        if (self.status == 4 or self.status == 3) and self.ended_date is None:
-            self.ended_date = datetime.now()
-        if self.ended_date is not None and self.started_date is None:
-            self.started_date = self.ended_date
         if self.item_type == "MOVIE":
             self.item_type = "WATCH"
         elif self.item_type == "TV":

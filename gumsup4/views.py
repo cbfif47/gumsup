@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView, UpdateView
 from django.views import View
-from django.db.models import Count, Avg, Max
+from django.db.models import Count, Avg, Max, DateField
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
@@ -565,9 +565,6 @@ class FinishItemView(UserCheckMixin,TemplateView):
     def get(self, request, item_id, **kwargs):
         item = get_object_or_404(Item, id = item_id)
         if item.user == request.user:
-            if item.started_date is None:
-                item.started_date = timezone.localdate()
-            item.ended_date = timezone.localdate()
             form = ItemFormFinished(instance=item)
             context= {
                 'form': form
@@ -621,13 +618,8 @@ class ItemEditView(UserCheckMixin,TemplateView):
 
         if f.is_valid():                
             new_item = f.save(commit=False)
-            if (item.status == 4 or item.status == 3) and item.ended_date is None:
-                item.ended_date = datetime.now()
             if (item.status == 1 or item.status == 2):
-                item.ended_date = None
                 item.rating = None
-            if item.ended_date is not None and item.started_date is None:
-                item.started_date = item.ended_date
             new_item.save()
             return redirect(to='home')
         else:
@@ -775,7 +767,6 @@ def StartItem(request,item_id):
         item = get_object_or_404(Item, id = item_id)
         if item.user == request.user:
             item.status = 2
-            item.started_date = datetime.now()
             item.save()
             return HttpResponse("disabled") # Sending an success response
         else:
@@ -819,18 +810,18 @@ class StatsView(UserCheckMixin,TemplateView):
         else:
             year_end = year + '-12-31'
         base_items = Item.objects.filter(user=request.user
-            ,ended_date__gte=year + '-01-01'
-            ,ended_date__lte=year_end
+            ,last_date__gte=year + '-01-01'
+            ,last_date__lte=year_end
             ,status=3)
 
         item_types_count = base_items.values("item_type").annotate(count=Count("id"),rating=Avg("rating")).order_by('-count')
         item_types_rating = base_items.values("item_type").exclude(rating__isnull=True).annotate(rating=Avg("rating")).order_by('-rating')
-        items = base_items.annotate(month=Trunc("ended_date","month")).order_by("-ended_date")
-        months = base_items.dates("ended_date", "month","DESC")
-        years = base_items.dates("ended_date", "year","DESC")
-        item_type_months = base_items.annotate(month=Trunc("ended_date","month"),year=Trunc("ended_date","year")
+        items = base_items.annotate(month=Trunc("last_date","month", output_field=DateField())).order_by("-last_date")
+        months = base_items.dates("last_date", "month","DESC")
+        years = base_items.dates("last_date", "year","DESC")
+        item_type_months = base_items.annotate(month=Trunc("last_date","month", output_field=DateField()),year=Trunc("last_date","year")
             ).values("item_type","month").annotate(count=Count("id")).order_by("-count")
-        year_options = Item.objects.filter(user=request.user,status=3).dates("ended_date", "year","DESC")
+        year_options = Item.objects.filter(user=request.user,status=3).dates("last_date", "year","DESC")
         #starts = Item.objects.filter(user=request.user,started_date__gte="2024-01-01").annotate(month=Trunc("started_date","month")
         #    ,end_month=Trunc("ended_date","month")).filter(
         #        Q(ended_date__isnull=True)

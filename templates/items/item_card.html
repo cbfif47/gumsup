@@ -74,7 +74,7 @@
                   {% elif item.status == 2 %}
                     <button type="disabled" class="tertiary-button disabled" />start</button>
                   {% endif %}
-                  {% if item.ended_date is None %}
+                  {% if item.status < 3 %}
                       <form method="GET" action="{% url 'finish-item' item.id %}?from={{ from }}" style="display:inline;">
                         <button type="submit" class="tertiary-button"/>stop</button>
                       </form>

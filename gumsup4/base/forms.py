@@ -71,15 +71,13 @@ class ItemFormMain(forms.ModelForm):
 class ItemFormFinished(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','note','rating','ended_date', 'started_date','hide_from_feed','author','item_type'}
+     fields = {'name','note','rating', 'hide_from_feed','author','item_type'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
               }),
           "author": forms.TextInput(attrs={'placeholder': 'who wrote it','class': 'ui-autocomplete-input'}),
             "note": forms.Textarea(attrs={'placeholder': 'what did you think?'
               ,"rows": 5}),
-            "ended_date": forms.TextInput(),
-            "started_date": forms.TextInput(),
             "rating": forms.RadioSelect(attrs={"class":"tab-input"})
       }
 
@@ -87,15 +85,13 @@ class ItemFormFinished(forms.ModelForm):
 class ItemEditForm(forms.ModelForm):
    class Meta:
      model = Item
-     fields = {'name','rating','ended_date', 'started_date','item_type','note','status','hide_from_feed','author'}
+     fields = {'name','rating','item_type','note','status','hide_from_feed','author'}
      widgets = {
             "name": forms.TextInput(attrs={'placeholder': 'what is it','class': 'ui-autocomplete-input', 'id':"id_name_item"
               }),
           "author": forms.TextInput(attrs={'placeholder': 'optional secondary info','class': 'ui-autocomplete-input'}),
             "note": forms.Textarea(attrs={'placeholder': 'note/review'
               ,"rows": 5}),
-            "ended_date": forms.TextInput(),
-            "started_date": forms.TextInput(),
             "item_type": forms.RadioSelect(attrs={"class":"tab-input"}),
             "status": forms.RadioSelect(attrs={"class":"tab-input"}),
             "rating": forms.RadioSelect(attrs={"class":"tab-input"})
