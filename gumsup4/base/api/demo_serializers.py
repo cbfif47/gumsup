@@ -31,6 +31,12 @@ class DemoCommentSerializer(ModelSerializer):
 class DemoSerializer(ModelSerializer):
     comments = DemoCommentSerializer(many=True)
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['song_id'] = instance.song.id
+        ret['folder_id'] = instance.song.folder.id
+        return ret
+
     class Meta:
         model = DemoDemo
         fields = ["id","version", "is_primary","url","source_created","file_extension","comments"]
@@ -39,6 +45,11 @@ class DemoSerializer(ModelSerializer):
 class SongSerializer(ModelSerializer):
     """Serializer for custom users."""
     demos = DemoSerializer(many=True)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['folder_id'] = instance.folder.id
+        return ret
 
     class Meta:
         model = DemoSong
