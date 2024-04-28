@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import LiteUserSerializer
+from .serializers import LiteUserSerializer, MeSerializer
 from gumsup4.base.api import demo_serializers as ds
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from ..models import User, DemoFolder, DemoSong, DemoDemo, DemoComment, DemoShare
@@ -103,7 +103,12 @@ class MainView(APIView):
 		full_refresh = request.GET.get("full_refresh","")
 
 		fs = get_feed(request,full_refresh)
-		return Response(fs.data)
+		user = MeSerializer(request.user)
+		content = {
+			'user': user.data,
+            'folders': fs.data
+        }
+		return Response(content)
 
 
 class EditSongView(APIView):
