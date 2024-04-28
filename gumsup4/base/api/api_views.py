@@ -368,6 +368,7 @@ class SearchSuggestionsView(APIView):
 
 	def get(self, request, **kwargs):
 		query = request.GET.get("q",'')
+		version = request.GET.get("version",'')
 		items = Item.objects.filter(Q(name__icontains=query)
 		                    | Q(author__icontains=query)).order_by("name").annotate(suggestion=F("name")).values("suggestion").distinct()
 		#users = User.objects.filter((Q(username__icontains=query) | Q(bio__icontains=query)
@@ -418,7 +419,7 @@ class EditUserView(APIView):
 		user = get_object_or_404(User, id = request.data["id"])
 
 		if user == request.user:
-			serializer = sz.MeSerializer(user,data=request.data,context={'user': request.user})
+			serializer = sz.MeSerializer(user,data=request.data)
 			if serializer.is_valid():
 				serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
