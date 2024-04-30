@@ -368,18 +368,19 @@ class SearchSuggestionsView(APIView):
 
 	def get(self, request, **kwargs):
 		query = request.GET.get("q",'')
-		version = request.GET.get("version",'')
-		items = Item.objects.filter(Q(name__icontains=query)
-		                    | Q(author__icontains=query)).order_by("name").annotate(suggestion=F("name")).values("suggestion").distinct()
-		#users = User.objects.filter((Q(username__icontains=query) | Q(bio__icontains=query)
-		#			| Q(email__icontains=query))
-		#			& ~Q(blocks_received__user=request.user)
-		#			& ~Q(blocks__blocked_user=request.user)
-		#).order_by("username").annotate(suggestion=F("username")).values("suggestion").distinct()
-		#combined = users.union(items)
-		#suggestions = list((combined.values_list("suggestion",flat=True))[:5])
-		suggestions = list((items.values_list("suggestion",flat=True))[:5])
-		suggestions.insert(0,query)
+		query_object = request.GET.get("object",'item')
+		if query_object == 'item':
+			suggestions = Item.objects.filter(Q(name__icontains=query)
+		                    | Q(author__icontains=query)).order_by("name").distinct().values_list("name",flat=True)[:5]
+		elif query_object == 'user':
+			suggestions = User.objects.filter((Q(username__icontains=query) | Q(bio__icontains=query)
+					| Q(email__icontains=query))
+					& ~Q(blocks_received__user=request.user)
+					& ~Q(blocks__blocked_user=request.user)
+			).order_by("username").distinct().values_list("username",flat=True)[:5]
+		suggestions = list(suggestions)
+		if query not in suggestions:
+			suggestions.insert(0,query)
 		return Response(suggestions)
 
 
