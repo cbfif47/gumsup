@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers as sz
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block
+from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block, UserMessage
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
@@ -58,12 +58,19 @@ class FeedView(APIView):
 		tags = sz.TagSerializer(my_tags,many=True)
 		activity_count = Activity.objects.filter(user=request.user,seen=False).count()
 		friends = User.objects.filter(followers__user=request.user).values_list('username',flat=True)
+		user_message = UserMessage.objects.filter(user=request.user).first()
+		if user_message:
+			message = user_message.message.message
+			user_message.delete()
+		else:
+			message = ""
 		content = {
             'activity_count': activity_count,
             'user': user.data,
             'feed': feed.data,  # None
             'tags': tags.data,
-            'friends': friends
+            'friends': friends,
+            'message': message
         }
 		return Response(content)
 

@@ -80,3 +80,11 @@ class FlagAdmin(admin.ModelAdmin):
 @admin.register(models.Block)
 class BlockAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.AdminMessage)
+class AdminMessageAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.UserMessage)
+class UserMessageAdmin(admin.ModelAdmin):
+    """Admin for posts."""

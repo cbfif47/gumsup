@@ -501,6 +501,42 @@ class Block(BaseModel):
         ordering = ["-created"]
 
 
+class AdminMessage(BaseModel):
+    message = models.CharField(max_length=250,blank=False)
+
+    def __str__(self):
+        return f"{self.message}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        UserMessage.objects.all().delete()
+        for user in User.objects.all():
+            UserMessage.objects.create(user=user,message=self)
+
+    def __str__(self):
+        return f"{self.message}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
+class UserMessage(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,related_name="messages")
+    message = models.ForeignKey(
+        AdminMessage, on_delete=models.CASCADE,related_name="user_messages")
+
+    def __str__(self):
+        return f"Message {self.message.id} for {self.user}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
 
 ####################### START DEMOER MODELS ###########################
 import random
