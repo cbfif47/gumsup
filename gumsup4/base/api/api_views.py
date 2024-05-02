@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
 from django.db.models import Q, F, Count, Avg, Max, Value
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 
 @csrf_exempt
@@ -51,6 +52,8 @@ class FeedView(APIView):
 			items = request.user.item_feed().filter(last_date__lt=max_last_date)[:30]
 		else:
 			items = request.user.item_feed()[:30]
+			request.user.last_feed_call = timezone.now()
+			request.user.save()
 		
 		my_tags = ItemTag.objects.filter(item__user=request.user).order_by().values('tag').distinct()
 		feed = sz.ItemFeedSerializer(items,many=True,context={'user': request.user})
@@ -407,6 +410,7 @@ class ExploreView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, **kwargs):
+		version = request.GET.get("v",'')
 		popular = Item.objects.all().values('name').annotate(total=Count('name')
 			,avg_rating=Avg('rating')
             ,max_date=Max('last_date'),segment=Value("popular")).order_by('-total','-max_date').exclude(total=1)[:3]
@@ -415,7 +419,10 @@ class ExploreView(APIView):
 		highest_rated = Item.objects.filter(rating__gte=1).values('name').annotate(total=Count('rating')
 			,avg_rating=Avg('rating')
             ,max_date=Max('last_date'),segment=Value("highest_rated")).filter(total__gte=2).order_by('-avg_rating','-max_date','-total')[:3]
-		serializer = sz.ExploreSerializer(popular.union(highest_rated),many=True)
+		if version == 'v2':
+			serializer = sz.ExploreSerializerV2(popular.union(highest_rated),many=True)
+		else:
+			serializer = sz.ExploreSerializer(popular.union(highest_rated),many=True)
 		return Response(serializer.data)
 
 

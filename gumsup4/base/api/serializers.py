@@ -152,6 +152,13 @@ class ExploreSerializer(serializers.Serializer):
     segment = serializers.CharField()
 
 
+class ExploreSerializerV2(serializers.Serializer):
+    name = serializers.CharField()
+    total = serializers.IntegerField()
+    avg_rating = serializers.DecimalField(decimal_places=1,max_digits=2)
+    segment = serializers.CharField()
+
+
 class AppleSSOSerializer(ModelSerializer):
 
     class Meta:

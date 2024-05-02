@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
             'More info', # you can also use None 
             {
                 'fields': (
-                    'bio','is_private',"hide_objectionable_content"
+                    'bio','is_private',"hide_objectionable_content",'last_feed_call'
                 ),
             },
         ),

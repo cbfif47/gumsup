@@ -46,6 +46,7 @@ class User(BaseModel, AbstractUser):
         },
     )
     hide_objectionable_content = models.BooleanField(default=False)
+    last_feed_call = models.DateTimeField(null=True,blank=True,default=None)
 
     # every new user follows gummy and self by default
     def save(self, *args, **kwargs):
