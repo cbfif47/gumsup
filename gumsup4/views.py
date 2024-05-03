@@ -854,3 +854,18 @@ class CommentDeleteView(UserCheckMixin,TemplateView):
             comment.delete()
 
         return redirect(to='view-item',item_id=item.id)
+
+
+class AdminReportView(UserCheckMixin,TemplateView):
+
+    def get(self, request, **kwargs):
+        if request.user.is_superuser == False:
+            return redirect(to='home')
+        else:    
+            calls = User.objects.filter(last_feed_call__isnull=False).order_by('-last_feed_call')[:50]
+            users = User.objects.all().order_by('-created')[:50]
+            context = {
+                "calls": calls,
+                "users": users
+            }
+            return render(request, 'users/admin-report.html', context)

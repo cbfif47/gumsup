@@ -44,6 +44,7 @@ urlpatterns = [
     path("items/<item_id>/finish", views.FinishItemView.as_view(), name="finish-item"),
     path("items/<item_id>/save", views.SaveItemView.as_view(), name="save-item"),
     path("items/<item_id>/like", views.LikeItem, name='like-item'),
+    path("admin-report/", views.AdminReportView.as_view(), name="admin-report"),
     path("login/", views.LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
     path("admin/", admin.site.urls),
