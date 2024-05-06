@@ -862,8 +862,8 @@ class AdminReportView(UserCheckMixin,TemplateView):
         if request.user.is_superuser == False:
             return redirect(to='home')
         else:    
-            calls = User.objects.filter(last_feed_call__isnull=False).order_by('-last_feed_call')[:50]
-            users = User.objects.all().order_by('-created')[:50]
+            calls = User.objects.filter(last_feed_call__isnull=False).order_by('-last_feed_call')[:20]
+            users = User.objects.all().order_by('-created')[:20]
             context = {
                 "calls": calls,
                 "users": users
