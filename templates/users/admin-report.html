@@ -11,6 +11,15 @@
     </head>
 
     <body>
+        <h2>New Feed Calls</h2>
+    <table>
+    {% for call in calls %}
+      <tr>
+        <td>{{ call.username }}</td>
+        <td>{{ call.last_feed_call }}</td>
+      </tr>
+      {% endfor %}
+    </table>
         <h2>New Users</h2>
     <table>
     {% for user in users %}
@@ -22,15 +31,7 @@
       </tr>
       {% endfor %}
     </table>
-        <h2>New Feed Calls</h2>
-    <table>
-    {% for call in calls %}
-      <tr>
-        <td>{{ call.username }}</td>
-        <td>{{ call.last_feed_call }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+        
             
 
     </body>
