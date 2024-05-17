@@ -579,8 +579,8 @@ class StatsView(APIView):
 
 	def get(self, request,format=None):
 
-		stats_by_year = Item.objects.filter(user=request.user,status=3).annotate(year=Extract("last_date","year")).values("year","item_type").annotate(count=Count("id"),avg_rating=Avg("rating")).order_by('item_type')
-		stats_overall = Item.objects.filter(user=request.user,status=3).annotate(year=Value(1900)).values("year","item_type").annotate(count=Count("id"),avg_rating=Avg("rating")).order_by('item_type')
+		stats_by_year = Item.objects.filter(user=request.user,status=3).annotate(year=Extract("last_date","year")).values("year","item_type").annotate(item_count=Count("id"),avg_rating=Avg("rating")).order_by('item_type')
+		stats_overall = Item.objects.filter(user=request.user,status=3).annotate(year=Value(1900)).values("year","item_type").annotate(item_count=Count("id"),avg_rating=Avg("rating")).order_by('item_type')
 		stats = stats_by_year.union(stats_overall)
 		serializer = sz.StatSerializer(stats,many=True)
 		return Response(serializer.data)
