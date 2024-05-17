@@ -194,3 +194,4 @@ class StatSerializer(serializers.Serializer):
     year = serializers.IntegerField()
     avg_rating = serializers.DecimalField(decimal_places=1,max_digits=2)
     item_count = serializers.IntegerField()
+    assessment = serializers.CharField()
