@@ -185,3 +185,12 @@ class FollowRequestSerializer(ModelSerializer):
         model = FollowRequest
         fields = ["id","user","is_approved"]
         read_only_fields = ['user']
+
+
+
+
+class StatSerializer(serializers.Serializer):
+    item_type = serializers.CharField()
+    year = serializers.IntegerField()
+    avg_rating = serializers.DecimalField(decimal_places=1,max_digits=2)
+    count = serializers.IntegerField()
