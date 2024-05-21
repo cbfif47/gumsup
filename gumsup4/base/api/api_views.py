@@ -596,3 +596,22 @@ class StatsView(APIView):
 			stat["assessment"] = ass
 		serializer = sz.StatSerializer(stats,many=True)
 		return Response(serializer.data)
+
+
+class OtherItemsView(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, format=None):
+		max_last_date = request.GET.get("max_last_date","")
+		item_type = request.GET.get("item_type","")
+		if max_last_date != "":
+			items = request.user.item_non_feed().filter(last_date__lt=max_last_date)
+		else:
+			items = request.user.item_non_feed() 
+		if item_type != "":
+			items = items.filter(item_type=item_type)
+
+		feed = sz.ItemFeedSerializer(items[:30],many=True,context={'user': request.user})
+
+		return Response(feed.data)

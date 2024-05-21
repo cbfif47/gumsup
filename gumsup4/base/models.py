@@ -77,8 +77,19 @@ class User(BaseModel, AbstractUser):
 
     def item_feed(self):
         base_feed = Item.objects.filter(
-            (Q(user__followers__user=self) & ~Q(hide_from_feed=True) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self))
+            (Q(user__followers__user=self) & Q(hide_from_feed=False) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self))
             | Q(user=self)
+            )
+        if self.hide_objectionable_content:
+            base_feed = base_feed.filter(Q(flags__isnull=True))
+        feed = base_feed.distinct().order_by("-last_date")
+        return feed
+
+    def item_non_feed(self):
+        # this is stuff thats viewable but not in your feed
+        base_feed = Item.objects.filter(
+            ~Q(user__followers__user=self) & Q(hide_from_feed=False) & ~Q(user__blocks__blocked_user=self) & ~Q(user__blocks_received__user=self)
+            & ~Q(user=self) & Q(user__is_private=False)
             )
         if self.hide_objectionable_content:
             base_feed = base_feed.filter(Q(flags__isnull=True))
