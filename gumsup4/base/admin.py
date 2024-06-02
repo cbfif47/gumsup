@@ -88,3 +88,7 @@ class AdminMessageAdmin(admin.ModelAdmin):
 @admin.register(models.UserMessage)
 class UserMessageAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.CommentLike)
+class CommentLikeAdmin(admin.ModelAdmin):
+    """Admin for posts."""

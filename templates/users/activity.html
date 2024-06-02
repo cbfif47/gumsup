@@ -52,6 +52,10 @@
               <a href="{% url 'user' activity.comment.user %}">
                 {{ activity.comment.user }}</a> mentioned you in a comment about 
                 <a href="{% url 'view-item' activity.item.id %}">{{ activity.item.name }}</a>.
+            {% elif activity.action == 'comment_like' %}
+              <a href="{% url 'user' activity.comment_like.user %}">
+                {{ activity.comment_like.user }}</a> liked your comment about 
+                <a href="{% url 'view-item' activity.comment.item.id %}">{{ activity.comment.item.name }}</a>.
             {% endif %}
             <div class="row"><br>
                 <div class="time-since">{{activity.created|mytimesince}}</div>
