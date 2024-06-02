@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers as sz
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block, UserMessage
+from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block, UserMessage, CommentLike
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
@@ -151,6 +151,28 @@ class LikeItemView(APIView):
 			return HttpResponse("no action") # Sending an success response
 
 
+class LikeCommentView(APIView):
+
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, format=None):
+		comment = get_object_or_404(Comment, id = request.data["comment_id"])
+		action = request.data["action"]
+		existing_like = CommentLike.objects.filter(user=request.user,comment=comment)
+
+        # check the action. due to async aspect we could get out of sync
+		if existing_like and action == "unlike":
+			existing_like.delete()
+			return HttpResponse("unliked") # Sending an success response
+		elif not existing_like and action == "like":
+			m = CommentLike(user=request.user,comment=comment) # Creating Like Object
+			m.save()  # saving it to store in database
+			return HttpResponse("liked") # Sending an success response
+		else:
+			return HttpResponse("no action") # Sending an success response
+
+
 class ActivityView(APIView):
 
 	authentication_classes = [TokenAuthentication]
@@ -193,6 +215,8 @@ class ActivityView(APIView):
 				activity.message = activity.comment.user.username + " commented on your post about " + activity.item.name + "."
 			elif activity.action == 'item_comment_mention':
 				activity.message = activity.comment.user.username + " mentioned you in a comment about " + activity.item.name + "."
+			elif activity.action == 'comment_like':
+				activity.message = activity.comment_like.user.username + " liked your comment about " + activity.comment.item.name + "."
 		for a in activities:
 			if a.item:
 				a.item.is_liked = ItemLike.objects.filter(user=request.user,item=a.item).exists()

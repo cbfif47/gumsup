@@ -428,6 +428,25 @@ class Comment(BaseModel):
         ordering = ["-created"]
 
 
+class CommentLike(BaseModel):
+    user = models.ForeignKey(
+        User, verbose_name="Like By", on_delete=models.CASCADE,related_name="comment_liked_by")
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE,related_name="comment_liked")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        Activity.objects.create(user=self.comment.user,comment=self.comment,comment_like=self,action='comment_like')
+
+    def __str__(self):
+        return f"By {self.user}"
+
+    class Meta:
+        """Metadata."""
+
+        ordering = ["-created"]
+
+
 class Activity(BaseModel):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,related_name="activity_for")
@@ -437,9 +456,11 @@ class Activity(BaseModel):
     follow_request = models.ForeignKey(
         FollowRequest, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="follow_request_activity")
     item_like = models.ForeignKey(
-        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="item_likst_activity")
+        ItemLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="item_like_activity")
     comment = models.ForeignKey(
         Comment, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="comment_item_activity")
+    comment_like = models.ForeignKey(
+        CommentLike, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="comment_like_activity")
     item = models.ForeignKey(
         Item, on_delete=models.CASCADE, null=True,blank=True,default=None,related_name="item_activity")
     action = models.CharField(max_length=40,blank=True,null=True,default='')

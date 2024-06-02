@@ -70,6 +70,7 @@ urlpatterns = [
     path('api/more-items/', api_views.MoreItemsView.as_view()),
     path('api/item/<item_id>', api_views.ItemView.as_view()),
     path('api/like-item/', api_views.LikeItemView.as_view()),
+    path('api/like-comment/', api_views.LikeCommentView.as_view()),
     path('api/user/<user_id>/', api_views.UserView.as_view()),
     path('api/user/<user_id>/items/', api_views.UserItemsView.as_view()),
     path('api/user/<user_id>/socials/', api_views.UserSocialsView.as_view()),

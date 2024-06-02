@@ -4,7 +4,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework import serializers
 
-from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO, FollowRequest
+from gumsup4.base.models import User, Item, Activity, Comment, ItemLike, ItemTag, AppleSSO, FollowRequest, CommentLike
 from gumsup4.base.utilities import get_button_text, cbtimesince
 from django.db.models import Q
 
@@ -112,6 +112,8 @@ class CommentSerializer(ModelSerializer):
         mentioned_user_list = Activity.objects.filter(item=instance.item,action='item_comment_mention').values_list('user')
         mentioned_users = User.objects.filter(Q(id__in=mentioned_user_list) & ~Q(blocks_received__user=self.context.get("user")))
         ret['mentions'] = LiteUserSerializer(mentioned_users,many=True).data
+        ret['is_liked'] = CommentLike.objects.filter(comment=instance,user=self.context.get("user")).exists()
+        ret['likes_count'] = CommentLike.objects.filter(comment=instance).count()
         return(ret)
 
     class Meta:
