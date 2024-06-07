@@ -29,10 +29,9 @@ def cbtimesince(d):
         result = str(round(delta.seconds / 60 / 60)) + " hours ago"
     elif round(delta.seconds / 60) == 1:
         "1 minute ago"
-    else:
+    elif round(delta.seconds / 60) > 1
         result = str(round(delta.seconds / 60)) + " minutes ago"
-
-    if delta.days > 14:
-        return d.strftime("%b %d %Y")
     else:
-        return result
+        result = "a few seconds ago"
+
+    return result
