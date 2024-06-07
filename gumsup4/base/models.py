@@ -436,7 +436,7 @@ class CommentLike(BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        Activity.objects.create(user=self.comment.user,comment=self.comment,comment_like=self,action='comment_like')
+        Activity.objects.create(user=self.comment.user,comment=self.comment,item=self.comment.item,comment_like=self,action='comment_like')
 
     def __str__(self):
         return f"By {self.user}"
