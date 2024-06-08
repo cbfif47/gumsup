@@ -31,7 +31,7 @@ def cbtimesince(d):
         result = str(round(delta.seconds / 60 / 60)) + " hours ago"
     elif round(delta.seconds / 60) == 1:
         "1 minute ago"
-    elif round(delta.seconds / 60) > 1
+    elif round(delta.seconds / 60) > 1:
         result = str(round(delta.seconds / 60)) + " minutes ago"
     else:
         result = "a few seconds ago"
