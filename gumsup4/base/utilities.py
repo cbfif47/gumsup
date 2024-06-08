@@ -25,6 +25,8 @@ def cbtimesince(d):
         result = str(delta.days) + " days ago"
     elif delta.days == 1:
         result = "1 day ago"
+    elif round(delta.seconds / 60 / 60) == 1:
+        result = "1 hour ago"
     elif delta.seconds > 60 * 60:
         result = str(round(delta.seconds / 60 / 60)) + " hours ago"
     elif round(delta.seconds / 60) == 1:
