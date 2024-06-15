@@ -50,10 +50,10 @@ def ParseFolders(folders):
 				createdTime = f["createdTime"]
 				separator = file_name.find("-")
 				if separator > 0:
-					song_title = file_name[0:separator].strip()
-					version = file_name[(separator + 1):-4].strip()
+					song_title = file_name[0:separator].strip().lower()
+					version = file_name[(separator + 1):-4].strip().lower()
 				else:
-					song_title = file_name[0:-4].strip()
+					song_title = file_name[0:-4].strip().lower()
 					version = "v1"
 				# lets make songs if they dont exist, will default to no star or archive
 				song, song_created = DemoSong.objects.get_or_create(folder=folder,title=song_title)
