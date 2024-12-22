@@ -639,7 +639,7 @@ class DemoDemo(BaseModel):
     class Meta:
         """Metadata."""
 
-        ordering = ["-created"]
+        ordering = ["-source_created"]
 
 
 class DemoComment(BaseModel):

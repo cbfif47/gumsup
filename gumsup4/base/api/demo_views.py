@@ -86,7 +86,7 @@ def ParseFolders(folders):
 	return True
 
 def get_feed(request,full_refresh):
-	folders = DemoFolder.objects.filter(Q(user=request.user) | Q(shares__shared_to_user=request.user))
+	folders = DemoFolder.objects.filter(Q(user=request.user) | Q(shares__shared_to_user=request.user)).annotate(latest_demo=Max('songs__demos__source_created')).order_by('-latest_demo')
 
 	if full_refresh == "true":
 		ParseFolders(folders)
