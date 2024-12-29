@@ -49,7 +49,7 @@ class SongSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret['folder_id'] = instance.folder.id
-        return ret
+        return ret.annotate(latest_demo=Max('demos__source_created')).order_by('-latest_demo')
 
     class Meta:
         model = DemoSong
