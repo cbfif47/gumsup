@@ -84,8 +84,8 @@ def ParseFolders(folders):
 				song.priority_as_of = new_max_created['source_created__max']
 				song.latest_demo = new_max_created['source_created__max']
 				song.save()
-		folder_latest = DemoSong.objects.filter(folder=folder).aggregate(Max("source_created", default=""))
-		folder.latest_demo = folder_latest['source_created__max']
+		folder_latest = DemoSong.objects.filter(folder=folder).aggregate(Max("latest_demo", default=""))
+		folder.latest_demo = folder_latest['latest_demo__max']
 		folder.save()
 	return True
 
