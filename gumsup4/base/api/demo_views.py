@@ -82,7 +82,11 @@ def ParseFolders(folders):
 					demo.is_primary = (demo.row_number == 1) #all row 1s are primary TODO deal with manuals
 					demo.save()
 				song.priority_as_of = new_max_created['source_created__max']
+				song.latest_demo = new_max_created['source_created__max']
 				song.save()
+		folder_latest = DemoSong.objects.filter(folder=folder).aggregate(Max("source_created", default=""))
+		folder.latest_demo = folder_latest['source_created__max']
+		folder.save()
 	return True
 
 def get_feed(request,full_refresh):

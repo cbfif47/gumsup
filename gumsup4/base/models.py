@@ -590,6 +590,7 @@ class DemoFolder(BaseModel):
     url = models.URLField(blank=False)
     folder_type = models.CharField(max_length=80,blank=False,default="dropbox")
     key = models.CharField(max_length=80,blank=True,default="")
+    latest_demo = models.CharField(max_length=80,default="",blank=True)
 
     def save(self, *args, **kwargs):
         if self.key == "":
@@ -604,7 +605,7 @@ class DemoFolder(BaseModel):
     class Meta:
         """Metadata."""
 
-        ordering = ["-created"]
+        ordering = ["-latest_demo"]
 
 
 class DemoSong(BaseModel):
@@ -614,6 +615,7 @@ class DemoSong(BaseModel):
     is_starred = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
     priority_as_of = models.CharField(max_length=80,default="",blank=True)
+    latest_demo = models.CharField(max_length=80,default="",blank=True)
 
     def __str__(self):
         return f"{self.title}"
@@ -621,7 +623,7 @@ class DemoSong(BaseModel):
     class Meta:
         """Metadata."""
 
-        ordering = ["-created"]
+        ordering = ["-latest_demo"]
 
 
 class DemoDemo(BaseModel):
