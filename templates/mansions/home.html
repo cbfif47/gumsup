@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'mansions.css' %}" />
+        <link rel="shortcut icon" type="image/png" href="{% static 'mansionsfavicon.ico' %}" >
+        <title>MANSIONS</title>
+    </head>
+
+    <body>
+        <h1>MANSIONS</h1>
+        <img src="{% static 'mansions.gif' %}">
+        <p>Mansions is a band from Seattle, WA featuring Chris Browder, Robin Dove and friends.</p>
+        <a href="{% url 'shows' %}">SHOWS</a>
+        <a href>VIDEO</a>
+        <a href="https://mansions.bandcamp.com/">BANDCAMP</a>
+        <a href="http://www.instagram.com/mansions">INSTAGRAM</a>
+        <a href>OTHER</a>
+        <hr>
+        <br>
+        <h2>MUSIC</h2>
+        <table>
+            {% for album in albums %}
+              <tr>
+                <td>
+                    <a href="{% url 'album' slug=album.slug %}">
+                        <img src="{{ album.cover_art.url }}" class="cover">
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'album' slug=album.slug %}">
+                        {{ album.title|upper }}
+                    </a>
+                <td>
+                  LP
+                </td>
+                </td>
+                <td>{{ album.release_date|date:"Y-m-d" }}
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+
+    </body>
+
+</html>

@@ -1,0 +1,36 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  padding: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid gray;
+}
+
+td {
+  padding: 10px;
+  margin: auto;
+  border-bottom: 1px solid gray;
+  alignment
+}
+
+a {
+  color: lightgreen;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  padding-right: 8px;
+  font-weight: bold;
+}
+
+.cover {
+  width: 150px;
+  height: 150px;
+}
+
+.bigcover {
+  width: 300px;
+  height: 300px;
+}

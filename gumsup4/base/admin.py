@@ -92,3 +92,12 @@ class UserMessageAdmin(admin.ModelAdmin):
 @admin.register(models.CommentLike)
 class CommentLikeAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+@admin.register(models.MansionsAlbum)
+class MansionsAlbumAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.MansionsShow)
+class MansionsShowAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+

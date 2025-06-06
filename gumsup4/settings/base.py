@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "gumsup4.base",
     "django.contrib.postgres",  # new
     'rest_framework.authtoken',
+    "ckeditor",
 ]
 
 # Authentication settings
@@ -172,3 +173,4 @@ IOS_GOOGLE_CLIENT_ID = os.getenv("IOS_GOOGLE_CLIENT_ID")
 APPLE_SSO_KEY = os.getenv("APPLE_SSO_KEY")
 GOOGLE_DRIVE_KEY = os.getenv("GOOGLE_DRIVE_KEY")
 
+MEDIA_URL = '/media/'

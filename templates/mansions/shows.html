@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'mansions.css' %}" />
+        <link rel="shortcut icon" type="image/png" href="{% static 'mansionsfavicon.ico' %}" >
+        <title>MANSIONS - shows</title>
+    </head>
+
+    <body>
+        <h1>SHOWS</h1>
+        <table>
+            <tr>
+                <td><strong>DATE</strong></td>
+                <td><strong>CITY</strong></td>
+                <td><strong>VENUE</strong></td>
+                <td><strong>OTHER ACTS</strong></td>
+                <td><strong>NOTES</strong></td>
+            </tr>
+            {% for show in shows %}
+              <tr>
+                <td width=100>
+                    {{ show.show_date|date:"Y-m-d" }}
+                </td>
+                <td>
+                    {{ show.city }}, {{ show.state }}
+                </td>
+                <td>
+                    {{  show.venue }}
+                </td>
+                <td>{{ show.other_acts }}
+                </td>
+                <td>{{ show.note|safe }}
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+        <br><br>
+    <a href="{% url 'mansions' %}">back</a>
+
+
+    </body>
+
+</html>

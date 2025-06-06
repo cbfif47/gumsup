@@ -10,6 +10,9 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.utils.text import slugify
+from ckeditor.fields import RichTextField
+
 
 
 
@@ -673,3 +676,52 @@ class DemoShare(BaseModel):
 
     class Meta:
         ordering = ["-created"]
+
+
+class MansionsAlbum(models.Model):
+    slug = models.SlugField(primary_key=True, unique=True, max_length=100)
+    title = models.CharField(max_length=200)
+    release_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    cover_art = models.ImageField(upload_to='albums/covers/', blank=True, null=True)
+    summary = RichTextField(blank=True, null=True)
+    credits = RichTextField(blank=True, null=True)
+    release_notes = RichTextField(blank=True, null=True)
+    making_of = RichTextField(blank=True, null=True)
+    lyrics = RichTextField(blank=True, null=True)
+    album_type = models.CharField(max_length=10,null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Automatically generate slug from title if not provided
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def cover_art_preview(self):
+        if self.cover_art:
+            return mark_safe(f'<img src="{self.cover_art.url}" style="height: 100px;" />')
+        return "(No cover art)"
+
+    cover_art_preview.short_description = "Cover Art"
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["-release_date"]
+
+
+class MansionsShow(models.Model):
+    venue = models.CharField(max_length=200)
+    show_date = models.DateField()
+    city = models.CharField(max_length=200)
+    state = models.CharField(max_length=2)
+    other_acts = models.CharField(max_length=200,null=True, blank=True)
+    show_type = models.CharField(max_length=2)
+    note = models.CharField(max_length=500,null=True, blank=True)
+
+    def __str__(self):
+        return self.venue
+
+    class Meta:
+        ordering = ["-show_date"]

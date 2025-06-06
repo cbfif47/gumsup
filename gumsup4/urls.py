@@ -18,9 +18,11 @@ from django.urls import path, include, re_path
 #from django.conf.urls import url
 from django.views.generic import TemplateView
 from rest_framework import routers
-from gumsup4 import views
+from gumsup4 import views, mansions_views
 from gumsup4.base.api import serializers, viewsets, api_views, demo_views
 from django.contrib.auth.views import LogoutView
+from django.conf.urls.static import static
+from django.conf import settings
 
 # from .router import router
 
@@ -96,4 +98,8 @@ urlpatterns = [
     path('demoitis/demo/<demo_id>/comment/', demo_views.CreateCommentView.as_view()),
     path('api/follow-requests/', api_views.FollowRequestsView.as_view()),
     path('.well-known/apple-app-site-association', demo_views.AppleSiteAssociationView),
-]
+    path('mansions/', mansions_views.MansionsHomeView.as_view(),name='mansions'),
+    path('albums/<slug:slug>/', mansions_views.MansionsAlbumView.as_view(), name='album'),
+    path('albums/<slug:slug>/lyrics', mansions_views.MansionsAlbumLyricsView.as_view(), name='lyrics'),
+    path('shows/', mansions_views.MansionsShowsView.as_view(),name='shows'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

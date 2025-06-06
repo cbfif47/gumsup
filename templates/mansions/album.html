@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'mansions.css' %}" />
+        <link rel="shortcut icon" type="image/png" href="{% static 'mansionsfavicon.ico' %}" >
+        <title>MANSIONS - {{ album.title }}</title>
+    </head>
+
+    <body>
+        <img src="{{ album.cover_art.url }}" class="bigcover">
+        <h1>{{ album.title|upper }}</h1>
+        {% if album.lyrics %}
+            <a href="{% url 'lyrics' slug=album.slug %}">LYRICS</a>
+        {%  endif %}
+        {% if album.making_of %}
+            <a href="{% url 'album' slug=album.slug %}">MAKING OF</a>
+        {%  endif %}
+        <hr>
+        <p>
+          {{ album.summary|safe }}
+        </p>
+        {%  if album.credits %}
+            <h2>CREDITS</h2>
+            {{ album.credits|safe }}
+        {%  endif %}
+        {%  if album.release_notes %}
+            <h2>RELEASE</h2>
+            {{ album.release_notes|safe }}
+        {%  endif %}
+    <a href="{% url 'mansions' %}">back</a>
+    </body>
+
+</html>
