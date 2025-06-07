@@ -99,9 +99,7 @@ WSGI_APPLICATION = "gumsup4.wsgi.application"
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL", "postgres://postgres@db/django")
-    )
+    "default": dj_database_url.config(),
 }
 
 # Caching
