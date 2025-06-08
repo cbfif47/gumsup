@@ -173,4 +173,5 @@ IOS_GOOGLE_CLIENT_ID = os.getenv("IOS_GOOGLE_CLIENT_ID")
 APPLE_SSO_KEY = os.getenv("APPLE_SSO_KEY")
 GOOGLE_DRIVE_KEY = os.getenv("GOOGLE_DRIVE_KEY")
 
-MEDIA_URL = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
