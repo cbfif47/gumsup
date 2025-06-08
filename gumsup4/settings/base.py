@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SECRET_KEY = "82b-)e-#y905zd84bemqy#6&oqm3+!r)wog06&3g5e@xj8%9y@"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -173,4 +173,4 @@ IOS_GOOGLE_CLIENT_ID = os.getenv("IOS_GOOGLE_CLIENT_ID")
 APPLE_SSO_KEY = os.getenv("APPLE_SSO_KEY")
 GOOGLE_DRIVE_KEY = os.getenv("GOOGLE_DRIVE_KEY")
 
-MEDIA_URL = '/media/'
+MEDIA_URL = os.path.join(BASE_DIR, "media")
