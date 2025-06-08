@@ -11,6 +11,8 @@
     </head>
 
     <body>
+    <div class="back-link">
+    <a href="{% url 'mansions' %}">back</a></body></div>
         <img src="{% static album.cover_url %}" class="bigcover">
         <h1>{{ album.title|upper }}</h1>
         {% if album.lyrics %}
@@ -31,7 +33,6 @@
             <h2>RELEASE</h2>
             {{ album.release_notes|safe }}
         {%  endif %}
-    <a href="{% url 'mansions' %}">back</a>
     </body>
 
 </html>
