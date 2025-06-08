@@ -11,7 +11,7 @@
     </head>
 
     <body>
-        <img src="{{ album.cover_art.url }}" class="bigcover">
+        <img src="{% static album.cover_url %}" class="bigcover">
         <h1>{{ album.title|upper }}</h1>
         {% if album.lyrics %}
             <a href="{% url 'lyrics' slug=album.slug %}">LYRICS</a>

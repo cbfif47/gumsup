@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="{% static 'main.css' %}" />
         <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" >
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.js"></script>  
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.js"></script>
         <title>REX: {% block title %}{% endblock %}</title>
     </head>
 
@@ -52,7 +52,7 @@
                   </div>
                 {% endfor %}
               {% endif %}
-            
+
              {%block content %}
              {%endblock content%}<br><br><br>
             </div>
@@ -65,12 +65,14 @@
               {% else %}
                 <a href="{%url 'activity' %}" class="logo"><img src="{% static 'heart-empty2.png' %}" height="24px"></a>
               {% endif %}
+                {%  if request.user %}
               <a href="{%url 'user' request.user %}" class="logo"><img src="{% static 'me2.png' %}" height="24px"></a>
+            {%  endif %}
               </div>
         </main>
         <footer class="footer">
             <br><br>
-        </footer>    
+        </footer>
         <script src="{% static 'main.js' %}"></script>
 
     </body>

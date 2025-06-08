@@ -691,6 +691,10 @@ class MansionsAlbum(models.Model):
     lyrics = RichTextField(blank=True, null=True)
     album_type = models.CharField(max_length=10,null=True, blank=True)
 
+    def cover_url(self):
+        url = 'albumcovers/' + self.slug + '.jpg'
+        return url
+
     def save(self, *args, **kwargs):
         if not self.slug:
             # Automatically generate slug from title if not provided

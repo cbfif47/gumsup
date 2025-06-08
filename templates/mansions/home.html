@@ -27,7 +27,7 @@
               <tr>
                 <td>
                     <a href="{% url 'album' slug=album.slug %}">
-                        <img src="{{ album.cover_art.url }}" class="cover">
+                        <img src="{% static album.cover_url %}" class="cover">
                     </a>
                 </td>
                 <td>
