@@ -695,6 +695,10 @@ class MansionsAlbum(models.Model):
         url = 'albumcovers/' + self.slug + '.jpg'
         return url
 
+    def small_cover_url(self):
+        url = 'albumcovers/' + self.slug + '-small.jpg'
+        return url
+
     def save(self, *args, **kwargs):
         if not self.slug:
             # Automatically generate slug from title if not provided
