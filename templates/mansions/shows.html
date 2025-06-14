@@ -39,7 +39,10 @@
                         {{  show.venue }}
                     {%  endif %}
                 </td>
-                <td>{{ show.other_acts }}
+                <td>
+                    {% if show.other_acts %}
+                        {{ show.other_acts }}
+                    {%  endif %}
                 </td>
               </tr>
             {% endfor %}
