@@ -48,3 +48,50 @@ a {
 .back-link {
   padding-bottom: 20px;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  font-weight: bold;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 300px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+  font-weight: normal;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.legend {
+  display: inline-block;
+  border: 0px;
+  padding: 0px 10px;
+  border-radius: 5px;
+  margin-right:5px;
+  margin-bottom:10px;
+  }
+tr.S:hover {background-color: #64A6BD;}
+tr.D:hover {background-color: #FDCFF3;}
+tr.TG:hover {background-color: #BBBDF6;}
+tr.GD:hover {background-color: #EEEEFF;}
+tr.T:hover {background-color: #A1CF6B;}
+tr.GBK:hover {background-color: #D4E09B;}
+tr.F:hover {background-color: #F39C6B;}

@@ -18,7 +18,6 @@
                 <td><strong>CITY</strong></td>
                 <td><strong>VENUE</strong></td>
                 <td><strong>OTHER ACTS</strong></td>
-                <td><strong>NOTES</strong></td>
             </tr>
             {% for show in shows %}
               <tr>
@@ -29,11 +28,18 @@
                     {{ show.city }}, {{ show.state }}
                 </td>
                 <td>
-                    {{  show.venue }}
+                    {% if show.note %}
+                        <div class='tooltip'>
+                            {{  show.venue }}
+                            <span class='tooltiptext'>
+                            {{ show.note|safe }}
+                            </span>
+                        </div>
+                    {%  else %}
+                        {{  show.venue }}
+                    {%  endif %}
                 </td>
                 <td>{{ show.other_acts }}
-                </td>
-                <td>{{ show.note|safe }}
                 </td>
               </tr>
             {% endfor %}
