@@ -732,4 +732,5 @@ class MansionsShow(models.Model):
         return self.venue
 
     class Meta:
+        unique_together = ('venue', 'show_date')
         ordering = ["-show_date"]
