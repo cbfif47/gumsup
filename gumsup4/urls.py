@@ -102,4 +102,5 @@ urlpatterns = [
     path('albums/<slug:slug>/', mansions_views.MansionsAlbumView.as_view(), name='album'),
     path('albums/<slug:slug>/lyrics', mansions_views.MansionsAlbumLyricsView.as_view(), name='lyrics'),
     path('shows/', mansions_views.MansionsShowsView.as_view(),name='shows'),
+    path('video/', mansions_views.MansionsVideoView.as_view(),name='video'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

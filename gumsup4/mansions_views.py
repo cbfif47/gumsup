@@ -51,3 +51,12 @@ class MansionsShowsView(ListView):
     template_name = 'mansions/shows.html'  # You can rename this
     context_object_name = 'shows'  # default is 'object_list'
     ordering = ['-show_date']  # optional: newest first
+
+
+class MansionsVideoView(TemplateView):
+
+    def get(self, request, **kwargs):
+        context = {
+        }
+
+        return render(request, 'mansions/video.html', context)
