@@ -4,5 +4,9 @@
 {% endblock %}
   {% block content %}
   <h1>uh oh</h1>
+{% if request.site_context == 'mansions' %}
+  dude, something ain't right. go <a href="{% url 'mansions' %}">home</a>
+{% else %}
   dude, something ain't right. go <a href="{% url 'home' %}">home</a>
+{% endif %}
     {% endblock %}
