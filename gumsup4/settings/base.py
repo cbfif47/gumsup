@@ -16,7 +16,12 @@ SECRET_KEY = "82b-)e-#y905zd84bemqy#6&oqm3+!r)wog06&3g5e@xj8%9y@"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "rexwithfriends.com",
+    "www.rexwithfriends.com",
+    "thisismansions.com",
+    "www.thisismansions.com",
+]
 
 
 INSTALLED_APPS = [
