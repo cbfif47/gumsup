@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.contrib import messages
 from .base.models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment
 from .base.forms import RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm, CommentForm
@@ -28,9 +28,11 @@ class HomePageView(TemplateView):
 class UserCheckMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('login')
+            url = reverse('login', urlconf=request.urlconf)
+            return redirect(url)
         elif not request.user.username:
-            return redirect('welcome')
+            url = reverse('welcome', urlconf=request.urlconf)
+            return redirect(url)
         return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -121,7 +123,8 @@ class UserFollowersView(UserCheckMixin,TemplateView):
             }
             return render(request, 'users/gummy.html', context)
         elif user.is_private and request.user.is_following(user) == False and request.user != user:
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
         else:
             followers = user.follower_list()
             for follower in followers:
@@ -154,7 +157,8 @@ class UserFollowingView(UserCheckMixin,TemplateView):
             }
             return render(request, 'users/gummy.html', context)
         elif user.is_private and request.user.is_following(user) == False and request.user != user:
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
         else:
             followers = user.following_list()
             for follower in followers:
@@ -207,7 +211,8 @@ def FollowUser(request,username):
 
         return HttpResponse(text) # Sending an success response
     else:
-        return redirect(to='login')
+            url = reverse('login', urlconf=request.urlconf)
+            return redirect(url)
 
 
 class UserEditView(LoginRequiredMixin,TemplateView):
@@ -226,7 +231,8 @@ class UserEditView(LoginRequiredMixin,TemplateView):
 
         if f.is_valid():
             updated_user = f.save()
-            return redirect(to='activity')
+            url = reverse('activity', urlconf=request.urlconf)
+            return redirect(url)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
@@ -242,7 +248,8 @@ class WelcomeView(LoginRequiredMixin,TemplateView):
 
     def get(self, request, **kwargs):
         if request.user.username:
-            return redirect('home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
         else:
             context = {
                 'form': UserEditForm(instance = request.user),
@@ -257,7 +264,8 @@ class WelcomeView(LoginRequiredMixin,TemplateView):
 
         if f.is_valid():
             updated_user = f.save()
-            return redirect(to='suggested-welcome')
+            url = reverse('suggested-welcome', urlconf=request.urlconf)
+            return redirect(url)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
@@ -273,7 +281,7 @@ class LoginView(LoginView):
     template_name = 'users/login.html'
     
     def get_success_url(self):
-        return reverse_lazy('home') 
+        return reverse('home',urlconf=request.urlconf)
     
     def form_invalid(self, form):
         messages.error(self.request,'Invalid username or password')
@@ -300,7 +308,8 @@ class RegisterView(View):
                                     )
             messages.success(request, "welcome " + form.cleaned_data['username'] + "! we started you off by following gummy, but click search to find other people to follow.")
             login(request, new_user)
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
 
         return render(request, self.template_name, {'form': form})
 
@@ -430,7 +439,8 @@ class UserFollowRequestsView(UserCheckMixin,TemplateView):
                             'follow_requests': follow_requests
                 }
             else:
-                return redirect('activity')
+                url = reverse('activity', urlconf=request.urlconf)
+                return redirect(url)
 
             return render(request, 'users/follow-requests.html', context)
 
@@ -483,13 +493,15 @@ class ItemsView(UserCheckMixin,FilterableItemsMixin,TemplateView):
             # if new_item.original_item:
             #     Activity.objects.create(user=new_item.original_item.user,item=new_item,action='item_save')
             if request.GET.get('status', '') == 'done':
-                return redirect(to='finish-item',item_id=new_item.id)
+                url = reverse('home', kwargs={'item_id':new_item.id},urlconf=request.urlconf)
+                return redirect(url)
             else:
                 if request.GET.get('from', 'items') == '':
                     dest = 'items'
                 else:
                     dest = request.GET.get('from', 'items')
-                return redirect(to=dest)
+                    url = reverse(dest, urlconf=request.urlconf)
+                    return redirect(url)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
@@ -521,9 +533,11 @@ class ItemAddView(UserCheckMixin,FilterableItemsMixin,TemplateView):
             if new_item.original_item:
                 Activity.objects.create(user=new_item.original_item.user,item=new_item,action='item_save')
             if request.GET.get('status', '') == 'done':
-                return redirect(to='finish-item',item_id=new_item.id)
+                url = reverse('finish-item', kwargs={'item_id':new_item.id},urlconf=request.urlconf)
+                return redirect(url)
             else:
-                return redirect(to='home')
+                url = reverse('home', urlconf=request.urlconf)
+                return redirect(url)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
@@ -572,7 +586,8 @@ class FinishItemView(UserCheckMixin,TemplateView):
 
             return render(request, 'items/item_form_finished.html', context)
         else:
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
 
     def post(self,request, item_id, **kwargs):
         item = get_object_or_404(Item, id = item_id)
@@ -585,7 +600,8 @@ class FinishItemView(UserCheckMixin,TemplateView):
             else:
                 new_item.status = 3
             new_item.save()
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
@@ -610,7 +626,8 @@ class ItemEditView(UserCheckMixin,TemplateView):
 
             return render(request, 'items/edit_item2.html', context)
         else:
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
 
     def post(self,request, item_id, **kwargs):
         item = get_object_or_404(Item, id = item_id)
@@ -621,7 +638,8 @@ class ItemEditView(UserCheckMixin,TemplateView):
             if (item.status == 1 or item.status == 2):
                 item.rating = None
             new_item.save()
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
         else:
             for field in f.errors:
                 f[field].field.widget.attrs['class'] = 'error'
@@ -698,7 +716,8 @@ class ItemDeleteView(UserCheckMixin,TemplateView):
                 }
             return render(request, 'items/delete-item.html', context)
         else:
-            return redirect(to=back_to)
+            url = reverse(back_to, urlconf=request.urlconf)
+            return redirect(url)
 
     def post(self, request, item_id, **kwargs):
 
@@ -706,8 +725,8 @@ class ItemDeleteView(UserCheckMixin,TemplateView):
         back_to = request.GET.get('from', 'items')
         if item.user == request.user:
             item.delete()
-
-        return redirect(to=back_to)
+        url = reverse(back_to, urlconf=request.urlconf)
+        return redirect(url)
 
 
 class SaveItemView(UserCheckMixin,TemplateView):
@@ -853,14 +872,16 @@ class CommentDeleteView(UserCheckMixin,TemplateView):
         if item.user == request.user or comment.user == request.user:
             comment.delete()
 
-        return redirect(to='view-item',item_id=item.id)
+        url = reverse('view-item', kwargs={'item_id': item.id},urlconf=request.urlconf)
+        return redirect(url)
 
 
 class AdminReportView(UserCheckMixin,TemplateView):
 
     def get(self, request, **kwargs):
         if request.user.is_superuser == False:
-            return redirect(to='home')
+            url = reverse('home', urlconf=request.urlconf)
+            return redirect(url)
         else:    
             calls = User.objects.filter(last_feed_call__isnull=False).order_by('-last_feed_call')[:20]
             users = User.objects.all().order_by('-created')[:20]

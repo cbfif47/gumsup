@@ -75,7 +75,7 @@ MIDDLEWARE = [
 ]
 MIDDLEWARE.insert(0, 'gumsup4.dynamic_urls.SiteBasedURLRoutingMiddleware')
 
-ROOT_URLCONF = "gumsup4.rex_urls"
+ROOT_URLCONF = "gumsup4.urls"
 
 TEMPLATES = [
     {
