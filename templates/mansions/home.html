@@ -19,8 +19,9 @@
         <a href="http://www.instagram.com/mansions">INSTAGRAM</a>
         <hr>
         <br>
+        <div id="music">
         <h2>MUSIC
-        <form method="get">
+        <form method="get" action="#music">
           <select name="type" id="album-type-select" onchange="this.form.submit()">
             <option value="">All Releases</option>
             {% for value in album_type_choices %}
@@ -50,7 +51,7 @@
               </tr>
             {% endfor %}
         </table>
-
+        </div>
     </body>
 
 </html>
