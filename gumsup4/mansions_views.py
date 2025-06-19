@@ -38,7 +38,13 @@ class MansionsHomeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["album_type_choices"] = MansionsAlbum.objects.values("album_type").distinct()
+        context["album_type_choices"] = (
+            MansionsAlbum.objects.values_list("album_type", flat=True)
+            .exclude(album_type__isnull=True)
+            .exclude(album_type__exact="")
+            .distinct()
+            .order_by("album_type")
+        )
         context["selected_album_type"] = self.request.GET.get("type", "")
         return context
 
