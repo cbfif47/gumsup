@@ -61,17 +61,17 @@ class MansionsShowsView(ListView):
         context["shows_by_state"] = (
             MansionsShow.objects.values("state")
             .annotate(count=Count("id"))
-            .order_by("-count")[:3]
+            .order_by("-count")[:5]
         )
         context["shows_by_venue"] = (
             MansionsShow.objects.values("city", "venue","state")
             .annotate(count=Count("id"))
-            .order_by("-count")[:3]
+            .order_by("-count")[:5]
         )
         context["shows_by_city"] = (
             MansionsShow.objects.values("city", "state")
             .annotate(count=Count("id"))
-            .order_by("-count")[:3]
+            .order_by("-count")[:5]
         )
         context["shows_by_year"] = (
             MansionsShow.objects.annotate(year=ExtractYear("show_date"))
