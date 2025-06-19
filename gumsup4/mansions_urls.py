@@ -32,6 +32,8 @@ urlpatterns = [
     path('/', mansions_views.MansionsHomeView.as_view(),name='mansions'),
     path('music/<slug:slug>/', mansions_views.MansionsAlbumView.as_view(), name='music'),
     path('music/<slug:slug>/lyrics', mansions_views.MansionsAlbumLyricsView.as_view(), name='lyrics'),
+    path('music/<slug:slug>/making-of', mansions_views.MansionsMakingOfView.as_view(), name='making-of'),
     path('shows/', mansions_views.MansionsShowsView.as_view(),name='shows'),
+    path("admin/", admin.site.urls),
     #path('video/', mansions_views.MansionsVideoView.as_view(),name='video'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,20 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'mansions.css' %}" />
+        <link rel="shortcut icon" type="image/png" href="{% static 'mansionsfavicon.ico' %}" >
+        <title>MANSIONS - {{ album.title }} Making Of</title>
+    </head>
+
+    <body>
+        <h1>{{ album.title|upper }}</h1>
+        {{ album.making_of|safe }}
+
+    </body>
+
+</html>

@@ -13,7 +13,7 @@ from .base.models import User, Follow, Activity, FollowRequest, Item, ItemLike, 
 from .base.forms import RegisterForm, UserEditForm, ItemFormMain, ItemFormFinished, ItemEditForm, CommentForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q, F
-from django.db.models.functions import Trunc
+from django.db.models.functions import Trunc, ExtractYear
 from .base.utilities import get_button_text
 from datetime import datetime
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
@@ -52,6 +52,36 @@ class MansionsShowsView(ListView):
     context_object_name = 'shows'  # default is 'object_list'
     ordering = ['-show_date']  # optional: newest first
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Example aggregates
+        context["total_shows"] = MansionsShow.objects.count()
+        context["distinct_cities"] = MansionsShow.objects.values("city","state").distinct().count()
+        context["shows_by_state"] = (
+            MansionsShow.objects.values("state")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:3]
+        )
+        context["shows_by_venue"] = (
+            MansionsShow.objects.values("city", "venue","state")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:3]
+        )
+        context["shows_by_city"] = (
+            MansionsShow.objects.values("city", "state")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:3]
+        )
+        context["shows_by_year"] = (
+            MansionsShow.objects.annotate(year=ExtractYear("show_date"))
+            .values("year")
+            .annotate(count=Count("id"))
+            .order_by("year")
+        )
+
+        return context
+
 
 class MansionsVideoView(TemplateView):
 
@@ -60,3 +90,11 @@ class MansionsVideoView(TemplateView):
         }
 
         return render(request, 'mansions/video.html', context)
+
+
+class MansionsMakingOfView(DetailView):
+    model = MansionsAlbum
+    template_name = 'mansions/making-of.html'
+    context_object_name = 'album'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
