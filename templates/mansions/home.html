@@ -20,7 +20,18 @@
         <a href>OTHER</a>
         <hr>
         <br>
-        <h2>MUSIC</h2>
+        <h2>MUSIC
+        <a name="music"></a>
+        <form method="get">
+          <select name="type" id="album-type-select" onchange="this.form.submit()">
+            <option value="">All Releases</option>
+            {% for value in album_type_choices %}
+              <option value="{{ value.album_type }}" {% if value.album_type == selected_album_type %}selected{% endif %}>
+                {{ value.album_type }}
+              </option>
+            {% endfor %}
+          </select>
+        </form></h2>
         <table>
             {% for album in albums %}
               <tr>

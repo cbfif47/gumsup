@@ -22,14 +22,25 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 
-class MansionsHomeView(TemplateView):
+class MansionsHomeView(ListView):
+    model = MansionsAlbum
+    template_name = "mansions/home.html"
+    context_object_name = "albums"
 
-    def get(self, request, **kwargs):
-        context = {
-            "albums": MansionsAlbum.objects.all()
-        }
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        album_type = self.request.GET.get("type")
 
-        return render(request, 'mansions/home.html', context)
+        if album_type:
+            queryset = queryset.filter(album_type=album_type)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["album_type_choices"] = MansionsAlbum.objects.values("album_type").distinct()
+        context["selected_album_type"] = self.request.GET.get("type", "")
+        return context
 
 class MansionsAlbumView(DetailView):
     model = MansionsAlbum
