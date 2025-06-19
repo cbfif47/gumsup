@@ -1,8 +1,6 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}my stuff
-{% endblock %}
-  {% block content %}
-  <h1>uh oh</h1>
+<h1>uh oh</h1>
+{% if request.site_context == 'mansions' %}
+  dude, something ain't right. go <a href="{% url 'mansions' %}">home</a>
+{% else %}
   dude, something ain't right. go <a href="{% url 'home' %}">home</a>
-    {% endblock %}
+{% endif %}

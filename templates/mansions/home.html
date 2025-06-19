@@ -25,12 +25,12 @@
             {% for album in albums %}
               <tr>
                 <td>
-                    <a href="{% url 'album' slug=album.slug %}">
+                    <a href="{% url 'music' slug=album.slug %}">
                         <img src="{% static album.small_cover_url %}" class="cover">
                     </a>
                 </td>
                 <td>
-                    <a href="{% url 'album' slug=album.slug %}">
+                    <a href="{% url 'music' slug=album.slug %}">
                         {{ album.title|upper }}
                     </a>
                     <br>

@@ -29,7 +29,7 @@ from django.conf import settings
 router = routers.DefaultRouter()
 
 urlpatterns = [
-    path('/', mansions_views.MansionsHomeView.as_view(),name='mansions'),
+    path('', mansions_views.MansionsHomeView.as_view(),name='mansions'),
     path('music/<slug:slug>/', mansions_views.MansionsAlbumView.as_view(), name='music'),
     path('music/<slug:slug>/lyrics', mansions_views.MansionsAlbumLyricsView.as_view(), name='lyrics'),
     path('music/<slug:slug>/making-of', mansions_views.MansionsMakingOfView.as_view(), name='making-of'),
