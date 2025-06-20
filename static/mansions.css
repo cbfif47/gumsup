@@ -99,14 +99,6 @@ details {
     font-weight: bold;
   }
 
-  details[open] summary::after {
-    content: " ▲";
-  }
-
-  summary::after {
-    content: " ▼";
-  }
-
 tr.S:hover {background-color: #64A6BD;}
 tr.D:hover {background-color: #FDCFF3;}
 tr.TG:hover {background-color: #BBBDF6;}
