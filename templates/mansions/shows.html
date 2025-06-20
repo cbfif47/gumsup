@@ -13,9 +13,11 @@
     <body>
         <h1>SHOWS</h1>
         We have played {{ total_shows }} shows in {{ distinct_cities }} cities.<br>
-        The largest was in Detroit with Taking Back Sunday and Bayside on 10/7/2012 (2,800 people).<br>
-        The smallest was in Cleveland with The Lives Of Famous Men and James McGrurer on 3/8/2009 (1 bartender).
+        <details>
+          <summary>See more show stats</summary>
         <ul>
+            <li>The largest was in Detroit with Taking Back Sunday and Bayside on 10/7/2012 (2,800 people).</li>
+            <li>The smallest was in Cleveland with The Lives Of Famous Men and James McGrurer on 3/8/2009 (1 bartender).</li>
             <li>Top States:
             <ul>
                 {% for s in shows_by_state %}
@@ -45,6 +47,7 @@
             </ul>
             </li>
         </ul>
+        </details>
         <table>
             <tr>
                 <td><strong>DATE</strong></td>
