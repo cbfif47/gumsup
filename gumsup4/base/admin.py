@@ -49,6 +49,22 @@ class ActivityAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     """Admin for posts."""
 
+@admin.register(models.Player)
+class PlayerAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.Group)
+class GroupAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.Hand)
+class HandAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
+@admin.register(models.Trick)
+class TrickAdmin(admin.ModelAdmin):
+    """Admin for posts."""
+
 @admin.register(models.AppleSSO)
 class AppleSSOAdmin(admin.ModelAdmin):
     """Admin for posts."""
@@ -100,4 +116,18 @@ class MansionsAlbumAdmin(admin.ModelAdmin):
 @admin.register(models.MansionsShow)
 class MansionsShowAdmin(admin.ModelAdmin):
     """Admin for posts."""
+
+
+@admin.register(models.CreativeWork)
+class CreativeWorkAdmin(admin.ModelAdmin):
+    list_display = ('title', 'work_type', 'status', 'created_at')
+    list_filter = ('work_type', 'status')
+    search_fields = ('title', 'description')
+
+
+@admin.register(models.VisitorCounter)
+class VisitorCounterAdmin(admin.ModelAdmin):
+    list_display = ('name', 'count')
+
+
 

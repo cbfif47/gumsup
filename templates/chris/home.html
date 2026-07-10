@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="crt-screen">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'chris.css' %}" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" >
+    <title>CHRIS BROWDER'S CREATIVE PORTFOLIO</title>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <!-- <div style="background: repeating-linear-gradient(45deg, #ffff00, #ffff00 10px, #000000 10px, #000000 20px); height: 12px; margin-bottom: 20px; border: 1px solid #ffff00;"></div> -->
+            <h1 class="retro-title">CHRIS BROWDER</h1>
+            <div class="subtitle">*** Welcome to my webpage ***</div>
+            
+            <div class="marquee-container">
+                <marquee scrollamount="4">I am just a guy who likes to make stuff like music under the name Mansions, a social recommendations app called Rex With Friends, and other stuff. Poke around and see what you like!</marquee>
+            </div>
+        </header>
+
+        <!-- Shuffle Button Section -->
+        <div class="shuffle-section">
+            <a href="?type={{ selected_type }}&status={{ selected_status }}" class="win-btn shuffle-btn">
+                RESHUFFLE GALLERY
+            </a>
+        </div>
+
+        <!-- Filter Tabs (Work Types) -->
+        <div class="win-tabs-container">
+            <ul class="win-tabs">
+                <li class="win-tab-item {% if not selected_type %}active{% endif %}">
+                    <a href="?status={{ selected_status }}" class="win-tab-link">All Works</a>
+                </li>
+                {% for value, name in work_types %}
+                <li class="win-tab-item {% if selected_type == value %}active{% endif %}">
+                    <a href="?type={{ value }}&status={{ selected_status }}" class="win-tab-link">{{ name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Status Filter Sub-bar (Windows 95 Style Button Group) -->
+<!--         <div style="margin-bottom: 25px; padding: 10px; color: #fff; font-family: Arial, sans-serif; font-size: 0.9rem; display: flex; align-items: center; gap: 10px;">
+            <strong>Filter by Status:</strong>
+            <a href="?type={{ selected_type }}" class="win-btn {% if not selected_status %}active{% endif %}" style="padding: 2px 8px; font-size: 0.8rem; {% if not selected_status %}background: #dfdfdf; border-style: inset;{% endif %}">Show All</a>
+            <a href="?type={{ selected_type }}&status=completed" class="win-btn {% if selected_status == 'completed' %}active{% endif %}" style="padding: 2px 8px; font-size: 0.8rem; {% if selected_status == 'completed' %}background: #dfdfdf; border-style: inset;{% endif %}">Completed</a>
+            <a href="?type={{ selected_type }}&status=in_progress" class="win-btn {% if selected_status == 'in_progress' %}active{% endif %}" style="padding: 2px 8px; font-size: 0.8rem; {% if selected_status == 'in_progress' %}background: #dfdfdf; border-style: inset;{% endif %}">In Progress</a>
+        </div> -->
+
+        <!-- Creative Works Grid -->
+        <main class="works-grid">
+            {% for work in works %}
+                <!-- <div class="win-dialog"> -->
+  <!--                   <div class="win-titlebar">
+                        <span>{{ work.get_work_type_display|upper }} : {{ work.title|truncatechars:25 }}</span>
+                        <div class="win-titlebar-btn">X</div>
+                    </div> -->
+                    <div class="win-body">
+
+                        <h2 class="work-title">{{ work.title }}</h2>
+                        
+                        {% if work.description > "" %}
+                            <div class="work-desc">
+                                {{ work.description|linebreaksbr }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Image Media -->
+                        {% if work.image %}
+                            <div class="work-media">
+                                <img src="{{ work.image.url }}" alt="{{ work.title }}" />
+                            </div>
+                        {% endif %}
+
+                        <!-- Audio Media -->
+                        {% if work.audio_file %}
+                            <div class="work-media audio-player-container">
+                                <audio controls>
+                                    <source src="{{ work.audio_file.url }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
+                        {% endif %}
+
+                        <!-- external link -->
+                        {% if work.external_link > "" %}
+                            <a href="{{ work.external_link }}" target="_blank" class="win-btn" style="color: #000;">
+                                View Project
+                            </a>
+                            <br>
+                        {% endif %}
+
+                        <!-- Footer Actions -->
+                        <div class="win-footer">
+                        <!-- Status Badge -->
+                        <div class="win-status-badge {{ work.status|slugify }}">
+                            {% if work.status == 'in_progress' %}
+                                🛠️ IN PROGRESS
+                            {% else %}
+                                ⭐ COMPLETED
+                            {% endif %}
+                        </div>
+                            <span style="font-size: 0.75rem; color: #555;"> {{ work.created_at|date:"M Y" }}</span>
+                        </div>
+                    <!-- </div> -->
+                </div>
+            {% empty %}
+                <div class="win-dialog" style="grid-column: span 2; min-height: 100px;">
+                    <div class="win-titlebar">
+                        <span>SYSTEM ALERT</span>
+                        <div class="win-titlebar-btn">X</div>
+                    </div>
+                    <div class="win-body" style="text-align: center; justify-content: center;">
+                        <p style="font-weight: bold; color: #ff0000; font-family: monospace;">No works found matching the selected filters.</p>
+                        <a href="?" class="win-btn" style="margin-top: 10px; align-self: center;">Reset Filters</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </main>
+
+        <!-- Footer / Guestbook / Stats -->
+        <footer class="retro-footer">
+            <div class="visitor-counter-label">--- YOU ARE VISITOR NUMBER ---</div>
+            <div class="visitor-counter">
+                {% for digit in visitor_digits %}
+                    <div class="digit">{{ digit }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- Links Out -->
+            <div class="footer-links">
+                <a href="https://www.thisismansions.com" target="_blank">[ MANSIONS ]</a>
+                <a href="https://www.rexwithfriends.com" target="_blank">[ REX WITH FRIENDS ]</a>
+            </div>
+
+<!--             <div class="under-construction-section">
+                <span>🚧 CHRIS-BROWDER.COM IS FOREVER UNDER CONSTRUCTION 🚧</span>
+            </div> -->
+            
+            <!-- <div style="background: repeating-linear-gradient(45deg, #ffff00, #ffff00 10px, #000000 10px, #000000 20px); height: 12px; margin-top: 20px; border: 1px solid #ffff00;"></div> -->
+            <p style="font-size: 0.7rem; color: #888; margin-top: 10px;">Copyright 2026 Chris Browder.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

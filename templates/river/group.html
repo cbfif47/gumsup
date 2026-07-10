@@ -1,0 +1,14 @@
+<h1>{{ group.name }}</h1>
+<p>Welcome, {{ player.name }}!</p>
+Other players:
+<ul>
+{% for p in players %}
+	{% if p != player %}
+	<li>{{ p.name }}</li>
+	{% endif %}
+{% endfor %}
+</ul>
+<form method="post" action="{%url 'river_new_game' %}">
+  {% csrf_token %}
+  <button type="submit">New Game</button>
+</form>

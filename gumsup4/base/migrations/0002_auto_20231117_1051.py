@@ -4,19 +4,25 @@ import os
 from django.db import migrations
 
 def generate_superuser(apps, schema_editor):
-    from django.contrib.auth import get_user_model
-
     USERNAME = os.getenv("ADMIN_USERNAME")
     PASSWORD = os.getenv("ADMIN_PASSWORD")
     EMAIL = os.getenv("ADMIN_EMAIL")
 
-    user = get_user_model()
+    if not USERNAME:
+        return
 
-    if not user.objects.filter(username=USERNAME, email=EMAIL).exists():
-        admin = user.objects.create_superuser(
-           username=USERNAME, password=PASSWORD, email=EMAIL
+    User = apps.get_model('base', 'User')
+
+    if not User.objects.filter(username=USERNAME, email=EMAIL).exists():
+        from django.contrib.auth.hashers import make_password
+        User.objects.create(
+            username=USERNAME,
+            email=EMAIL,
+            password=make_password(PASSWORD),
+            is_staff=True,
+            is_superuser=True
         )
-        admin.save()
+
 
 
 class Migration(migrations.Migration):

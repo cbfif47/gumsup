@@ -1,0 +1,12 @@
+<h1>{{ game.group.name }}</h1>
+You're in game {{ game.id }}
+and hand {{ hand.id }}
+<br>
+You are {{ player.name }}
+<br>
+Your cards are:
+<ul>
+{% for card in player_state.cards %}
+    <li>{{ card.rank }} of {{ card.suit }}</li>
+{% endfor %}
+</ul>

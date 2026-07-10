@@ -734,3 +734,131 @@ class MansionsShow(models.Model):
     class Meta:
         unique_together = ('venue', 'show_date')
         ordering = ["-show_date"]
+
+
+
+# UP AND DOWN THE RIVER
+class Group(BaseModel):
+
+    def __str__(self):
+        return f"{self.id}"
+
+
+class Player(BaseModel):
+    name = models.CharField(max_length=50)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="players",blank=True,null=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class GroupPlayer(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="group_players")
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.player.name} in group {self.group.id}"
+
+
+class RiverGame(BaseModel):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="games")
+
+    def __str__(self):
+        return f"{self.id}"
+
+
+
+
+class Hand(models.Model):
+    created_at = models.DateTimeField(default=timezone.now)
+    players = models.ManyToManyField(Player, through="PlayerState")
+    current_turn = models.ForeignKey(
+        Player, null=True, blank=True, on_delete=models.SET_NULL, related_name="current_hands"
+    )
+    deck = models.JSONField(default=list)  
+    trump_suit = models.CharField(max_length=10, null=True, blank=True)
+    num_of_tricks = models.IntegerField(default=1)
+    game = models.ForeignKey(RiverGame, on_delete=models.CASCADE, related_name="hands", null=True, blank=True,)
+
+    def __str__(self):
+        return f"Hand {self.id} ({self.players.count()} players)"
+
+
+class PlayerState(models.Model):
+    hand = models.ForeignKey(Hand, on_delete=models.CASCADE, related_name="player_states")
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    cards = models.JSONField(default=list)      # cards currently in hand
+
+    def __str__(self):
+        return f"{self.player.name} in Hand {self.hand.id} cards {self.cards}"
+
+
+class Trick(models.Model):
+    hand = models.ForeignKey(Hand, on_delete=models.CASCADE, related_name="tricks")
+    number = models.IntegerField()  # trick order within hand
+    played_cards = models.JSONField(default=list)  
+    lead_suit = models.CharField(max_length=10)
+    winner = models.ForeignKey(Player, null=True, blank=True, on_delete=models.CASCADE, related_name="tricks_won")
+    # list of dicts: {"player_id": 1, "card": {"suit": "hearts", "rank": "A", "value": 14}}
+
+    def __str__(self):
+        return f"Trick {self.number} in Hand {self.hand.id}"
+
+    def add_play(self, player_state, card):
+        """
+        Add a card played by a player to this trick.
+        Removes the card from the player's hand automatically.
+        """
+        # Remove from player's hand
+        player_hand = player_state.cards
+        try:
+            player_hand.remove(card)
+        except ValueError:
+            raise ValueError("Player does not have that card in hand")
+        player_state.cards = player_hand
+        player_state.save()
+
+        self.played_cards.append({
+            "player_id": str(player_state.player.id),
+            "card": card
+        })
+        self.save()
+
+
+class CreativeWork(models.Model):
+    WORK_TYPES = [
+        ('music', 'Music'),
+        ('painting', 'Painting'),
+        ('other', 'Other'),
+    ]
+
+    STATUS_CHOICES = [
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
+
+    title = models.CharField(max_length=200)
+    work_type = models.CharField(max_length=20, choices=WORK_TYPES, default='other')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='completed')
+    description = models.TextField(blank=True, null=True)
+    external_link = models.URLField(blank=True, null=True, help_text="Link to Mansions, Rex, etc. or project page")
+    image = models.ImageField(upload_to='creative_works/images/', blank=True, null=True)
+    audio_file = models.FileField(upload_to='creative_works/audio/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.get_work_type_display()}) - {self.get_status_display()}"
+
+    class Meta:
+        ordering = ['?']
+
+
+class VisitorCounter(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.name}: {self.count}"
+
+

@@ -1,8 +1,18 @@
 """Base (shared) settings for gumsup4
 """
 
-import dj_database_url
 import os
+
+# Load local environment variables from gumsup4/.env.py if available
+try:
+    from gumsup4 import env
+    for key, value in env.__dict__.items():
+        if not key.startswith('__'):
+            os.environ.setdefault(key, str(value))
+except ImportError:
+    pass
+
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -16,12 +26,7 @@ SECRET_KEY = "82b-)e-#y905zd84bemqy#6&oqm3+!r)wog06&3g5e@xj8%9y@"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "rexwithfriends.com",
-    "www.rexwithfriends.com",
-    "thisismansions.com",
-    "www.thisismansions.com",
-]
+ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
@@ -44,6 +49,8 @@ INSTALLED_APPS = [
     "django.contrib.postgres",  # new
     'rest_framework.authtoken',
     "ckeditor",
+    "channels",
+    "storages",
 ]
 
 # Authentication settings
@@ -99,6 +106,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "gumsup4.wsgi.application"
+ASGI_APPLICATION = "gumsup4.asgi.application"  
 
 
 # Database
@@ -181,3 +189,21 @@ GOOGLE_DRIVE_KEY = os.getenv("GOOGLE_DRIVE_KEY")
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Cloudflare R2 / S3 Storage configuration (enabled if env vars are present)
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN")
+
+if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_S3_REGION_NAME = 'auto'
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_ADDRESSING_STYLE = 'path'
+    AWS_DEFAULT_ACL = None
+    if AWS_S3_CUSTOM_DOMAIN:
+        AWS_S3_CUSTOM_DOMAIN = AWS_S3_CUSTOM_DOMAIN
+

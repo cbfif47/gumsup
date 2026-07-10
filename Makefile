@@ -1,7 +1,7 @@
 BACKEND_CONTAINER := gumsup4_api:latest
 DEV_BACKEND_CONTAINER := gumsup4_api_dev
 
-COMPOSE = docker-compose -f docker/docker-compose.yml
+COMPOSE = docker compose -f docker/docker-compose.yml
 WAIT_FOR_DB = wait-for-it --service gumsup4_db:5432
 
 
@@ -37,6 +37,9 @@ start:
 
 makemigrations:
 	$(COMPOSE) run --rm gumsup4_web python manage.py makemigrations
+
+rollback:
+	$(COMPOSE) run --rm gumsup4_web python manage.py migrate base 0071_mansionsalbum_making_of
 
 migrate:
 	$(COMPOSE) run --rm gumsup4_web python manage.py migrate

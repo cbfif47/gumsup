@@ -1,0 +1,401 @@
+/* chris.css - Retro Geocities & Windows 95 Theme */
+@font-face {
+  font-family: 'Sono';
+  font-style: normal;
+  font-weight: 300;
+  src: url(https://fonts.gstatic.com/s/sono/v6/aFTO7PNiY3U2Cqf_aYEN64CYaK18YUhIma9UZrHl.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJXUdVNF.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+body {
+    background-color: #000000;
+/*    background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);*/
+    background-size: 550px 550px, 350px 350px, 250px 250px;
+    background-position: 0 0, 40px 60px, 130px 270px;
+    color: #000000;
+    font-family: 'Sono';
+    padding: 20px;
+    margin: 0;
+}
+
+/* CRT Scanline effect */
+/*.crt-screen::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 10%, rgba(0, 0, 0, 0.25) 10%);
+    z-index: 1000;
+    background-size: 100% 3px, 6px 100%;
+    pointer-events: none;
+}*/
+
+/* Page container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+/*    background-color: rgba(10, 0, 26, 0.85);*/
+    border: 3px double #00ff00;
+    padding: 30px;
+    box-shadow: 0 0 20px #00ff00;
+}
+
+/* Main title styling */
+h1.retro-title {
+    text-align: center;
+    font-family: "VT323";
+    font-size: 3.5rem;
+    color: #00ff11;
+    text-shadow: 3px 3px 0px #ffffff;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    text-align: center;
+    color: lightgray;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+/* Marquee style updates */
+.marquee-container {
+    background: #000;
+    border: 2px solid lightgray;
+    padding: 5px;
+    margin: 15px 0 25px 0;
+    color: cyan;
+    font-weight: bold;
+}
+
+/* Tab bar layout (Windows 95 style) */
+.win-tabs-container {
+    margin-bottom: 30px;
+}
+
+.win-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 2px solid #808080;
+}
+
+.win-tab-item {
+    margin-right: 4px;
+}
+
+.win-tab-link {
+    display: block;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #dfdfdf #808080 #808080 #dfdfdf;
+    border-bottom: none;
+    padding: 6px 16px;
+    color: #000 !important;
+    text-decoration: none !important;
+    font-family: "Arial", sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.win-tab-item.active .win-tab-link {
+    background: #dfdfdf;
+    border-color: #ffffff #808080 #dfdfdf #ffffff;
+    padding-bottom: 8px;
+    margin-bottom: -2px;
+}
+
+.win-tab-link:hover {
+    background: #e0e0e0;
+}
+
+/* Works layout */
+.works-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+@media(max-width: 768px) {
+    .works-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Windows 95 style card dialog box */
+.win-dialog {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+    color: #000;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.win-titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #ffffff;
+    padding: 3px 8px;
+    font-family: "Arial", sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.win-titlebar-btn {
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #5a5a5a #5a5a5a #ffffff;
+    box-shadow: inset 1px 1px 0px #ffffff;
+    width: 16px;
+    height: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 9px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+
+.win-titlebar-btn:active {
+    border-color: #5a5a5a #ffffff #ffffff #5a5a5a;
+    box-shadow: inset -1px -1px 0px #ffffff;
+}
+
+.win-body {
+    padding: 15px;
+/*    font-family: "Arial", sans-serif;*/
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border: dotted 1px white;
+  background-color: black;
+  padding: 3%;
+  margin-bottom: 1em;
+}
+
+.win-status-badge {
+    align-self: flex-start;
+    background: #000;
+    color: #ffff00;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    
+    margin-bottom: 10px;
+    font-family: monospace;
+}
+
+.win-status-badge.completed {
+    color: #00ff00;
+}
+
+.win-status-badge.in-progress {
+    color: #ff3333;
+    animation: blink 1.5s infinite;
+}
+
+.work-title {
+    margin: 5px 0 10px 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    font-family: "VT323", sans-serif;
+}
+
+.work-desc {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #fff;
+    margin-bottom: 15px;
+    flex-grow: 1;
+    font-family: "Arial", sans-serif;
+}
+
+.work-media {
+    margin-top: auto;
+    /*background: #a0a0a0;*/
+    /*border: 2px inset #ffffff;*/
+    /*padding: 10px;*/
+    margin-bottom: 10px;*/
+}
+
+.work-media img {
+    max-width: 100%;
+    height: auto;
+    /*border: 1px solid #000;*/
+    display: block;
+    margin: 0 auto;
+}
+
+/* Audio Player Retro Customization */
+.audio-player-container {
+    text-align: center;
+}
+
+audio {
+    width: 100%;
+    height: 35px;
+    outline: none;
+}
+
+.win-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #808080;
+    padding-top: 10px;
+    margin-top: auto;
+}
+
+/* Buttons */
+.win-btn {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 6px 12px;
+    color: #000 !important;
+    text-decoration: none !important;
+    font-family: "Arial", sans-serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.win-btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.win-btn:hover {
+    background: #d8d8d8;
+}
+
+/* Shuffle button section */
+.shuffle-section {
+    text-align: center;
+    margin: 20px 0 40px 0;
+}
+
+.shuffle-btn {
+    font-size: 1.1rem;
+    padding: 8px 24px;
+    background: #00ff11;
+    color: #fff !important;
+    border-color: #ffffff #550055 #550055 #ffffff;
+    text-shadow: 1px 1px 0px #000;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+}
+
+.shuffle-btn:hover {
+    background: #ff33ff;
+}
+
+.shuffle-btn:active {
+    border-color: #550055 #ffffff #ffffff #550055;
+}
+
+/* Footer / Stats section */
+.retro-footer {
+    margin-top: 40px;
+    border-top: 3px double #ff85de;
+    padding-top: 25px;
+    text-align: center;
+}
+
+/* Visitor Counter */
+.visitor-counter-label {
+    font-size: 0.9rem;
+    color: #ff85de;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.visitor-counter {
+    display: inline-flex;
+    background: #000000;
+    
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.digit {
+    background: #111111;
+    color: #ff85de;
+    font-family: 'Courier New', monospace;
+    font-size: 2.2rem;
+    font-weight: bold;
+    padding: 0 5px;
+    margin: 0 2px;
+    border: 1px solid #333;
+    text-shadow: 0 0 5px #ff0000;
+}
+
+/* Links and Gifs */
+.footer-links {
+    margin: 20px 0;
+}
+
+.footer-links a {
+    color: #00ffff;
+    text-decoration: underline;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+.footer-links a:hover {
+    color: #ffff00;
+}
+
+.under-construction-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #ffff00;
+}
+
+.construction-gif {
+    height: 35px;
+    image-rendering: pixelated;
+}
+
+/* Animations */
+.blink {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Rainbow Text for special items */
+.rainbow-text {
+    background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}

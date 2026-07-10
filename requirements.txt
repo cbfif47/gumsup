@@ -13,3 +13,7 @@ axios
 google-auth
 pillow
 django-ckeditor
+channels
+channels-redis
+django-storages
+boto3

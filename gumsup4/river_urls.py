@@ -15,26 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-#from django.conf.urls import url
 from django.views.generic import TemplateView
 from rest_framework import routers
-from gumsup4 import views, mansions_views
-from gumsup4.base.api import serializers, viewsets, api_views, demo_views
-from django.contrib.auth.views import LogoutView
+from gumsup4 import river_views, consumers
 from django.conf.urls.static import static
 from django.conf import settings
+
 
 # from .router import router
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
-    path('', mansions_views.MansionsHomeView.as_view(),name='mansions'),
-    path('music/<slug:slug>/', mansions_views.MansionsAlbumView.as_view(), name='music'),
-    path('music/<slug:slug>/lyrics', mansions_views.MansionsAlbumLyricsView.as_view(), name='lyrics'),
-    path('music/<slug:slug>/making-of', mansions_views.MansionsMakingOfView.as_view(), name='making-of'),
-    path('shows/', mansions_views.MansionsShowsView.as_view(),name='shows'),
+    path('group/<group_id>/', river_views.group_view, name='river_group'),
+    path('/new_game', river_views.new_game_view, name='river_new_game'),
+    path('game/<game_id>/', river_views.game_view, name='river_game'),
     path("admin/", admin.site.urls),
-    #path('video/', mansions_views.MansionsVideoView.as_view(),name='video'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+
+# WebSocket endpoints (used by htmx ws extension)
+websocket_urlpatterns = [
+    re_path(r"ws/game/(?P<group_id>[0-9a-f-]+)/$", consumers.GameConsumer.as_asgi()),
+]

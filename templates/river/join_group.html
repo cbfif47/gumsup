@@ -1,0 +1,6 @@
+<h1>Join {{ group.name }}</h1>
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="name" placeholder="Your name" required>
+  <button type="submit">Join</button>
+</form>
