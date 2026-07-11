@@ -846,7 +846,7 @@ class CreativeWork(models.Model):
     audio_file = models.FileField(upload_to='creative_works/audio/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    work_date = models.DateField(auto_now=True)
+    work_date = models.DateField(default=timezone.now)
 
     def __str__(self):
         return f"{self.title} ({self.get_work_type_display()}) - {self.get_status_display()}"
