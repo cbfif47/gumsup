@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'chris.css' %}" />
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" >
-    <title>CHRIS BROWDER'S CREATIVE PORTFOLIO</title>
+    <title>CHRIS BROWDER</title>
 </head>
 
 <body>
@@ -16,10 +16,10 @@
         <header>
             <!-- <div style="background: repeating-linear-gradient(45deg, #ffff00, #ffff00 10px, #000000 10px, #000000 20px); height: 12px; margin-bottom: 20px; border: 1px solid #ffff00;"></div> -->
             <h1 class="retro-title">CHRIS BROWDER</h1>
-            <div class="subtitle">*** Welcome to my webpage ***</div>
+            <div class="subtitle">Seattle, WA</div>
             
             <div class="marquee-container">
-                <marquee scrollamount="4">I am just a guy who likes to make stuff like music under the name Mansions, a social recommendations app called Rex With Friends, and other stuff. Poke around and see what you like!</marquee>
+                <marquee scrollamount="10">I'm a guy who likes to make stuff, including music under the name Mansions, a social recommendations app called Rex With Friends, and other stuff. Poke around and see what you like...</marquee>
             </div>
         </header>
 
@@ -34,7 +34,7 @@
         <div class="win-tabs-container">
             <ul class="win-tabs">
                 <li class="win-tab-item {% if not selected_type %}active{% endif %}">
-                    <a href="?status={{ selected_status }}" class="win-tab-link">All Works</a>
+                    <a href="?status={{ selected_status }}" class="win-tab-link">All</a>
                 </li>
                 {% for value, name in work_types %}
                 <li class="win-tab-item {% if selected_type == value %}active{% endif %}">
@@ -102,7 +102,7 @@
                             {% if work.status == 'in_progress' %}
                                 🛠️ IN PROGRESS
                             {% else %}
-                                ⭐ COMPLETED
+                                <img src="{% static 'starsmall.png' %}" style="height:0.75rem;margin-right: 0.2rem;">COMPLETED
                             {% endif %}
                         </div>
                             <span style="font-size: 0.75rem; color: #555;"> {{ work.work_date|date:"M Y" }}</span>
@@ -134,8 +134,9 @@
 
             <!-- Links Out -->
             <div class="footer-links">
-                <a href="https://www.thisismansions.com" target="_blank">[ MANSIONS ]</a>
-                <a href="https://www.rexwithfriends.com" target="_blank">[ REX WITH FRIENDS ]</a>
+                <a href="mailto:hey@chris-browder.com" target="_blank">CONTACT</a>
+                <a href="https://www.thisismansions.com" target="_blank">MANSIONS</a>
+                <a href="https://www.rexwithfriends.com" target="_blank">REX WITH FRIENDS</a>
             </div>
 
 <!--             <div class="under-construction-section">
