@@ -89,6 +89,7 @@ urlpatterns = [
     path("api/apple-login/", api_views.AppleLogin),
     path("api/objections/", api_views.ObjectionView.as_view()),
     path("api/stats/", api_views.StatsView.as_view()),
+    path("api/register-push-token/", api_views.RegisterPushToken.as_view()),
     path('demoitis/main/', demo_views.MainView.as_view()),
     path('demoitis/share/', demo_views.ShareView.as_view()),
     path('demoitis/sharelink/', demo_views.ShareWebView.as_view()),

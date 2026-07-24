@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "ckeditor",
     "channels",
     "storages",
+    "push_notifications",
 ]
 
 # Authentication settings
@@ -206,4 +207,3 @@ if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
     AWS_DEFAULT_ACL = None
     if AWS_S3_CUSTOM_DOMAIN:
         AWS_S3_CUSTOM_DOMAIN = AWS_S3_CUSTOM_DOMAIN
-

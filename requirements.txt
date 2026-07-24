@@ -17,3 +17,4 @@ channels
 channels-redis
 django-storages
 boto3
+django-push-notifications[apns-async]

@@ -18,6 +18,7 @@ from gumsup4.base.utilities import get_button_text
 from django.db.models import Q, F, Count, Avg, Max, Value, Variance
 from django.db.models.functions import Coalesce, Extract
 from django.utils import timezone
+from push_notifications.models import APNSDevice
 
 
 @csrf_exempt
@@ -639,3 +640,22 @@ class OtherItemsView(APIView):
 		feed = sz.ItemFeedSerializer(items[:30],many=True,context={'user': request.user})
 
 		return Response(feed.data)
+
+
+class RegisterPushToken(APIView):
+	authentication_classes = [TokenAuthentication]
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, **kwargs):
+		token = request.data.get('registration_id')
+		device, created = APNSDevice.objects.get_or_create(
+				        registration_id=token,
+				        defaults={'user': request.user}
+				    )
+		if not created:
+			device.user = request.user
+			device.active = True
+			device.save()
+		return Response(status=status.HTTP_200_OK)
+
+    

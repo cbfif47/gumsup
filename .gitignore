@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 .DS_Store
+ios_push_key.p8

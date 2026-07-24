@@ -344,7 +344,7 @@ class Item(BaseModel):
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view
-        mentions = re.findall("@[-\w]*",self.note)
+        mentions = re.findall("@[-\\w]*",self.note)
         if mentions:
             for mention in mentions:
                 username = mention.replace("@","")
@@ -357,7 +357,7 @@ class Item(BaseModel):
         # now do tags
         #first delete existing. otherwise deleted ones stick around
         ItemTag.objects.filter(item=self).delete()
-        tags = re.findall("#[-\w]*",self.note)
+        tags = re.findall("#[-\\w]*",self.note)
         if tags:
             for tag in tags:
                 text = tag.replace("#","")
@@ -409,7 +409,7 @@ class Comment(BaseModel):
         super().save(*args, **kwargs)
 
         # log mentions, save item activity is in the view
-        mentions = re.findall("@[-\w]*",self.body)
+        mentions = re.findall("@[-\\w]*",self.body)
         if mentions:
             for mention in mentions:
                 username = mention.replace("@","")
