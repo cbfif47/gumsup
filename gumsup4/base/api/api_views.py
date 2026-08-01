@@ -709,11 +709,15 @@ class GetDaycareTasksView(APIView):
 			"Wake-Up": baseline.wakeup if baseline else "DNE",
 			"Drop-Off": baseline.dropoff if baseline else "DNE",
 			"Pick-Up": baseline.pickup if baseline else "DNE",
-			"On-Call": baseline.pickup if baseline else "DNE",
+			"Sick": baseline.on_call if baseline else "DNE",
 			"Chris WOD": baseline.chris_wod if baseline else 'DNE',
 			"Robin WOD": baseline.robin_wod if baseline else 'DNE',
 		}
 
+		if person == "Chris":
+			other_person = "Robin"
+		else:
+			other_person = "Chris"
 		# 4. Fetch & Apply Any Overrides for this Date
 		overrides = DaycareScheduleOverride.objects.filter(date=target_date)
 		for override in overrides:
@@ -725,16 +729,13 @@ class GetDaycareTasksView(APIView):
 			if assigned_value and assigned_value.lower() == person.lower():
 				person_tasks.append(task_type)
 
-		if person == "Chris":
-			workout = f"Your WOD is {day_schedule['Chris WOD']}, Robin's is {day_schedule['Robin WOD']}."
-		else:
-			workout = f"Your WOD is {day_schedule['Robin WOD']}, Chris' is {day_schedule['Chris WOD']}."
-
 		return Response({
 			"date": target_date.strftime('%Y-%m-%d'),
 			"person": person,
-			"work_location": day_schedule.get(f"{person.capitalize()} Location"),
-			"workout": workout,
+			"work_location": day_schedule.get(f"{person} Location"),
+			"other_location": day_schedule.get(f"{other_person} Location"),
+			"workout": day_schedule.get(f"{person} WOD"),
+			"other_workout": day_schedule.get(f"{other_person} WOD"),
 			"assigned_tasks": ", ".join(person_tasks),
 			"full_day_schedule": day_schedule  # Included for complete context!
 		}, status=status.HTTP_200_OK)
