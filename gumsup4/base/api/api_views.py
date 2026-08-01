@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers as sz
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
-from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block, UserMessage, CommentLike
+from ..models import User, Follow, Activity, FollowRequest, Item, ItemLike, ItemTag, Comment, AppleSSO, FollowRequest, Flag, Block, UserMessage, CommentLike, DaycareBaselineSchedule, DaycareScheduleOverride
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from gumsup4.base.utilities import get_button_text
@@ -19,6 +19,7 @@ from django.db.models import Q, F, Count, Avg, Max, Value, Variance
 from django.db.models.functions import Coalesce, Extract
 from django.utils import timezone
 from push_notifications.models import APNSDevice
+import datetime
 
 
 @csrf_exempt
@@ -658,4 +659,83 @@ class RegisterPushToken(APIView):
 			device.save()
 		return Response(status=status.HTTP_200_OK)
 
+
+# DAYCARE STUFF
+def validate_daycare_token(request):
+	auth_header = request.headers.get('Authorization', '')
+	if not auth_header.startswith('Bearer '):
+		return False
+	token = auth_header.split(' ')[1]
+	return token == getattr(settings, 'DAYCARE_API_TOKEN')
+
+
+class GetDaycareTasksView(APIView):
+	permission_classes = []
+
+	def get(self, request):
+		# 1. Bearer Token Check
+		if not validate_daycare_token(request):
+			return Response(
+				{"error": "Unauthorized. Invalid or missing Bearer token."},
+				status=status.HTTP_401_UNAUTHORIZED
+			)
+
+		# 2. Extract Query Params
+		person = request.query_params.get('person')  # e.g., "Chris" or "Robin"
+		date_str = request.query_params.get('date')  # e.g., "2026-08-06"
+
+		if not person or not date_str:
+			return Response(
+				{"error": "Both 'person' and 'date' query parameters are required."},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		try:
+			target_date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+		except ValueError:
+			return Response(
+				{"error": "Invalid date format. Use YYYY-MM-DD."},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		# 3. Pull Baseline Schedule for Day of Week (0=Mon, 6=Sun)
+		day_of_week = target_date.weekday()
+		baseline = DaycareBaselineSchedule.objects.filter(day_of_week=day_of_week).first()
+
+		# Build initial schedule state from baseline (or empty defaults if none set)
+		day_schedule = {
+			"Chris Location": baseline.chris_location if baseline else "WFH",
+			"Robin Location": baseline.robin_location if baseline else "Home",
+			"Wake-Up": baseline.wakeup if baseline else "Chris",
+			"Drop-Off": baseline.dropoff if baseline else "Chris",
+			"Pick-Up": baseline.pickup if baseline else "Robin",
+			"On-Call": baseline.pickup if baseline else "Chris",
+			"Chris WOD": baseline.chris_wod if baseline else 'n/a',
+			"Robin WOD": baseline.robin_wod if baseline else 'n/a',
+		}
+
+		# 4. Fetch & Apply Any Overrides for this Date
+		overrides = DaycareScheduleOverride.objects.filter(date=target_date)
+		for override in overrides:
+			day_schedule[override.override_type] = override.value
+
+		# 5. Filter Down to Tasks Assigned to the Requested Person
+		person_tasks = []
+		for task_type, assigned_value in day_schedule.items():
+			if assigned_value and assigned_value.lower() == person.lower():
+				person_tasks.append(task_type)
+
+		if person == "Chris":
+			workout = f"Your WOD is {day_schedule['Chris WOD']}, Robin's is {day_schedule['Robin WOD']}."
+		else:
+			workout = f"Your WOD is {day_schedule['Robin WOD']}, Chris' is {day_schedule['Chris WOD']}."
+
+		return Response({
+			"date": target_date.strftime('%Y-%m-%d'),
+			"person": person,
+			"work_location": day_schedule.get(f"{person.capitalize()} Location"),
+			"workout": workout,
+			"assigned_tasks": "You're on duty for: " + ", ".join(person_tasks),
+			"full_day_schedule": day_schedule  # Included for complete context!
+		}, status=status.HTTP_200_OK)
     

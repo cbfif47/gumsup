@@ -863,3 +863,34 @@ class VisitorCounter(models.Model):
         return f"{self.name}: {self.count}"
 
 
+
+# daycare logistics
+class DaycareBaselineSchedule(models.Model):
+    # Holds your default standard week (Mon-Fri defaults)
+    day_of_week = models.IntegerField() # 0=Mon, 3=Thu...
+    chris_location = models.CharField(max_length=10) # 'Home' / 'Office'
+    robin_location = models.CharField(max_length=10)
+    wakeup = models.CharField(max_length=10)
+    dropoff = models.CharField(max_length=10)
+    pickup = models.CharField(max_length=10)
+    on_call = models.CharField(max_length=10)
+    chris_wod = models.CharField(max_length=10)
+    robin_wod = models.CharField(max_length=10)
+
+
+class DaycareScheduleOverride(models.Model):
+    date = models.DateField()
+    override_type = models.CharField(max_length=50)  # e.g., "Chris Location", "Pickup Person"
+    value = models.CharField(max_length=50)          # e.g., "Office", "Robin"
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['date', 'override_type'], 
+                name='unique_date_override_type'
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.date} - {self.override_type}: {self.value}"

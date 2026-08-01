@@ -130,4 +130,11 @@ class VisitorCounterAdmin(admin.ModelAdmin):
     list_display = ('name', 'count')
 
 
+@admin.register(models.DaycareBaselineSchedule)
+class DaycareBaselineAdmin(admin.ModelAdmin):
+    """baseline"""
 
+
+@admin.register(models.DaycareScheduleOverride)
+class DaycareOverrideAdmin(admin.ModelAdmin):
+    """overrides"""
