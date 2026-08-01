@@ -704,14 +704,14 @@ class GetDaycareTasksView(APIView):
 
 		# Build initial schedule state from baseline (or empty defaults if none set)
 		day_schedule = {
-			"Chris Location": baseline.chris_location if baseline else "WFH",
-			"Robin Location": baseline.robin_location if baseline else "Home",
-			"Wake-Up": baseline.wakeup if baseline else "Chris",
-			"Drop-Off": baseline.dropoff if baseline else "Chris",
-			"Pick-Up": baseline.pickup if baseline else "Robin",
-			"On-Call": baseline.pickup if baseline else "Chris",
-			"Chris WOD": baseline.chris_wod if baseline else 'n/a',
-			"Robin WOD": baseline.robin_wod if baseline else 'n/a',
+			"Chris Location": baseline.chris_location if baseline else "DNE",
+			"Robin Location": baseline.robin_location if baseline else "DNE",
+			"Wake-Up": baseline.wakeup if baseline else "DNE",
+			"Drop-Off": baseline.dropoff if baseline else "DNE",
+			"Pick-Up": baseline.pickup if baseline else "DNE",
+			"On-Call": baseline.pickup if baseline else "DNE",
+			"Chris WOD": baseline.chris_wod if baseline else 'DNE',
+			"Robin WOD": baseline.robin_wod if baseline else 'DNE',
 		}
 
 		# 4. Fetch & Apply Any Overrides for this Date
@@ -735,7 +735,58 @@ class GetDaycareTasksView(APIView):
 			"person": person,
 			"work_location": day_schedule.get(f"{person.capitalize()} Location"),
 			"workout": workout,
-			"assigned_tasks": "You're on duty for: " + ", ".join(person_tasks),
+			"assigned_tasks": ", ".join(person_tasks),
 			"full_day_schedule": day_schedule  # Included for complete context!
+		}, status=status.HTTP_200_OK)
+
+
+
+class CreateDaycareOverrideView(APIView):
+	permission_classes = []
+
+	def post(self, request):
+		# 1. Bearer Token Check
+		if not validate_daycare_token(request):
+			return Response(
+				{"error": "Unauthorized. Invalid or missing Bearer token."},
+				status=status.HTTP_401_UNAUTHORIZED
+			)
+
+		# 2. Extract JSON Body Data
+		date_str = request.data.get('date')
+		override_type = request.data.get('override_type')
+		value = request.data.get('value')
+
+		if not date_str or not override_type or not value:
+			return Response(
+				{"error": "'date', 'override_type', and 'value' are all required fields."},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		try:
+			target_date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+		except ValueError:
+			return Response(
+				{"error": "Invalid date format. Use YYYY-MM-DD."},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		# 3. Upsert using Unique Constraint (date + override_type)
+		override_obj, created = DaycareScheduleOverride.objects.update_or_create(
+			date=target_date,
+			override_type=override_type,
+			defaults={'value': value}
+		)
+
+		action_text = "created" if created else "updated"
+
+		return Response({
+			"message": f"Successfully {action_text} override.",
+			"override": {
+				"id": override_obj.id,
+				"date": override_obj.date.strftime('%Y-%m-%d'),
+				"override_type": override_obj.override_type,
+				"value": override_obj.value
+			}
 		}, status=status.HTTP_200_OK)
     

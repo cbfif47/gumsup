@@ -877,6 +877,9 @@ class DaycareBaselineSchedule(models.Model):
     chris_wod = models.CharField(max_length=10)
     robin_wod = models.CharField(max_length=10)
 
+    def __str__(self):
+        return f"{self.day_of_week} Schedule"
+
 
 class DaycareScheduleOverride(models.Model):
     date = models.DateField()

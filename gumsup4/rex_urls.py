@@ -99,5 +99,6 @@ urlpatterns = [
     path('demoitis/demo/<demo_id>/comment/', demo_views.CreateCommentView.as_view()),
     path('api/follow-requests/', api_views.FollowRequestsView.as_view()),
     path('api/daycare-schedule/', api_views.GetDaycareTasksView.as_view()),
+    path('api/daycare-override/', api_views.CreateDaycareOverrideView.as_view()),
     path('.well-known/apple-app-site-association', demo_views.AppleSiteAssociationView),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
