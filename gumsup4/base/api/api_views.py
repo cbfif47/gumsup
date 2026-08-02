@@ -720,7 +720,7 @@ class GetDaycareTasksView(APIView):
 			other_person = "Chris"
 		# 4. Fetch & Apply Any Overrides for this Date
 		overrides = DaycareScheduleOverride.objects.filter(date=target_date)
-		is_holiday = False
+		is_holiday = day_schedule["Wake-Up"] == "DNE"
 		for override in overrides:
 			if override.override_type == "Holiday":
 				is_holiday = True
