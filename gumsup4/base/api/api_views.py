@@ -704,14 +704,14 @@ class GetDaycareTasksView(APIView):
 
 		# Build initial schedule state from baseline (or empty defaults if none set)
 		day_schedule = {
-			"Chris Location": baseline.chris_location if baseline else "DNE",
-			"Robin Location": baseline.robin_location if baseline else "DNE",
+			"Chris Location": baseline.chris_location if baseline else "Home",
+			"Robin Location": baseline.robin_location if baseline else "Home",
 			"Wake-Up": baseline.wakeup if baseline else "DNE",
 			"Drop-Off": baseline.dropoff if baseline else "DNE",
 			"Pick-Up": baseline.pickup if baseline else "DNE",
 			"Sick": baseline.on_call if baseline else "DNE",
-			"Chris WOD": baseline.chris_wod if baseline else 'DNE',
-			"Robin WOD": baseline.robin_wod if baseline else 'DNE',
+			"Chris WOD": baseline.chris_wod if baseline else 'rest day',
+			"Robin WOD": baseline.robin_wod if baseline else 'rest day',
 		}
 
 		if person == "Chris":
@@ -720,18 +720,24 @@ class GetDaycareTasksView(APIView):
 			other_person = "Chris"
 		# 4. Fetch & Apply Any Overrides for this Date
 		overrides = DaycareScheduleOverride.objects.filter(date=target_date)
+		is_holiday = False
 		for override in overrides:
+			if override.override_type == "Holiday":
+				is_holiday = True
+
 			day_schedule[override.override_type] = override.value
 
 		# 5. Filter Down to Tasks Assigned to the Requested Person
 		person_tasks = []
-		for task_type, assigned_value in day_schedule.items():
-			if assigned_value and assigned_value.lower() == person.lower():
-				person_tasks.append(task_type)
+		if not is_holiday:
+			for task_type, assigned_value in day_schedule.items():
+				if assigned_value and assigned_value.lower() == person.lower():
+					person_tasks.append(task_type)
 
 		return Response({
 			"date": target_date.strftime('%Y-%m-%d'),
 			"person": person,
+			"is_holiday": is_holiday,
 			"work_location": day_schedule.get(f"{person} Location"),
 			"other_location": day_schedule.get(f"{other_person} Location"),
 			"workout": day_schedule.get(f"{person} WOD"),
